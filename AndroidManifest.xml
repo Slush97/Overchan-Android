@@ -249,7 +249,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         
         <provider
             android:name="androidx.core.content.FileProvider"
-            android:authorities="nya.miku.wishmaster.fileprovider"
+            android:authorities="dev.esoc.esochan.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data

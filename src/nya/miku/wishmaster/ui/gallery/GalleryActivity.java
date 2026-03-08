@@ -465,7 +465,7 @@ public class GalleryActivity extends Activity implements View.OnClickListener {
     
     private Uri getFileUri(File file) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            return FileProvider.getUriForFile(this, "nya.miku.wishmaster.fileprovider", file);
+            return FileProvider.getUriForFile(this, "dev.esoc.esochan.fileprovider", file);
         }
         return Uri.fromFile(file);
     }
