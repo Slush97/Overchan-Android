@@ -61,6 +61,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import androidx.core.content.ContextCompat;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -301,7 +302,7 @@ public class GalleryActivity extends Activity implements View.OnClickListener {
     
     private void waitForPageLoaded(Bundle savedInstanceState) {
         final String savedHash = savedInstanceState != null ? savedInstanceState.getString(EXTRA_SAVED_ATTACHMENTHASH) : null;
-        if (savedHash != null) registerReceiver(new BroadcastReceiver() {
+        if (savedHash != null) ContextCompat.registerReceiver(this, new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 if (intent.getAction() != null && intent.getAction().equals(BoardFragment.BROADCAST_PAGE_LOADED)) {
@@ -316,7 +317,7 @@ public class GalleryActivity extends Activity implements View.OnClickListener {
                     }
                 }
             }
-        }, new IntentFilter(BoardFragment.BROADCAST_PAGE_LOADED));
+        }, new IntentFilter(BoardFragment.BROADCAST_PAGE_LOADED), ContextCompat.RECEIVER_NOT_EXPORTED);
     }
     
     @Override

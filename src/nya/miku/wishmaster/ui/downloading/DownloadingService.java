@@ -64,12 +64,12 @@ import nya.miku.wishmaster.lib.base64.Base64OutputStream;
 import nya.miku.wishmaster.ui.Attachments;
 import nya.miku.wishmaster.ui.settings.ApplicationSettings;
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
+import android.content.pm.ServiceInfo;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
@@ -164,47 +164,23 @@ public class DownloadingService extends Service {
     
     private void notifyForeground(int id, Notification notification) {
         if (!isForeground) {
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.ECLAIR) {
-                try {
-                    getClass().getMethod("setForeground", new Class[] { boolean.class }).invoke(this, Boolean.TRUE);
-                } catch (Exception e) {
-                    Logger.e(TAG, "cannot invoke setForeground(true)", e);
-                }
-                notificationManager.notify(id, notification);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+                startForeground(id, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC);
             } else {
-                ForegroundCompat.startForeground(this, id, notification);
+                startForeground(id, notification);
             }
             isForeground = true;
         } else {
             notificationManager.notify(id, notification);
         }
     }
-    
+
     private void cancelForeground(int id) {
         if (isForeground) {
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.ECLAIR) {
-                notificationManager.cancel(id);
-                try {
-                    getClass().getMethod("setForeground", new Class[] { boolean.class }).invoke(this, Boolean.FALSE);
-                } catch (Exception e) {
-                    Logger.e(TAG, "cannot invoke setForeground(false)", e);
-                }
-            } else {
-                ForegroundCompat.stopForeground(this);
-            }
+            stopForeground(STOP_FOREGROUND_REMOVE);
             isForeground = false;
         } else {
             notificationManager.cancel(id);
-        }
-    }
-    
-    @TargetApi(Build.VERSION_CODES.ECLAIR)
-    private static class ForegroundCompat {
-        static void startForeground(Service service, int id, Notification notification) {
-            service.startForeground(id, notification);
-        }
-        static void stopForeground(Service service) {
-            service.stopForeground(true);
         }
     }
     

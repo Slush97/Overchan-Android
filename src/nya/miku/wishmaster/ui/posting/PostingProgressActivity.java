@@ -28,6 +28,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import androidx.core.content.ContextCompat;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.view.View;
@@ -95,7 +96,7 @@ public class PostingProgressActivity extends Activity implements View.OnClickLis
     @Override
     protected void onStart() {
         super.onStart();
-        registerReceiver(broadcastReceiver, intentFilter);
+        ContextCompat.registerReceiver(this, broadcastReceiver, intentFilter, ContextCompat.RECEIVER_NOT_EXPORTED);
         bindService(bindingIntent, serviceConnection, Service.BIND_AUTO_CREATE);
         if (!PostingService.isNowPosting()) finish();
     }

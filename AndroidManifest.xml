@@ -30,6 +30,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
     <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.VIBRATE" />
     
@@ -270,8 +272,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         </provider>
         
         <service android:name="nya.miku.wishmaster.ui.posting.PostingService" android:exported="false" />
-        <service android:name="nya.miku.wishmaster.ui.downloading.DownloadingService" android:exported="false" />
-        <service android:name="nya.miku.wishmaster.ui.tabs.TabsTrackerService" android:exported="false" />
+        <service android:name="nya.miku.wishmaster.ui.downloading.DownloadingService" android:exported="false" android:foregroundServiceType="dataSync" />
+        <service android:name="nya.miku.wishmaster.ui.tabs.TabsTrackerService" android:exported="false" android:foregroundServiceType="dataSync" />
         <service android:name="nya.miku.wishmaster.ui.gallery.GalleryBackend" android:exported="false" />
         
     </application>

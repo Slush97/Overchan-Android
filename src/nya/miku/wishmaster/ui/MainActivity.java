@@ -53,6 +53,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import androidx.core.content.ContextCompat;
 import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import android.graphics.Point;
@@ -432,7 +433,7 @@ public class MainActivity extends FragmentActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        registerReceiver(broadcastReceiver, intentFilter);
+        ContextCompat.registerReceiver(this, broadcastReceiver, intentFilter, ContextCompat.RECEIVER_NOT_EXPORTED);
         tabsAdapter.notifyDataSetChanged(false);
         ExtendedTrustManager.bindActivity(this);
     }
