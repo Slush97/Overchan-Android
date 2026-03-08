@@ -249,6 +249,8 @@ public abstract class AbstractVichanModule extends AbstractWakabaModule {
                 case ".jpeg":
                 case ".jpg":
                 case ".png":
+                case ".webp":
+                case ".avif":
                     attachment.type = AttachmentModel.TYPE_IMAGE_STATIC;
                     break;
                 case ".gif":
@@ -260,10 +262,17 @@ public abstract class AbstractVichanModule extends AbstractWakabaModule {
                     break;
                 case ".mp3":
                 case ".ogg":
+                case ".opus":
+                case ".m4a":
+                case ".flac":
+                case ".wav":
+                case ".aac":
                     attachment.type = AttachmentModel.TYPE_AUDIO;
                     break;
                 case ".webm":
                 case ".mp4":
+                case ".m4v":
+                case ".gifv":
                     attachment.type = AttachmentModel.TYPE_VIDEO;
                     break;
                 default:

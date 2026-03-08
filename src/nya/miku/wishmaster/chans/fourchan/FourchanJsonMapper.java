@@ -33,7 +33,7 @@ import nya.miku.wishmaster.lib.org_json.JSONObject;
 
 public class FourchanJsonMapper {
     private static final boolean LINKIFY = true;
-    private static final String[] ATTACHMENT_FORMATS = new String[] { "jpg", "jpeg", "png", "gif", "webm" };
+    private static final String[] ATTACHMENT_FORMATS = new String[] { "jpg", "jpeg", "png", "gif", "webm", "mp4" };
     
     private static final Pattern S_TAG = Pattern.compile("<(/?)s>");
     
@@ -119,6 +119,7 @@ public class FourchanJsonMapper {
                 case ".gif":
                     attachment.type = AttachmentModel.TYPE_IMAGE_GIF;
                     break;
+                case ".mp4":
                 case ".webm":
                     attachment.type = AttachmentModel.TYPE_VIDEO;
                     break;

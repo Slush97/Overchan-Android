@@ -45,11 +45,11 @@ import nya.miku.wishmaster.ui.tabs.TabsState;
 import nya.miku.wishmaster.ui.tabs.TabsSwitcher;
 
 import org.acra.ACRA;
-import org.acra.annotation.ReportsCrashes;
 
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningAppProcessInfo;
 import android.app.Application;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.preference.PreferenceManager;
@@ -60,19 +60,6 @@ import android.preference.PreferenceManager;
  * @author miku-nyan
  *
  */
-
-@ReportsCrashes(
-        formUri = ACRAConstants.ACRA_FORM_URL,
-        reportType = org.acra.sender.HttpSender.Type.JSON,
-        httpMethod = org.acra.sender.HttpSender.Method.PUT,
-        formUriBasicAuthLogin = ACRAConstants.ACRA_LOGIN,
-        formUriBasicAuthPassword = ACRAConstants.ACRA_PASSWORD,
-        mode = org.acra.ReportingInteractionMode.DIALOG,
-        resDialogText = R.string.crash_dialog_text,
-        resDialogIcon = android.R.drawable.ic_dialog_info,
-        resDialogTitle = R.string.crash_dialog_title,
-        resDialogCommentPrompt = R.string.crash_dialog_comment_prompt,
-        resDialogOkToast = R.string.crash_dialog_ok_toast )
 
 public class MainApplication extends Application {
     
@@ -238,26 +225,33 @@ public class MainApplication extends Application {
         Wifi.register(this);
     }
     
-    private String getProcessName() {
+    private String getAppProcessName() {
         int myPid = android.os.Process.myPid();
         for (RunningAppProcessInfo process : ((ActivityManager) getSystemService(ACTIVITY_SERVICE)).getRunningAppProcesses()) {
             if (myPid == process.pid) return process.processName;
         }
         return null;
     }
-    
+
     private boolean isGalleryProcess() {
         try {
-            return getProcessName().endsWith(":Gallery");
+            return getAppProcessName().endsWith(":Gallery");
         } catch (Exception e) {
             return false;
         }
     }
     
     @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
+        if (ACRAConstants.ACRA_ENABLED) {
+            ACRA.init(this);
+        }
+    }
+
+    @Override
     public void onCreate() {
         super.onCreate();
-        if (ACRAConstants.ACRA_ENABLED) ACRA.init(this);
         if (isGalleryProcess()) return;
         initObjects();
         instance = this;

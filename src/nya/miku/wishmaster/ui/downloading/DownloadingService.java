@@ -78,8 +78,8 @@ import android.net.Uri;
 import android.os.Binder;
 import android.os.Build;
 import android.os.IBinder;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.content.res.ResourcesCompat;
+import androidx.core.app.NotificationCompat;
+import androidx.core.content.res.ResourcesCompat;
 
 public class DownloadingService extends Service {
     private static final String TAG = "DownloadingService";

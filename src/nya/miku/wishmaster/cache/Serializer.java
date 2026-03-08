@@ -44,7 +44,7 @@ import nya.miku.wishmaster.ui.tabs.TabModel;
 import nya.miku.wishmaster.ui.tabs.TabsIdStack;
 import nya.miku.wishmaster.ui.tabs.TabsState;
 import android.os.Build;
-import android.support.v4.util.AtomicFile;
+import androidx.core.util.AtomicFile;
 
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;

@@ -418,15 +418,15 @@ public class WakabaReader implements Closeable {
         if ((startHref = html.indexOf("href=\"")) != -1 && (endHref = html.indexOf('\"', startHref + 6)) != -1) {
             attachment.path = html.substring(startHref + 6, endHref);
             String pathLower = attachment.path.toLowerCase(Locale.US);
-            if (pathLower.endsWith(".jpg") || pathLower.endsWith(".jpeg") || pathLower.endsWith(".png"))
+            if (pathLower.endsWith(".jpg") || pathLower.endsWith(".jpeg") || pathLower.endsWith(".png") || pathLower.endsWith(".webp") || pathLower.endsWith(".avif"))
                 attachment.type = AttachmentModel.TYPE_IMAGE_STATIC;
             else if (pathLower.endsWith(".gif"))
                 attachment.type = AttachmentModel.TYPE_IMAGE_GIF;
             else if (pathLower.endsWith(".svg") || pathLower.endsWith(".svgz"))
                 attachment.type = AttachmentModel.TYPE_IMAGE_SVG;
-            else if (pathLower.endsWith(".webm") || pathLower.endsWith(".mp4") || pathLower.endsWith(".ogv"))
+            else if (pathLower.endsWith(".webm") || pathLower.endsWith(".mp4") || pathLower.endsWith(".ogv") || pathLower.endsWith(".m4v") || pathLower.endsWith(".gifv"))
                 attachment.type = AttachmentModel.TYPE_VIDEO;
-            else if (pathLower.endsWith(".mp3") || pathLower.endsWith(".ogg"))
+            else if (pathLower.endsWith(".mp3") || pathLower.endsWith(".ogg") || pathLower.endsWith(".opus") || pathLower.endsWith(".m4a") || pathLower.endsWith(".flac") || pathLower.endsWith(".wav") || pathLower.endsWith(".aac"))
                 attachment.type = AttachmentModel.TYPE_AUDIO;
             else if (pathLower.startsWith("http") && (pathLower.contains("youtube.")))
                 attachment.type = AttachmentModel.TYPE_OTHER_NOTFILE;

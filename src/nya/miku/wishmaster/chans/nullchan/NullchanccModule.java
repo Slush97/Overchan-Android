@@ -31,7 +31,7 @@ import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.preference.EditTextPreference;
 import android.preference.PreferenceGroup;
-import android.support.v4.content.res.ResourcesCompat;
+import androidx.core.content.res.ResourcesCompat;
 import android.text.InputType;
 import android.text.TextUtils;
 import nya.miku.wishmaster.R;

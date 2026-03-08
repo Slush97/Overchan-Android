@@ -115,7 +115,7 @@ public class DvachnetJsonMapper {
             attachment.type = AttachmentModel.TYPE_IMAGE_STATIC;
             String pathLower = path.toLowerCase(Locale.US);
             if (pathLower.endsWith(".gif")) attachment.type = AttachmentModel.TYPE_IMAGE_GIF;
-            else if (pathLower.endsWith(".webm")) attachment.type = AttachmentModel.TYPE_VIDEO;
+            else if (pathLower.endsWith(".webm") || pathLower.endsWith(".mp4")) attachment.type = AttachmentModel.TYPE_VIDEO;
         }
         
         int banned = json.optInt("banned", 0);

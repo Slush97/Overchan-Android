@@ -10,3 +10,5 @@
 -keep class sun.nio.ch.** { *; }
 -keep class sun.misc.** { *; }
 -keep class java.beans.** { *; }
+-keep class com.google.android.exoplayer2.** { *; }
+-dontwarn com.google.android.exoplayer2.**

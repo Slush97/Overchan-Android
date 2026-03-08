@@ -2,7 +2,7 @@ package nya.miku.wishmaster.lib.appcompat_v7_actionbartoogle.wrappers;
 
 import nya.miku.wishmaster.lib.appcompat_v7_actionbartoogle.ActionBarDrawerToggle;
 import android.app.Activity;
-import android.support.v4.widget.DrawerLayout;
+import androidx.drawerlayout.widget.DrawerLayout;
 
 public class ActionBarDrawerToogleV7 extends ActionBarDrawerToggle implements ActionBarDrawerToogleCompat {
 

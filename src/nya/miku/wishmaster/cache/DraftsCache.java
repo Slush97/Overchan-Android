@@ -20,7 +20,7 @@ package nya.miku.wishmaster.cache;
 
 import nya.miku.wishmaster.api.models.CaptchaModel;
 import nya.miku.wishmaster.api.models.SendPostModel;
-import android.support.v4.util.LruCache;
+import androidx.collection.LruCache;
 
 /**
  * Кэш для черновиков (неотправленных постов).<br>

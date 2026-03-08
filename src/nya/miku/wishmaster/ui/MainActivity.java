@@ -27,7 +27,6 @@ import nya.miku.wishmaster.common.Logger;
 import nya.miku.wishmaster.common.MainApplication;
 import nya.miku.wishmaster.http.client.ExtendedTrustManager;
 import nya.miku.wishmaster.lib.appcompat_v7_actionbartoogle.wrappers.ActionBarDrawerToogleCompat;
-import nya.miku.wishmaster.lib.appcompat_v7_actionbartoogle.wrappers.ActionBarDrawerToogleV4;
 import nya.miku.wishmaster.lib.appcompat_v7_actionbartoogle.wrappers.ActionBarDrawerToogleV7;
 import nya.miku.wishmaster.lib.dslv.DragSortController;
 import nya.miku.wishmaster.lib.dslv.DragSortListView;
@@ -58,9 +57,9 @@ import android.content.res.TypedArray;
 import android.graphics.Point;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.drawerlayout.widget.DrawerLayout;
 import android.util.TypedValue;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -109,36 +108,18 @@ public class MainActivity extends FragmentActivity {
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer);
         if (drawerLayout == null || Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) return;
 
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            int drawerResId = ThemeUtils.getThemeResId(getTheme(), R.attr.iconDrawer);
-            drawerToggle = new ActionBarDrawerToogleV4(this, drawerLayout, drawerResId, R.string.drawer_open, R.string.drawer_close) {
-                @SuppressWarnings("deprecation")
-                @Override
-                public void onDrawerClosed(View drawerView) {
-                    super.onDrawerClosed(drawerView);
-                    if (tabsAdapter != null) tabsAdapter.setDraggingItem(-1);
-                }
-                @SuppressWarnings("deprecation")
-                @Override
-                public void onDrawerSlide(View drawerView, float slideOffset) {
-                    super.onDrawerSlide(drawerView, slideOffset);
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) CompatibilityImpl.showActionBar(MainActivity.this);
-                }
-            };
-        } else {
-            drawerToggle = new ActionBarDrawerToogleV7(this, drawerLayout, R.string.drawer_open, R.string.drawer_close) {
-                @Override
-                public void onDrawerClosed(View drawerView) {
-                    super.onDrawerClosed(drawerView);
-                    if (tabsAdapter != null) tabsAdapter.setDraggingItem(-1);
-                }
-                @Override
-                public void onDrawerSlide(View drawerView, float slideOffset) {
-                    super.onDrawerSlide(drawerView, slideOffset);
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) CompatibilityImpl.showActionBar(MainActivity.this);
-                }
-            };
-        }
+        drawerToggle = new ActionBarDrawerToogleV7(this, drawerLayout, R.string.drawer_open, R.string.drawer_close) {
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                super.onDrawerClosed(drawerView);
+                if (tabsAdapter != null) tabsAdapter.setDraggingItem(-1);
+            }
+            @Override
+            public void onDrawerSlide(View drawerView, float slideOffset) {
+                super.onDrawerSlide(drawerView, slideOffset);
+                CompatibilityImpl.showActionBar(MainActivity.this);
+            }
+        };
         drawerLayout.setDrawerListener(drawerToggle);
         
         drawerLayout.setDrawerShadow(R.drawable.drawer_shadow, DRAWER_GRAVITY);

@@ -25,8 +25,8 @@ import nya.miku.wishmaster.ui.FavoritesFragment;
 import nya.miku.wishmaster.ui.HistoryFragment;
 import nya.miku.wishmaster.ui.NewTabFragment;
 import nya.miku.wishmaster.ui.presentation.BoardFragment;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
 /**
  * Переключение вкладок (фрагментов)

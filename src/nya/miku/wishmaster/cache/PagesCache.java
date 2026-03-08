@@ -20,7 +20,7 @@ package nya.miku.wishmaster.cache;
 
 import nya.miku.wishmaster.common.Logger;
 import nya.miku.wishmaster.ui.presentation.PresentationModel;
-import android.support.v4.util.LruCache;
+import androidx.collection.LruCache;
 
 /**
  * Кэш страниц, для хранения сериализованных страниц с чана (в файлах) и готовых к показу объектов PresentationModel (только в памяти)

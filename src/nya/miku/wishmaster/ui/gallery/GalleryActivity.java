@@ -65,7 +65,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Point;
-import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -74,9 +73,9 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.RemoteException;
 import android.preference.PreferenceManager;
-import android.support.v4.view.MotionEventCompat;
-import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
+import androidx.core.view.MotionEventCompat;
+import androidx.viewpager.widget.PagerAdapter;
+import androidx.viewpager.widget.ViewPager;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.style.BackgroundColorSpan;
@@ -98,7 +97,14 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.VideoView;
+import android.graphics.Matrix;
+import android.view.ScaleGestureDetector;
+import android.view.TextureView;
+import androidx.core.content.FileProvider;
+import com.google.android.exoplayer2.ExoPlayer;
+import com.google.android.exoplayer2.MediaItem;
+import com.google.android.exoplayer2.Player;
+import com.google.android.exoplayer2.PlaybackException;
 
 public class GalleryActivity extends Activity implements View.OnClickListener {
     private static final String TAG = "GalleryActivity";
@@ -457,6 +463,13 @@ public class GalleryActivity extends Activity implements View.OnClickListener {
         }
     }
     
+    private Uri getFileUri(File file) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            return FileProvider.getUriForFile(this, "nya.miku.wishmaster.fileprovider", file);
+        }
+        return Uri.fromFile(file);
+    }
+
     private void openExternal() {
         GalleryItemViewTag tag = getCurrentTag();
         if (tag == null) return;
@@ -473,8 +486,9 @@ public class GalleryActivity extends Activity implements View.OnClickListener {
                 break;
         }
         Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.setDataAndType(Uri.fromFile(tag.file), mime);
+        intent.setDataAndType(getFileUri(tag.file), mime);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         startActivity(intent);
     }
     
@@ -493,14 +507,16 @@ public class GalleryActivity extends Activity implements View.OnClickListener {
             case AttachmentModel.TYPE_IMAGE_STATIC:
                 if (extension.equalsIgnoreCase(".png")) {
                     shareIntent.setType("image/png");
-                } else if (extension.equalsIgnoreCase(".jpg") || extension.equalsIgnoreCase(".jpg")) {
+                } else if (extension.equalsIgnoreCase(".jpg") || extension.equalsIgnoreCase(".jpeg")) {
                     shareIntent.setType("image/jpeg");
+                } else if (extension.equalsIgnoreCase(".webp")) {
+                    shareIntent.setType("image/webp");
                 } else {
                     shareIntent.setType("image/*");
                 }
                 break;
             case AttachmentModel.TYPE_VIDEO:
-                if (extension.equalsIgnoreCase(".mp4")) {
+                if (extension.equalsIgnoreCase(".mp4") || extension.equalsIgnoreCase(".m4v")) {
                     shareIntent.setType("video/mp4");
                 } else if (extension.equalsIgnoreCase(".webm")) {
                     shareIntent.setType("video/webm");
@@ -514,6 +530,8 @@ public class GalleryActivity extends Activity implements View.OnClickListener {
                     shareIntent.setType("video/x-flv");
                 } else if (extension.equalsIgnoreCase(".wmv")) {
                     shareIntent.setType("video/x-ms-wmv");
+                } else if (extension.equalsIgnoreCase(".gifv")) {
+                    shareIntent.setType("video/mp4");
                 } else {
                     shareIntent.setType("video/*");
                 }
@@ -531,6 +549,12 @@ public class GalleryActivity extends Activity implements View.OnClickListener {
                     shareIntent.setType("audio/flac");
                 } else if (extension.equalsIgnoreCase(".wav")) {
                     shareIntent.setType("audio/vnd.wave");
+                } else if (extension.equalsIgnoreCase(".opus")) {
+                    shareIntent.setType("audio/opus");
+                } else if (extension.equalsIgnoreCase(".m4a")) {
+                    shareIntent.setType("audio/mp4");
+                } else if (extension.equalsIgnoreCase(".aac")) {
+                    shareIntent.setType("audio/aac");
                 } else {
                     shareIntent.setType("audio/*");
                 }
@@ -540,7 +564,8 @@ public class GalleryActivity extends Activity implements View.OnClickListener {
                 break;
         }
         Logger.d(TAG, shareIntent.getType());
-        shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(tag.file));
+        shareIntent.putExtra(Intent.EXTRA_STREAM, getFileUri(tag.file));
+        shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         startActivity(Intent.createChooser(shareIntent, getString(R.string.share_via)));
     }
     
@@ -814,12 +839,6 @@ public class GalleryActivity extends Activity implements View.OnClickListener {
                 View v = tag.layout.getChildAt(i);
                 if (v instanceof FixedSubsamplingScaleImageView) {
                     ((FixedSubsamplingScaleImageView) v).recycle();
-                } else if (v != null && v.getId() == R.id.gallery_video_container) {
-                    try {
-                        ((VideoView) v.findViewById(R.id.gallery_video_view)).stopPlayback();
-                    } catch (Exception e) {
-                        Logger.e(TAG, "cannot release videoview", e);
-                    }
                 } else if (v != null) {
                     Object gifTag = v.getTag();
                     if (gifTag != null && gifTag instanceof GifDrawable) {
@@ -832,13 +851,13 @@ public class GalleryActivity extends Activity implements View.OnClickListener {
         
         if (cancelTask && tag.downloadingTask != null) tag.downloadingTask.cancel();
         if (tag.timer != null) tag.timer.cancel();
-        if (tag.audioPlayer != null) {
+        if (tag.exoPlayer != null) {
             try {
-                tag.audioPlayer.release();
+                tag.exoPlayer.release();
             } catch (Exception e) {
-                Logger.e(TAG, "cannot release audio mediaplayer", e);
+                Logger.e(TAG, e);
             } finally {
-                tag.audioPlayer = null;
+                tag.exoPlayer = null;
             }
         }
         
@@ -936,55 +955,168 @@ public class GalleryActivity extends Activity implements View.OnClickListener {
                             recycleTag(tag, false);
                             tag.thumbnailView.setVisibility(View.GONE);
                             View videoContainer = inflater.inflate(R.layout.gallery_videoplayer, tag.layout);
-                            final VideoView videoView = (VideoView)videoContainer.findViewById(R.id.gallery_video_view);
+                            final TextureView textureView = (TextureView)videoContainer.findViewById(R.id.gallery_video_surface);
                             final TextView durationView = (TextView)videoContainer.findViewById(R.id.gallery_video_duration);
-                            
-                            videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                            final View videoFrame = videoContainer.findViewById(R.id.gallery_video_frame);
+
+                            final ExoPlayer exoPlayer = new ExoPlayer.Builder(GalleryActivity.this).build();
+                            tag.exoPlayer = exoPlayer;
+                            exoPlayer.setVideoTextureView(textureView);
+                            exoPlayer.setMediaItem(MediaItem.fromUri(Uri.fromFile(file)));
+                            exoPlayer.setRepeatMode(Player.REPEAT_MODE_ONE);
+
+                            final float[] videoScale = {1f};
+                            final float[] videoPan = {0f, 0f};
+                            final float[] videoFit = {0f, 0f, 1f, 1f}; // fitX, fitY, fitW, fitH
+                            final int[] videoNativeSize = {0, 0};
+                            final float[] videoPixelRatio = {1f};
+
+                            final Runnable updateTransform = new Runnable() {
                                 @Override
-                                public void onPrepared(final MediaPlayer mp) {
-                                    mp.setLooping(true);
-                                    
-                                    durationView.setText("00:00 / " + formatMediaPlayerTime(mp.getDuration()));
-                                    
-                                    tag.timer = new Timer();
-                                    tag.timer.schedule(new TimerTask() {
-                                        @Override
-                                        public void run() {
-                                            runOnUiThread(new Runnable() {
-                                                @Override
-                                                public void run() {
-                                                    try {
-                                                        durationView.setText(formatMediaPlayerTime(mp.getCurrentPosition()) + " / " +
-                                                                formatMediaPlayerTime(mp.getDuration()));
-                                                    } catch (Exception e) {
-                                                        Logger.e(TAG, e);
-                                                        tag.timer.cancel();
-                                                    }
-                                                }
-                                            });
-                                        }
-                                    }, 1000, 1000);
-                                    
-                                    videoView.start();
+                                public void run() {
+                                    int vw = videoNativeSize[0];
+                                    int vh = videoNativeSize[1];
+                                    if (vw == 0 || vh == 0) return;
+                                    int tw = textureView.getWidth();
+                                    int th = textureView.getHeight();
+                                    if (tw == 0 || th == 0) return;
+
+                                    float videoAspect = (float) vw * videoPixelRatio[0] / vh;
+                                    float viewAspect = (float) tw / th;
+
+                                    float fitScaleX, fitScaleY;
+                                    if (videoAspect > viewAspect) {
+                                        fitScaleX = 1f;
+                                        fitScaleY = viewAspect / videoAspect;
+                                    } else {
+                                        fitScaleX = videoAspect / viewAspect;
+                                        fitScaleY = 1f;
+                                    }
+
+                                    float scale = videoScale[0];
+                                    float totalScaleX = fitScaleX * scale;
+                                    float totalScaleY = fitScaleY * scale;
+
+                                    float maxPanX = Math.max(0, (totalScaleX - 1f) * tw / 2f);
+                                    float maxPanY = Math.max(0, (totalScaleY - 1f) * th / 2f);
+                                    videoPan[0] = Math.max(-maxPanX, Math.min(maxPanX, videoPan[0]));
+                                    videoPan[1] = Math.max(-maxPanY, Math.min(maxPanY, videoPan[1]));
+
+                                    Matrix matrix = new Matrix();
+                                    matrix.setScale(totalScaleX, totalScaleY, tw / 2f, th / 2f);
+                                    matrix.postTranslate(videoPan[0], videoPan[1]);
+                                    textureView.setTransform(matrix);
                                 }
-                            });
-                            videoView.setOnErrorListener(new MediaPlayer.OnErrorListener() {
+                            };
+
+                            final ScaleGestureDetector scaleDetector = new ScaleGestureDetector(GalleryActivity.this,
+                                    new ScaleGestureDetector.SimpleOnScaleGestureListener() {
+                                        @Override
+                                        public boolean onScale(ScaleGestureDetector detector) {
+                                            videoScale[0] = Math.max(1f, Math.min(10f, videoScale[0] * detector.getScaleFactor()));
+                                            updateTransform.run();
+                                            return true;
+                                        }
+                                        @Override
+                                        public boolean onScaleBegin(ScaleGestureDetector detector) {
+                                            return true;
+                                        }
+                                    });
+
+                            final float[] lastTouch = {0f, 0f};
+                            final boolean[] isDragging = {false};
+                            textureView.setOnTouchListener(new View.OnTouchListener() {
                                 @Override
-                                public boolean onError(MediaPlayer mp, int what, int extra) {
-                                    Logger.e(TAG, "(Video) Error code: " + what);
-                                    if (tag.timer != null) tag.timer.cancel();
-                                    showError(tag, getString(R.string.gallery_error_play));
+                                public boolean onTouch(View v, MotionEvent event) {
+                                    scaleDetector.onTouchEvent(event);
+                                    int action = event.getActionMasked();
+                                    if (event.getPointerCount() == 1) {
+                                        switch (action) {
+                                            case MotionEvent.ACTION_DOWN:
+                                                lastTouch[0] = event.getX();
+                                                lastTouch[1] = event.getY();
+                                                isDragging[0] = false;
+                                                break;
+                                            case MotionEvent.ACTION_MOVE:
+                                                if (videoScale[0] > 1.01f) {
+                                                    float dx = event.getX() - lastTouch[0];
+                                                    float dy = event.getY() - lastTouch[1];
+                                                    if (isDragging[0] || Math.abs(dx) > 10 || Math.abs(dy) > 10) {
+                                                        isDragging[0] = true;
+                                                        videoPan[0] += dx;
+                                                        videoPan[1] += dy;
+                                                        updateTransform.run();
+                                                    }
+                                                    lastTouch[0] = event.getX();
+                                                    lastTouch[1] = event.getY();
+                                                }
+                                                break;
+                                        }
+                                    } else {
+                                        lastTouch[0] = event.getX();
+                                        lastTouch[1] = event.getY();
+                                    }
+                                    if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL) {
+                                        if (videoScale[0] < 1.01f) {
+                                            videoScale[0] = 1f;
+                                            videoPan[0] = 0f;
+                                            videoPan[1] = 0f;
+                                            updateTransform.run();
+                                        }
+                                    }
                                     return true;
                                 }
                             });
-                            
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ECLAIR) {
-                                CompatibilityImpl.setVideoViewZOrderOnTop(videoView);
-                            }
-                            videoView.setVideoPath(file.getAbsolutePath());
+
+                            exoPlayer.addListener(new Player.Listener() {
+                                @Override
+                                public void onVideoSizeChanged(com.google.android.exoplayer2.video.VideoSize videoSize) {
+                                    if (videoSize.width == 0 || videoSize.height == 0) return;
+                                    videoNativeSize[0] = videoSize.width;
+                                    videoNativeSize[1] = videoSize.height;
+                                    videoPixelRatio[0] = videoSize.pixelWidthHeightRatio;
+                                    updateTransform.run();
+                                }
+
+                                @Override
+                                public void onPlaybackStateChanged(int state) {
+                                    if (state == Player.STATE_READY) {
+                                        long duration = exoPlayer.getDuration();
+                                        durationView.setText("00:00 / " + formatMediaPlayerTime((int)duration));
+
+                                        tag.timer = new Timer();
+                                        tag.timer.schedule(new TimerTask() {
+                                            @Override
+                                            public void run() {
+                                                runOnUiThread(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        try {
+                                                            durationView.setText(formatMediaPlayerTime((int)exoPlayer.getCurrentPosition()) + " / " +
+                                                                    formatMediaPlayerTime((int)exoPlayer.getDuration()));
+                                                        } catch (Exception e) {
+                                                            Logger.e(TAG, e);
+                                                            tag.timer.cancel();
+                                                        }
+                                                    }
+                                                });
+                                            }
+                                        }, 1000, 1000);
+                                    }
+                                }
+                                @Override
+                                public void onPlayerError(PlaybackException error) {
+                                    Logger.e(TAG, "(Video) ExoPlayer error: " + error.getMessage());
+                                    if (tag.timer != null) tag.timer.cancel();
+                                    showError(tag, getString(R.string.gallery_error_play));
+                                }
+                            });
+
+                            exoPlayer.prepare();
+                            exoPlayer.play();
                         }
                     }
-                    
+
                 });
             }
         });
@@ -1005,53 +1137,50 @@ public class GalleryActivity extends Activity implements View.OnClickListener {
                             durationView.setGravity(Gravity.CENTER);
                             tag.layout.setVisibility(View.VISIBLE);
                             tag.layout.addView(durationView);
-                            tag.audioPlayer = new MediaPlayer();
-                            tag.audioPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+
+                            final ExoPlayer exoPlayer = new ExoPlayer.Builder(GalleryActivity.this).build();
+                            tag.exoPlayer = exoPlayer;
+                            exoPlayer.setMediaItem(MediaItem.fromUri(Uri.fromFile(file)));
+                            exoPlayer.setRepeatMode(Player.REPEAT_MODE_ONE);
+
+                            exoPlayer.addListener(new Player.Listener() {
                                 @Override
-                                public void onPrepared(final MediaPlayer mp) {
-                                    mp.setLooping(true);
-                                    
-                                    durationView.setText(getSpannedText("00:00 / " + formatMediaPlayerTime(mp.getDuration())));
-                                    
-                                    tag.timer = new Timer();
-                                    tag.timer.schedule(new TimerTask() {
-                                        @Override
-                                        public void run() {
-                                            runOnUiThread(new Runnable() {
-                                                @Override
-                                                public void run() {
-                                                    try {
-                                                        durationView.setText(getSpannedText(formatMediaPlayerTime(mp.getCurrentPosition()) + " / " +
-                                                                formatMediaPlayerTime(mp.getDuration())));
-                                                    } catch (Exception e) {
-                                                        Logger.e(TAG, e);
-                                                        tag.timer.cancel();
+                                public void onPlaybackStateChanged(int state) {
+                                    if (state == Player.STATE_READY) {
+                                        long duration = exoPlayer.getDuration();
+                                        durationView.setText(getSpannedText("00:00 / " + formatMediaPlayerTime((int)duration)));
+
+                                        tag.timer = new Timer();
+                                        tag.timer.schedule(new TimerTask() {
+                                            @Override
+                                            public void run() {
+                                                runOnUiThread(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        try {
+                                                            durationView.setText(getSpannedText(formatMediaPlayerTime((int)exoPlayer.getCurrentPosition()) + " / " +
+                                                                    formatMediaPlayerTime((int)exoPlayer.getDuration())));
+                                                        } catch (Exception e) {
+                                                            Logger.e(TAG, e);
+                                                            tag.timer.cancel();
+                                                        }
                                                     }
-                                                }
-                                            });
-                                        }
-                                    }, 1000, 1000);
-                                    
-                                    mp.start();
+                                                });
+                                            }
+                                        }, 1000, 1000);
+
+                                        exoPlayer.play();
+                                    }
                                 }
-                            });
-                            tag.audioPlayer.setOnErrorListener(new MediaPlayer.OnErrorListener() {
                                 @Override
-                                public boolean onError(MediaPlayer mp, int what, int extra) {
-                                    Logger.e(TAG, "(Audio) Error code: " + what);
+                                public void onPlayerError(PlaybackException error) {
+                                    Logger.e(TAG, "(Audio) ExoPlayer error: " + error.getMessage());
                                     if (tag.timer != null) tag.timer.cancel();
                                     showError(tag, getString(R.string.gallery_error_play));
-                                    return true;
                                 }
                             });
-                            try {
-                                tag.audioPlayer.setDataSource(file.getAbsolutePath());
-                                tag.audioPlayer.prepareAsync();
-                            } catch (Exception e) {
-                                Logger.e(TAG, "audio player error", e);
-                                if (tag.timer != null) tag.timer.cancel();
-                                showError(tag, getString(R.string.gallery_error_play));
-                            }
+
+                            exoPlayer.prepare();
                         }
                     }
                 });
@@ -1285,7 +1414,7 @@ public class GalleryActivity extends Activity implements View.OnClickListener {
     private class GalleryItemViewTag {
         public CancellableTask downloadingTask;
         public Timer timer;
-        public MediaPlayer audioPlayer;
+        public ExoPlayer exoPlayer;
         public AttachmentModel attachmentModel;
         public String attachmentHash;
         public File file;

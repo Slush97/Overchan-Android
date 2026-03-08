@@ -19,23 +19,31 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:layout_gravity="center"
     android:orientation="vertical"
+    android:gravity="center"
     android:id="@+id/gallery_video_container" >
-    
-    <VideoView  
-        android:id="@+id/gallery_video_view"
+
+    <FrameLayout
+        android:id="@+id/gallery_video_frame"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:layout_gravity="center_horizontal" />
-    
+        android:layout_weight="1" >
+
+        <TextureView
+            android:id="@+id/gallery_video_surface"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center" />
+
+    </FrameLayout>
+
     <TextView
         android:id="@+id/gallery_video_duration"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textColor="@android:color/white"
         android:gravity="center" />
-    
+
 </LinearLayout>

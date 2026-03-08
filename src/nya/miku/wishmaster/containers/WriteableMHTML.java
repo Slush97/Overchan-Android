@@ -138,10 +138,22 @@ public class WriteableMHTML extends WriteableContainer {
             w.write("video/webm");
         } else if (filename_l.endsWith(".mp4")) {
             w.write("video/mp4");
+        } else if (filename_l.endsWith(".webp")) {
+            w.write("image/webp");
         } else if (filename_l.endsWith(".ogg")) {
             w.write("audio/ogg");
         } else if (filename_l.endsWith(".mp3")) {
             w.write("audio/mpeg");
+        } else if (filename_l.endsWith(".opus")) {
+            w.write("audio/opus");
+        } else if (filename_l.endsWith(".m4a")) {
+            w.write("audio/mp4");
+        } else if (filename_l.endsWith(".flac")) {
+            w.write("audio/flac");
+        } else if (filename_l.endsWith(".wav")) {
+            w.write("audio/vnd.wave");
+        } else if (filename_l.endsWith(".aac")) {
+            w.write("audio/aac");
         } else {
             w.write("application/octet-stream");
         }
