@@ -1,4 +1,5 @@
 #include "gif.h"
+#include <unistd.h>
 
 /**
  * Generates default color map, used when there is no color map defined in GIF file
