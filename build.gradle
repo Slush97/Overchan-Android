@@ -67,6 +67,7 @@ android {
         proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-project.txt'
     }
     defaultConfig {
+        applicationId "dev.esoc.esochan"
         minSdkVersion 21
         targetSdkVersion 28
     }
