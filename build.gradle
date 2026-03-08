@@ -28,8 +28,7 @@ dependencies {
 
 android {
     namespace 'nya.miku.wishmaster'
-    compileSdk 34
-    buildToolsVersion "34.0.0"
+    compileSdk 35
 
     buildFeatures {
         aidl true
@@ -59,8 +58,8 @@ android {
         targetSdk 28
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
     archivesBaseName = 'esochan'
     externalNativeBuild {
