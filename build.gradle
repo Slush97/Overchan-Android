@@ -1,29 +1,29 @@
 plugins {
-    id 'com.android.application' version '8.7.3'
+    alias(libs.plugins.android.application)
 }
 
 configurations.all {
     resolutionStrategy {
-        force 'org.jetbrains.kotlin:kotlin-stdlib:1.8.22'
-        force 'org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.8.22'
-        force 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.22'
+        force libs.kotlin.stdlib
+        force libs.kotlin.stdlib.jdk7
+        force libs.kotlin.stdlib.jdk8
     }
 }
 
 dependencies {
-    implementation 'androidx.core:core:1.12.0'
-    implementation 'androidx.fragment:fragment:1.6.2'
-    implementation 'androidx.viewpager:viewpager:1.0.0'
-    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
-    implementation 'androidx.drawerlayout:drawerlayout:1.2.0'
-    implementation 'androidx.localbroadcastmanager:localbroadcastmanager:1.1.0'
-    implementation 'androidx.annotation:annotation:1.7.1'
-    implementation 'androidx.cursoradapter:cursoradapter:1.0.0'
-    implementation 'org.apache.commons:commons-lang3:3.4'
-    implementation 'cz.msebera.android:httpclient:4.3.6'
-    implementation 'com.esotericsoftware:kryo:3.0.3'
-    implementation 'org.ccil.cowan.tagsoup:tagsoup:1.2.1'
-    implementation 'com.google.android.exoplayer:exoplayer-core:2.19.1'
+    implementation libs.androidx.core
+    implementation libs.androidx.fragment
+    implementation libs.androidx.viewpager
+    implementation libs.androidx.swiperefreshlayout
+    implementation libs.androidx.drawerlayout
+    implementation libs.androidx.localbroadcastmanager
+    implementation libs.androidx.annotation
+    implementation libs.androidx.cursoradapter
+    implementation libs.commons.lang3
+    implementation libs.httpclient
+    implementation libs.kryo
+    implementation libs.tagsoup
+    implementation libs.exoplayer.core
 }
 
 android {
