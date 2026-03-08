@@ -1,5 +1,5 @@
 /*
- * Overchan Android (Meta Imageboard Client)
+ * esochan (Meta Imageboard Client)
  * Copyright (C) 2014-2016  miku-nyan <https://github.com/miku-nyan>
  *     
  * This program is free software: you can redistribute it and/or modify
@@ -67,8 +67,8 @@ public class TabsTrackerService extends Service {
     
     public static final String EXTRA_UPDATE_IMMEDIATELY = "UpdateImmediately";
     public static final String EXTRA_CLEAR_SUBSCRIPTIONS = "ClearSubscriptions";
-    public static final String BROADCAST_ACTION_NOTIFY = "nya.miku.wishmaster.BROADCAST_ACTION_TRACKER_NOTIFY";
-    public static final String BROADCAST_ACTION_CLEAR_SUBSCRIPTIONS = "nya.miku.wishmaster.BROADCAST_ACTION_CLEAR_SUBSCRIPTIONS";
+    public static final String BROADCAST_ACTION_NOTIFY = "dev.esoc.esochan.BROADCAST_ACTION_TRACKER_NOTIFY";
+    public static final String BROADCAST_ACTION_CLEAR_SUBSCRIPTIONS = "dev.esoc.esochan.BROADCAST_ACTION_CLEAR_SUBSCRIPTIONS";
     public static final int TRACKER_NOTIFICATION_UPDATE_ID = 40;
     public static final int TRACKER_NOTIFICATION_SUBSCRIPTIONS_ID = 50;
     

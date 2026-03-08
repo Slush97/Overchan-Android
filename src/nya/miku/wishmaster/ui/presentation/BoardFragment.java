@@ -1,5 +1,5 @@
 /*
- * Overchan Android (Meta Imageboard Client)
+ * esochan (Meta Imageboard Client)
  * Copyright (C) 2014-2016  miku-nyan <https://github.com/miku-nyan>
  *     
  * This program is free software: you can redistribute it and/or modify
@@ -158,7 +158,7 @@ import android.widget.Toast;
 public class BoardFragment extends Fragment implements AdapterView.OnItemClickListener, VolatileSpanClickListener.Listener {
     private static final String TAG = "BoardFragment";
     
-    public static final String BROADCAST_PAGE_LOADED = "nya.miku.wishmaster.BROADCAST_ACTION_PAGE_LOADED";
+    public static final String BROADCAST_PAGE_LOADED = "dev.esoc.esochan.BROADCAST_ACTION_PAGE_LOADED";
     
     private boolean isFailInstance = false;
     

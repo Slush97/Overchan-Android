@@ -1,5 +1,5 @@
 /*
- * Overchan Android (Meta Imageboard Client)
+ * esochan (Meta Imageboard Client)
  * Copyright (C) 2014-2016  miku-nyan <https://github.com/miku-nyan>
  *     
  * This program is free software: you can redistribute it and/or modify
@@ -60,8 +60,8 @@ public class PostingService extends Service {
     public static final String EXTRA_RETURN_REASON_INTERACTIVE_EXCEPTION = "ReturnReasonInteractiveException";
     public static final String EXTRA_TARGET_URL = "TargetUrl";
     public static final String EXTRA_BROADCAST_PROGRESS_STATUS = "BroadcastProgress";
-    public static final String BROADCAST_ACTION_PROGRESS = "nya.miku.wishmaster.BROADCAST_ACTION_POSTING_PROGRESS";
-    public static final String BROADCAST_ACTION_STATUS = "nya.miku.wishmaster.BROADCAST_ACTION_POSTING_STATUS";
+    public static final String BROADCAST_ACTION_PROGRESS = "dev.esoc.esochan.BROADCAST_ACTION_POSTING_PROGRESS";
+    public static final String BROADCAST_ACTION_STATUS = "dev.esoc.esochan.BROADCAST_ACTION_POSTING_STATUS";
     
     public static final int BROADCAST_STATUS_SUCCESS = 201;
     public static final int BROADCAST_STATUS_ERROR = 202;

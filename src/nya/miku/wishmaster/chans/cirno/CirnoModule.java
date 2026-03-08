@@ -1,5 +1,5 @@
 /*
- * Overchan Android (Meta Imageboard Client)
+ * esochan (Meta Imageboard Client)
  * Copyright (C) 2014-2016  miku-nyan <https://github.com/miku-nyan>
  *     
  * This program is free software: you can redistribute it and/or modify
@@ -334,7 +334,8 @@ public class CirnoModule extends AbstractChanModule {
         if (pref != null && pref.length() > 0) {
             dNum = pref;
         } else {
-            String url = "http://miku-nyan.github.io/Overchan-Android/data/report_thread";
+            // Dead upstream URL, disabled
+            String url = ""; // was: "http://miku-nyan.github.io/Overchan-Android/data/report_thread"
             dNum = HttpStreamer.getInstance().getStringFromUrl(url, HttpRequestModel.builder().setGET().build(), httpClient, listener, task, false);
         }
         

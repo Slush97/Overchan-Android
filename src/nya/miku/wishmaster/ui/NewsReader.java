@@ -1,5 +1,5 @@
 /*
- * Overchan Android (Meta Imageboard Client)
+ * esochan (Meta Imageboard Client)
  * Copyright (C) 2014-2016  miku-nyan <https://github.com/miku-nyan>
  *     
  * This program is free software: you can redistribute it and/or modify
@@ -34,7 +34,9 @@ import nya.miku.wishmaster.http.streamer.HttpWrongStatusCodeException;
 
 public class NewsReader {
     private static final String TAG = "NewsReader";
-    private static final String URL = "http://miku-nyan.github.io/Overchan-Android/news/1.html";
+    // Dead upstream URL, disabled
+    // private static final String URL = "http://miku-nyan.github.io/Overchan-Android/news/1.html";
+    private static final String URL = "";
     
     public static void checkNews(final Activity activity) {
         Async.runAsync(new Runnable() {

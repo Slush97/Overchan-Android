@@ -1,5 +1,5 @@
 /*
- * Overchan Android (Meta Imageboard Client)
+ * esochan (Meta Imageboard Client)
  * Copyright (C) 2014-2016  miku-nyan <https://github.com/miku-nyan>
  *     
  * This program is free software: you can redistribute it and/or modify
@@ -91,7 +91,7 @@ public class DownloadingService extends Service {
     public static final int REPORT_OK = 1;
     public static final int REPORT_ERROR = 2;
     
-    public static final String BROADCAST_UPDATED = "nya.miku.wishmaster.BROADCAST_ACTION_DOWNLOADING_UPDATED";
+    public static final String BROADCAST_UPDATED = "dev.esoc.esochan.BROADCAST_ACTION_DOWNLOADING_UPDATED";
     
     public static final String SHARED_PREFERENCES_NAME = "downloading_last_error_report";
     public static final String PREF_ERROR_REPORT = "LAST_ERROR_REPORT";

@@ -1,5 +1,5 @@
 /*
- * Overchan Android (Meta Imageboard Client)
+ * esochan (Meta Imageboard Client)
  * Copyright (C) 2014-2016  miku-nyan <https://github.com/miku-nyan>
  *     
  * This program is free software: you can redistribute it and/or modify
@@ -127,7 +127,7 @@ public class HtmlBuilder implements Closeable {
     private static final String HTML_FOOTER =
                             "</form>" +
                             "<p class=\"footer\"> - " +
-                                "<a href=\"http://miku-nyan.github.io/Overchan-Android/\">overchan-android</a> + " +
+                                "esochan + " +
                                 "<a href=\"http://wakaba.c3.cx/\">wakaba 3.0.9</a> + " +
                                 "<a href=\"http://www.2chan.net/\">futaba</a> + " +
                                 "<a href=\"http://www.1chan.net/futallaby/\">futallaby</a> -</p>" +
