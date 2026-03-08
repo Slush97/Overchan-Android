@@ -55,7 +55,7 @@ android {
     defaultConfig {
         applicationId "dev.esoc.esochan"
         minSdk 21
-        targetSdk 28
+        targetSdk 33
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17

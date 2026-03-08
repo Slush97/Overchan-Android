@@ -422,18 +422,18 @@ public class TabsTrackerService extends Service {
                             getString(R.string.subscriptions_notification_text_multiple) :
                                 getString(R.string.subscriptions_notification_text_format, list.get(0).getRight())).
                     setStyle(style).
-                    setContentIntent(PendingIntent.getActivity(TabsTrackerService.this, 0, activityIntent, PendingIntent.FLAG_CANCEL_CURRENT)).
+                    setContentIntent(PendingIntent.getActivity(TabsTrackerService.this, 0, activityIntent, PendingIntent.FLAG_CANCEL_CURRENT | PendingIntent.FLAG_IMMUTABLE)).
                     build();
         }
         
-        private NotificationCompat.Builder notifUpdate = new NotificationCompat.Builder(TabsTrackerService.this).
+        private NotificationCompat.Builder notifUpdate = new NotificationCompat.Builder(TabsTrackerService.this, "tabs_tracker").
                 setSmallIcon(R.drawable.ic_launcher).
                 setCategory(NotificationCompat.CATEGORY_SERVICE).
                 setContentIntent(PendingIntent.getActivity(
-                        TabsTrackerService.this, 0, new Intent(TabsTrackerService.this, MainActivity.class), PendingIntent.FLAG_CANCEL_CURRENT));
+                        TabsTrackerService.this, 0, new Intent(TabsTrackerService.this, MainActivity.class), PendingIntent.FLAG_CANCEL_CURRENT | PendingIntent.FLAG_IMMUTABLE));
         
         
-        private NotificationCompat.Builder notifSubscription = new NotificationCompat.Builder(TabsTrackerService.this).
+        private NotificationCompat.Builder notifSubscription = new NotificationCompat.Builder(TabsTrackerService.this, "tabs_tracker").
                 setSmallIcon(R.drawable.ic_launcher).
                 setDefaults(NotificationCompat.DEFAULT_ALL).
                 setOngoing(false).
@@ -442,7 +442,7 @@ public class TabsTrackerService extends Service {
                 setCategory(NotificationCompat.CATEGORY_MESSAGE).
                 setContentTitle(getString(R.string.subscriptions_notification_title)).
                 setDeleteIntent(PendingIntent.getBroadcast(
-                        TabsTrackerService.this, 0, new Intent(BROADCAST_ACTION_CLEAR_SUBSCRIPTIONS), PendingIntent.FLAG_CANCEL_CURRENT));
+                        TabsTrackerService.this, 0, new Intent(BROADCAST_ACTION_CLEAR_SUBSCRIPTIONS), PendingIntent.FLAG_CANCEL_CURRENT | PendingIntent.FLAG_IMMUTABLE));
         
     }
     

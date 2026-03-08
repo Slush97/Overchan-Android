@@ -156,14 +156,14 @@ public class PostingService extends Service {
             Intent intentToProgressDialog = new Intent(PostingService.this, PostingProgressActivity.class);
             intentToProgressDialog.putExtra(EXTRA_IS_POSTING_THREAD, sendPostModel.threadNumber == null);
             PendingIntent pIntentToProgressDialog =
-                    PendingIntent.getActivity(PostingService.this, 0, intentToProgressDialog, PendingIntent.FLAG_CANCEL_CURRENT);
-            
+                    PendingIntent.getActivity(PostingService.this, 0, intentToProgressDialog, PendingIntent.FLAG_CANCEL_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+
             final String notifTitle = sendPostModel.threadNumber == null ? getString(R.string.posting_thread) : getString(R.string.posting_post);
             String notifText = sendPostModel.threadNumber == null ?
                     getString(R.string.posting_thread_format, sendPostModel.chanName, sendPostModel.boardName) :
                     getString(R.string.posting_post_format, sendPostModel.chanName, sendPostModel.boardName, sendPostModel.threadNumber);
             
-            final NotificationCompat.Builder progressNotifBuilder = new NotificationCompat.Builder(PostingService.this).
+            final NotificationCompat.Builder progressNotifBuilder = new NotificationCompat.Builder(PostingService.this, "posting").
                     setSmallIcon(android.R.drawable.stat_sys_upload).
                     setTicker(notifTitle).
                     setContentTitle(notifTitle).
@@ -244,8 +244,8 @@ public class PostingService extends Service {
                         broadcastIntent.putExtra(EXTRA_RETURN_REASON_ERROR, errorMessage);
                     }
                     PendingIntent pIntentToPostingForm =
-                            PendingIntent.getActivity(PostingService.this, 0, intentToPostingForm, PendingIntent.FLAG_CANCEL_CURRENT);
-                    NotificationCompat.Builder errorNotifBuilder = new NotificationCompat.Builder(PostingService.this).
+                            PendingIntent.getActivity(PostingService.this, 0, intentToPostingForm, PendingIntent.FLAG_CANCEL_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+                    NotificationCompat.Builder errorNotifBuilder = new NotificationCompat.Builder(PostingService.this, "posting").
                             setSmallIcon(android.R.drawable.stat_notify_error).
                             setTicker(e instanceof InteractiveException ? errorMessage : getString(R.string.posting_error)).
                             setContentTitle(getString(R.string.posting_error)).
@@ -303,8 +303,8 @@ public class PostingService extends Service {
                     }
                 }
                 intentSuccess.setData(Uri.parse(targetUrl));
-                PendingIntent pIntentSuccess = PendingIntent.getActivity(PostingService.this, 0, intentSuccess, PendingIntent.FLAG_CANCEL_CURRENT);
-                NotificationCompat.Builder successNotifBuilder = new NotificationCompat.Builder(PostingService.this).
+                PendingIntent pIntentSuccess = PendingIntent.getActivity(PostingService.this, 0, intentSuccess, PendingIntent.FLAG_CANCEL_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+                NotificationCompat.Builder successNotifBuilder = new NotificationCompat.Builder(PostingService.this, "posting").
                         setSmallIcon(android.R.drawable.stat_sys_upload_done).
                         setTicker(getString(R.string.posting_success)).
                         setContentTitle(getString(R.string.posting_success)).
@@ -319,12 +319,12 @@ public class PostingService extends Service {
                 broadcastIntent.putExtra(EXTRA_TARGET_URL, targetUrl);
                 sendBroadcast(broadcastIntent);
             } else if (isCancelled()) {
-                notificationManager.notify(POSTING_NOTIFICATION_ID, new NotificationCompat.Builder(PostingService.this).
+                notificationManager.notify(POSTING_NOTIFICATION_ID, new NotificationCompat.Builder(PostingService.this, "posting").
                         setSmallIcon(android.R.drawable.ic_delete).
                         setTicker(getString(R.string.posting_cancelled)).
                         setContentTitle(getString(R.string.posting_cancelled)).
                         setContentText(getString(R.string.posting_cancelled)).
-                        setContentIntent(PendingIntent.getActivity(PostingService.this, 0, new Intent(), 0)).
+                        setContentIntent(PendingIntent.getActivity(PostingService.this, 0, new Intent(), PendingIntent.FLAG_IMMUTABLE)).
                         build());
                 notificationManager.cancel(POSTING_NOTIFICATION_ID);
             }

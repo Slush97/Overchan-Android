@@ -25,8 +25,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     android:versionName="1.5.1">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.VIBRATE" />
     
@@ -35,12 +38,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         android:allowBackup="true"
         android:supportsRtl="false"
         android:icon="@drawable/ic_launcher"
-        android:label="@string/app_name" >
+        android:label="@string/app_name"
+        android:preserveLegacyExternalStorage="true" >
         
         <activity
             android:name="nya.miku.wishmaster.ui.MainActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:launchMode="singleTask" >
+            android:launchMode="singleTask"
+            android:exported="true" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -203,42 +208,49 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         
         <activity
             android:name="nya.miku.wishmaster.ui.posting.PostFormActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize" />
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:exported="false" />
         
         <activity
             android:name="nya.miku.wishmaster.ui.gallery.GalleryActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:theme="@style/Transparent"
-            android:process=":Gallery" />
+            android:process=":Gallery"
+            android:exported="false" />
         
         <activity
             android:name="nya.miku.wishmaster.ui.gallery.GalleryInteractiveExceptionHandler"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:theme="@style/Transparent" />
+            android:theme="@style/Transparent"
+            android:exported="false" />
         
         <activity
             android:name="nya.miku.wishmaster.ui.posting.PostingProgressActivity"
             android:theme="@style/Theme_Dialog_Switch"
-            android:launchMode="singleTask" />
+            android:launchMode="singleTask"
+            android:exported="false" />
         
         <activity
             android:name="nya.miku.wishmaster.ui.downloading.DownloadingProgressActivity"
             android:theme="@style/Theme_Dialog_Switch"
-            android:launchMode="singleTask" />
+            android:launchMode="singleTask"
+            android:exported="false" />
         
         <activity
             android:name="nya.miku.wishmaster.ui.downloading.DownloadingErrorReportActivity"
             android:theme="@style/Theme_Dialog_Switch"
-            android:launchMode="singleTask" />
+            android:launchMode="singleTask"
+            android:exported="false" />
         
-        <activity android:name="nya.miku.wishmaster.lib.FileDialogActivity" />
-        <activity android:name="nya.miku.wishmaster.ui.settings.PreferencesActivity" />
-        <activity android:name="nya.miku.wishmaster.ui.settings.AutohideActivity" />
-        <activity android:name="nya.miku.wishmaster.ui.settings.ChansSortActivity" />
-        <activity android:name="nya.miku.wishmaster.ui.settings.CertificatesActivity" />
-        <activity android:name="nya.miku.wishmaster.ui.settings.CustomThemeListActivity" />
+        <activity android:name="nya.miku.wishmaster.lib.FileDialogActivity" android:exported="false" />
+        <activity android:name="nya.miku.wishmaster.ui.settings.PreferencesActivity" android:exported="false" />
+        <activity android:name="nya.miku.wishmaster.ui.settings.AutohideActivity" android:exported="false" />
+        <activity android:name="nya.miku.wishmaster.ui.settings.ChansSortActivity" android:exported="false" />
+        <activity android:name="nya.miku.wishmaster.ui.settings.CertificatesActivity" android:exported="false" />
+        <activity android:name="nya.miku.wishmaster.ui.settings.CustomThemeListActivity" android:exported="false" />
         
-        <activity android:name="nya.miku.wishmaster.ui.ShareActivity" >
+        <activity android:name="nya.miku.wishmaster.ui.ShareActivity"
+            android:exported="true" >
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -257,10 +269,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 android:resource="@xml/file_provider_paths" />
         </provider>
         
-        <service android:name="nya.miku.wishmaster.ui.posting.PostingService" />
-        <service android:name="nya.miku.wishmaster.ui.downloading.DownloadingService" />
-        <service android:name="nya.miku.wishmaster.ui.tabs.TabsTrackerService" />
-        <service android:name="nya.miku.wishmaster.ui.gallery.GalleryBackend" />
+        <service android:name="nya.miku.wishmaster.ui.posting.PostingService" android:exported="false" />
+        <service android:name="nya.miku.wishmaster.ui.downloading.DownloadingService" android:exported="false" />
+        <service android:name="nya.miku.wishmaster.ui.tabs.TabsTrackerService" android:exported="false" />
+        <service android:name="nya.miku.wishmaster.ui.gallery.GalleryBackend" android:exported="false" />
         
     </application>
 

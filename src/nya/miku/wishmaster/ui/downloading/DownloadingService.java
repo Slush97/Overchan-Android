@@ -278,8 +278,8 @@ public class DownloadingService extends Service {
             errorItems = new ArrayList<>();
             Intent intentToProgressDialog = new Intent(DownloadingService.this, DownloadingProgressActivity.class);
             PendingIntent pIntentToProgressDialog =
-                    PendingIntent.getActivity(DownloadingService.this, 0, intentToProgressDialog, PendingIntent.FLAG_CANCEL_CURRENT);
-            progressNotifBuilder = new NotificationCompat.Builder(DownloadingService.this).
+                    PendingIntent.getActivity(DownloadingService.this, 0, intentToProgressDialog, PendingIntent.FLAG_CANCEL_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+            progressNotifBuilder = new NotificationCompat.Builder(DownloadingService.this, "downloads").
                     setSmallIcon(android.R.drawable.stat_sys_download).
                     setTicker(getString(R.string.downloading_start_ticker)).
                     setContentIntent(pIntentToProgressDialog).
@@ -756,8 +756,8 @@ public class DownloadingService extends Service {
                 } else {
                     Intent intentToErrorReport = new Intent(DownloadingService.this, DownloadingErrorReportActivity.class);
                     PendingIntent pIntentToErrorReport =
-                            PendingIntent.getActivity(DownloadingService.this, 0, intentToErrorReport, PendingIntent.FLAG_CANCEL_CURRENT);
-                    notificationManager.notify(ERROR_REPORT_NOTIFICATION_ID, new NotificationCompat.Builder(DownloadingService.this).
+                            PendingIntent.getActivity(DownloadingService.this, 0, intentToErrorReport, PendingIntent.FLAG_CANCEL_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+                    notificationManager.notify(ERROR_REPORT_NOTIFICATION_ID, new NotificationCompat.Builder(DownloadingService.this, "downloads").
                             setSmallIcon(android.R.drawable.stat_notify_error).
                             setTicker(getString(R.string.downloading_error_ticker)).
                             setContentTitle(getString(R.string.downloading_error_title)).

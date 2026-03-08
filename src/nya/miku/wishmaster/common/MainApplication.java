@@ -47,9 +47,12 @@ import nya.miku.wishmaster.ui.tabs.TabsSwitcher;
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningAppProcessInfo;
 import android.app.Application;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.os.Build;
 import android.preference.PreferenceManager;
 
 /**
@@ -249,6 +252,15 @@ public class MainApplication extends Application {
         super.onCreate();
         if (isGalleryProcess()) return;
         initObjects();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+            nm.createNotificationChannel(new NotificationChannel(
+                    "downloads", getString(R.string.channel_downloads), NotificationManager.IMPORTANCE_LOW));
+            nm.createNotificationChannel(new NotificationChannel(
+                    "posting", getString(R.string.channel_posting), NotificationManager.IMPORTANCE_LOW));
+            nm.createNotificationChannel(new NotificationChannel(
+                    "tabs_tracker", getString(R.string.channel_tabs_tracker), NotificationManager.IMPORTANCE_LOW));
+        }
         instance = this;
     }
     

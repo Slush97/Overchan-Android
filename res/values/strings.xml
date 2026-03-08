@@ -19,6 +19,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <resources>
     <string name="app_name">esochan</string>
+    <string name="channel_downloads">Downloads</string>
+    <string name="channel_posting">Posting</string>
+    <string name="channel_tabs_tracker">Background updates</string>
     
     <string name="drawer_open">Open drawer</string>
     <string name="drawer_close">Close drawer</string>
