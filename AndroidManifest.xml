@@ -18,7 +18,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools"
-    package="nya.miku.wishmaster"
     android:installLocation="auto"
     tools:ignore="UnusedAttribute"
     android:versionCode="55"
