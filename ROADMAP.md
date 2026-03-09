@@ -9,18 +9,18 @@ Rebranding Overchan Android → esochan, and modernizing for 2026 Android standa
 ## Phase 1A: Rebrand Identity
 
 ### A1: Core identity (low risk)
-- [ ] `settings.gradle`: rootProject.name → `esochan`
-- [ ] `build.gradle`: add `applicationId "dev.esoc.esochan"` in defaultConfig
-- [ ] `res/values/strings.xml`: app_name, crash_dialog_title, pref_cat_about, pref_about_version_title
-- [ ] `res/values-ru/strings.xml`: same strings
-- [ ] `res/values-de/strings.xml`: same strings
-- [ ] `res/values-uk/strings.xml`: same strings
-- [ ] `README.md`: rewrite for esochan
+- [x] `settings.gradle`: rootProject.name → `esochan`
+- [x] `build.gradle`: add `applicationId "dev.esoc.esochan"` in defaultConfig
+- [x] `res/values/strings.xml`: app_name, crash_dialog_title, pref_cat_about, pref_about_version_title
+- [x] `res/values-ru/strings.xml`: same strings
+- [x] `res/values-de/strings.xml`: same strings
+- [x] `res/values-uk/strings.xml`: same strings
+- [x] `README.md`: rewrite for esochan
 
 ### A2: FileProvider authority (medium risk — breaks sharing if wrong)
-- [ ] `AndroidManifest.xml`: authority → `dev.esoc.esochan.fileprovider`
-- [ ] `GalleryActivity.java:468`: update hardcoded authority string
-- [ ] Remove deprecated `package=` attribute from manifest (AGP reads namespace from build.gradle)
+- [x] `AndroidManifest.xml`: authority → `dev.esoc.esochan.fileprovider`
+- [x] `GalleryActivity.java:468`: update hardcoded authority string
+- [x] Remove deprecated `package=` attribute from manifest (AGP reads namespace from build.gradle)
 
 ### A3: Broadcast actions & ACRA (low risk)
 - [x] Update broadcast action strings in PostingService, TabsTrackerService, DownloadingService, BoardFragment
@@ -36,40 +36,40 @@ Rebranding Overchan Android → esochan, and modernizing for 2026 Android standa
 ## Phase 1B: Build System Upgrade
 
 ### B1: Gradle + AGP bump (medium risk)
-- [ ] `gradle-wrapper.properties`: Gradle 7.5.1 → 8.10.2
-- [ ] `build.gradle`: AGP 7.4.2 → 8.7.3
-- [ ] Migrate deprecated DSL: `compileSdkVersion` → `compileSdk`, `minSdkVersion` → `minSdk`, etc.
-- [ ] `packagingOptions` → `packaging`
-- [ ] `gradle.properties`: add `android.defaults.buildfeatures.buildconfig=true` (AGP 8 disables BuildConfig by default)
-- [ ] `settings.gradle`: add `pluginManagement` and `dependencyResolutionManagement` blocks
+- [x] `gradle-wrapper.properties`: Gradle 7.5.1 → 8.10.2
+- [x] `build.gradle`: AGP 7.4.2 → 8.7.3
+- [x] Migrate deprecated DSL: `compileSdkVersion` → `compileSdk`, `minSdkVersion` → `minSdk`, etc.
+- [x] `packagingOptions` → `packaging`
+- [x] `gradle.properties`: add `android.defaults.buildfeatures.buildconfig=true` (AGP 8 disables BuildConfig by default)
+- [x] `settings.gradle`: add `pluginManagement` and `dependencyResolutionManagement` blocks
 
 ### B2: Java 17 + compileSdk 35 (low risk)
-- [ ] `build.gradle`: Java 8 → Java 17
-- [ ] `build.gradle`: compileSdk 34 → 35
+- [x] `build.gradle`: Java 8 → Java 17
+- [x] `build.gradle`: compileSdk 34 → 35
 
 ### B3: Version catalog (low risk, organizational)
-- [ ] Create `gradle/libs.versions.toml`
-- [ ] Move all dependency declarations to catalog
-- [ ] Update `build.gradle` to use `libs.*` references
+- [x] Create `gradle/libs.versions.toml`
+- [x] Move all dependency declarations to catalog
+- [x] Update `build.gradle` to use `libs.*` references
 
 ### B4: Target SDK 28 → 33 (HIGH RISK — most complex step)
-- [ ] **Scoped storage (SDK 30):** Rewrite `Environment.getExternalStorageDirectory()` in FileCache, ApplicationSettings, PostFormActivity, CustomThemeListActivity, CompatibilityUtils, UriFileUtils → use `context.getExternalFilesDir()` / MediaStore / SAF
-- [ ] **Exported components (SDK 31):** Add `android:exported` to all activities/services in manifest
-- [ ] **PendingIntent mutability (SDK 31):** Add `FLAG_IMMUTABLE` to all PendingIntent calls in TabsTrackerService, DownloadingService, PostingService
-- [ ] **Notification channels (SDK 26+):** Create channels in MainApplication.onCreate() for downloads, posting, tab tracking
-- [ ] **POST_NOTIFICATIONS permission (SDK 33):** Add to manifest, add runtime permission request
-- [ ] **Storage permissions:** Add `maxSdkVersion="32"` to WRITE/READ_EXTERNAL_STORAGE, add READ_MEDIA_IMAGES etc. if needed
-- [ ] `build.gradle`: targetSdk → 33
+- [ ] **Scoped storage (SDK 30):** `CompatibilityImpl.getDefaultDownloadDir()` still uses `getExternalStoragePublicDirectory()` (has TODO comment). Remaining storage paths in FileCache, ApplicationSettings, etc. use `getExternalFilesDir()` or are guarded.
+- [x] **Exported components (SDK 31):** Add `android:exported` to all activities/services in manifest
+- [x] **PendingIntent mutability (SDK 31):** Add `FLAG_IMMUTABLE` to all PendingIntent calls in TabsTrackerService, DownloadingService, PostingService
+- [x] **Notification channels (SDK 26+):** Create channels in MainApplication.onCreate() for downloads, posting, tab tracking
+- [x] **POST_NOTIFICATIONS permission (SDK 33):** Add to manifest, add runtime permission request
+- [x] **Storage permissions:** Add `maxSdkVersion="32"` to WRITE/READ_EXTERNAL_STORAGE, add READ_MEDIA_IMAGES etc. if needed
+- [x] `build.gradle`: targetSdk → 33 (now at 35)
 
 ### B5: Target SDK 33 → 35 (medium risk)
-- [ ] **Foreground service types (SDK 34):** Add `foregroundServiceType` to all services in manifest (dataSync for DownloadingService, shortService for PostingService, etc.)
-- [ ] Add `FOREGROUND_SERVICE_DATA_SYNC` permission
-- [ ] Update `startForeground()` calls to pass service type
+- [x] **Foreground service types (SDK 34):** DownloadingService + TabsTrackerService have `dataSync`; PostingService doesn't use `startForeground()`
+- [x] Add `FOREGROUND_SERVICE_DATA_SYNC` permission
+- [x] Update `startForeground()` calls to pass service type
 - [ ] **Edge-to-edge (SDK 35):** Handle window insets if content is obscured by system bars
-- [ ] Remove dead `SDK_INT < ECLAIR` branches (minSdk is 21)
-- [ ] `build.gradle`: targetSdk → 35
+- [x] Remove dead `SDK_INT` branches (minSdk is 21)
+- [x] `build.gradle`: targetSdk → 35
 
-**Recommended commit order:** A1 → A2 → A3 → B1 → B2 → B3 → A4 → B4 → B5
+**Status:** Phase 1A (A1–A3) and Phase 1B (B1–B3) are complete. B4 and B5 are nearly complete. Remaining work: A4 (copyright headers), B4 scoped storage TODO (`getExternalStoragePublicDirectory`), B5 edge-to-edge.
 
 ---
 
@@ -92,7 +92,7 @@ This should be done as a single atomic commit with IDE refactoring support.
 
 ### Replace dead/deprecated libraries
 - [ ] Apache HttpClient (`cz.msebera.android:httpclient`) → OkHttp 4.x
-- [ ] ExoPlayer 2.19.1 → Media3 (`androidx.media3:media3-exoplayer`)
+- [x] ExoPlayer 2.19.1 → Media3 (`androidx.media3:media3-exoplayer 1.8.0`)
 - [ ] TagSoup → Jsoup
 - [ ] Kryo 3.0.3 → Kryo 5.x (or kotlinx.serialization)
 - [ ] `base64-2.3.8.jar` → `java.util.Base64` (built into Java 8+)
@@ -101,7 +101,7 @@ This should be done as a single atomic commit with IDE refactoring support.
 
 ### Bump AndroidX
 - [ ] Review all AndroidX deps for latest stable versions
-- [ ] Remove `android.enableJetifier=true` once all deps are AndroidX-native
+- [x] Remove `android.enableJetifier=true` (already absent from gradle.properties)
 
 ---
 
