@@ -98,8 +98,14 @@ public class PreferencesActivity extends PreferenceActivity {
             });
         }
         
-        ((EditTextPreference) getPreferenceManager().findPreference(getString(R.string.pref_key_download_dir))).
-                getEditText().setHint(MainApplication.getInstance().settings.getDefaultDownloadDir().getAbsolutePath());
+        EditTextPreference downloadDirPref = (EditTextPreference) getPreferenceManager().findPreference(getString(R.string.pref_key_download_dir));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            downloadDirPref.getEditText().setHint("Downloads");
+            downloadDirPref.setEnabled(false);
+            downloadDirPref.setSummary(getString(R.string.pref_download_dir_summary) + " (Downloads)");
+        } else {
+            downloadDirPref.getEditText().setHint(MainApplication.getInstance().settings.getDefaultDownloadDir().getAbsolutePath());
+        }
         
         final Preference clearCachePreference = getPreferenceManager().findPreference(getString(R.string.pref_key_clear_cache));
         clearCachePreference.setSummary(getString(R.string.pref_clear_cache_summary, MainApplication.getInstance().fileCache.getCurrentSizeMB()));

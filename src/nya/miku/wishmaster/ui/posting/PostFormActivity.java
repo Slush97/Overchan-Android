@@ -35,6 +35,7 @@ import nya.miku.wishmaster.common.MainApplication;
 import nya.miku.wishmaster.http.interactive.InteractiveException;
 import nya.miku.wishmaster.lib.FileDialogActivity;
 import nya.miku.wishmaster.lib.UriFileUtils;
+import nya.miku.wishmaster.ui.downloading.DownloadStorage;
 import nya.miku.wishmaster.ui.CompatibilityImpl;
 import nya.miku.wishmaster.ui.CompatibilityUtils;
 import nya.miku.wishmaster.ui.settings.ApplicationSettings;
@@ -211,19 +212,19 @@ public class PostFormActivity extends Activity implements View.OnClickListener {
                 Bitmap bmp = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
                 drawable.draw(new Canvas(bmp));
                 
-                File dir = new File(settings.getDownloadDirectory(), chan.getChanName());
-                if (!dir.mkdirs() && !dir.isDirectory()) throw new Exception("Couldn't create directory");
                 int i = 0;
-                File file = null;
-                do file = new File(dir, "captcha-" + (++i) + ".png"); while (file.exists() || file.isDirectory());
-                OutputStream stream = null;
+                String fileName;
+                do {
+                    fileName = "captcha-" + (++i) + ".png";
+                } while (DownloadStorage.fileExists(this, chan.getChanName(), null, fileName));
+                DownloadStorage.DownloadTarget target = DownloadStorage.createFile(this, chan.getChanName(), null, fileName, "image/png");
                 try {
-                    stream = new FileOutputStream(file);
-                    if (!bmp.compress(Bitmap.CompressFormat.PNG, 100, stream)) throw new Exception("Couldn't compress bitmap");
-                    Toast.makeText(this, "captcha-" + i + ".png", Toast.LENGTH_LONG).show();
+                    if (!bmp.compress(Bitmap.CompressFormat.PNG, 100, target.stream)) throw new Exception("Couldn't compress bitmap");
+                    DownloadStorage.finalizeDownload(this, target);
+                    Toast.makeText(this, fileName, Toast.LENGTH_LONG).show();
                     return true;
                 } finally {
-                    if (stream != null) stream.close();
+                    if (target.stream != null) target.stream.close();
                 }
             } catch (Exception e) {
                 Toast.makeText(this, R.string.error_unknown, Toast.LENGTH_LONG).show();

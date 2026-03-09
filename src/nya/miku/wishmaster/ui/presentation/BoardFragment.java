@@ -69,6 +69,7 @@ import nya.miku.wishmaster.ui.MainActivity;
 import nya.miku.wishmaster.ui.QuickAccess;
 import nya.miku.wishmaster.ui.ReverseImageSearch;
 import nya.miku.wishmaster.ui.CompatibilityUtils;
+import nya.miku.wishmaster.ui.downloading.DownloadStorage;
 import nya.miku.wishmaster.ui.downloading.DownloadingService;
 import nya.miku.wishmaster.ui.gallery.GalleryActivity;
 import nya.miku.wishmaster.ui.gallery.GallerySettings;
@@ -3225,9 +3226,7 @@ public class BoardFragment extends Fragment implements AdapterView.OnItemClickLi
                 Toast.makeText(activity, resources.getString(R.string.notification_download_already_in_queue, itemName), Toast.LENGTH_LONG).show();
             return false;
         } else {
-            File dir = new File(settings.getDownloadDirectory(), tabModel.pageModel.chanName);
-            if (subdir != null) dir = new File(dir, subdir);
-            if (new File(dir, fileName).exists()) {
+            if (DownloadStorage.fileExists(activity, tabModel.pageModel.chanName, subdir, fileName)) {
                 if (!fromGridGallery)
                     Toast.makeText(activity, resources.getString(R.string.notification_download_already_exists, fileName), Toast.LENGTH_LONG).show();
                 return false;

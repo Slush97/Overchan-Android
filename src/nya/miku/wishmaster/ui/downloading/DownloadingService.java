@@ -70,6 +70,7 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.content.pm.ServiceInfo;
+import android.media.MediaScannerConnection;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
@@ -305,17 +306,12 @@ public class DownloadingService extends Service {
                         }
                     };
                     
-                    File directory = new File(settings.getDownloadDirectory(), item.chanName);
-                    if (item.subdirectory != null && item.subdirectory.length() > 0) directory = new File(directory, item.subdirectory);
-                    if (!directory.mkdirs() && !directory.isDirectory()) {
-                        addError(item, elementName, getString(R.string.downloading_error_mkdir));
-                        continue;
-                    }
-                    File target = new File(directory, filename);
-                    if (target.exists()) {
+                    String subdirectory = (item.subdirectory != null && item.subdirectory.length() > 0) ? item.subdirectory : null;
+                    if (DownloadStorage.fileExists(DownloadingService.this, item.chanName, subdirectory, filename)) {
                         addError(item, elementName, getString(R.string.downloading_error_file_exists));
                         continue;
                     }
+                    String lockKey = item.chanName + "/" + (subdirectory != null ? subdirectory + "/" : "") + filename;
                     File fromCache = fileCache.get(FileCache.PREFIX_ORIGINALS + ChanModels.hashAttachmentModel(item.attachment) +
                             Attachments.getAttachmentExtention(item.attachment));
                     if (fromCache != null) {
@@ -324,12 +320,12 @@ public class DownloadingService extends Service {
                         if (isCancelled()) continue;
                         boolean success = false;
                         InputStream is = null;
-                        OutputStream os = null;
+                        DownloadStorage.DownloadTarget target = null;
                         try {
+                            target = DownloadStorage.createFile(DownloadingService.this, item.chanName, subdirectory, filename, null);
                             if (listener != null) listener.setMaxValue(fromCache.length());
                             is = IOUtils.modifyInputStream(new FileInputStream(fromCache), listener, this);
-                            os = new FileOutputStream(target);
-                            IOUtils.copyStream(is, os);
+                            IOUtils.copyStream(is, target.stream);
                             success = true;
                         } catch (Exception e) {
                             if (!isCancelled()) {
@@ -338,22 +334,21 @@ public class DownloadingService extends Service {
                             }
                         } finally {
                             IOUtils.closeQuietly(is);
-                            IOUtils.closeQuietly(os);
-                            if (!success) target.delete();
-                            else notifyMediaScanner(target);
+                            IOUtils.closeQuietly(target != null ? target.stream : null);
+                            if (!success && target != null) DownloadStorage.cancelDownload(DownloadingService.this, target);
+                            else if (success && target != null) DownloadStorage.finalizeDownload(DownloadingService.this, target);
                         }
                     } else {
-                        String targetFilename = target.getAbsolutePath();
-                        while (!downloadingLocker.lock(targetFilename)) downloadingLocker.waitUnlock(targetFilename);
+                        while (!downloadingLocker.lock(lockKey)) downloadingLocker.waitUnlock(lockKey);
                         if (isCancelled()) {
-                            downloadingLocker.unlock(targetFilename);
+                            downloadingLocker.unlock(lockKey);
                             continue;
                         }
                         boolean success = false;
-                        FileOutputStream out = null;
+                        DownloadStorage.DownloadTarget target = null;
                         try {
-                            out = new FileOutputStream(target);
-                            MainApplication.getInstance().getChanModule(item.chanName).downloadFile(item.attachment.path, out, listener, this);
+                            target = DownloadStorage.createFile(DownloadingService.this, item.chanName, subdirectory, filename, null);
+                            MainApplication.getInstance().getChanModule(item.chanName).downloadFile(item.attachment.path, target.stream, listener, this);
                             success = true;
                         } catch (Exception e) {
                             Logger.e(TAG, e);
@@ -361,10 +356,10 @@ public class DownloadingService extends Service {
                                     getString(R.string.downloading_error_interactive_format, ((InteractiveException) e).getServiceName()) :
                                         getMessageOrENOSPC(e));
                         } finally {
-                            IOUtils.closeQuietly(out);
-                            if (!success) target.delete();
-                            else notifyMediaScanner(target);
-                            downloadingLocker.unlock(targetFilename);
+                            IOUtils.closeQuietly(target != null ? target.stream : null);
+                            if (!success && target != null) DownloadStorage.cancelDownload(DownloadingService.this, target);
+                            else if (success && target != null) DownloadStorage.finalizeDownload(DownloadingService.this, target);
+                            downloadingLocker.unlock(lockKey);
                         }
                     }
                     
@@ -380,12 +375,8 @@ public class DownloadingService extends Service {
                     notifyForeground(DOWNLOADING_NOTIFICATION_ID, progressNotifBuilder.build());
                     sendBroadcast(new Intent(BROADCAST_UPDATED));
                     
-                    File directory = new File(settings.getDownloadDirectory(), item.chanName);
-                    if (!directory.mkdirs() && !directory.isDirectory()) {
-                        addError(item, elementName, getString(R.string.downloading_error_mkdir));
-                        continue;
-                    }
-                    
+                    File directory = DownloadStorage.getSavedThreadsDir(DownloadingService.this, item.chanName);
+
                     WriteableContainer zip = null;
                     File zipFile = new File(directory, filename);
                     try {
@@ -809,7 +800,7 @@ public class DownloadingService extends Service {
         
         private void notifyMediaScanner(File file) {
             try {
-                sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(file)));
+                MediaScannerConnection.scanFile(DownloadingService.this, new String[]{file.getAbsolutePath()}, null, null);
             } catch (Exception e) {
                 Logger.e(TAG, e);
             }

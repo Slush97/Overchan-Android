@@ -53,6 +53,7 @@ import nya.miku.wishmaster.common.MainApplication;
 import nya.miku.wishmaster.containers.ReadableContainer;
 import nya.miku.wishmaster.http.interactive.InteractiveException;
 import nya.miku.wishmaster.ui.Attachments;
+import nya.miku.wishmaster.ui.downloading.DownloadStorage;
 import nya.miku.wishmaster.ui.downloading.DownloadingLocker;
 import nya.miku.wishmaster.ui.downloading.DownloadingService;
 import nya.miku.wishmaster.ui.presentation.BoardFragment;
@@ -289,20 +290,23 @@ public class GalleryBackend extends Service {
                 if (callback.isCancelled()) return null;
             }
             if (file == null || !file.exists() || file.isDirectory() || file.length() == 0) {
-                File dir = new File(settings.getDownloadDirectory(), chan.getChanName());
-                file = new File(dir, Attachments.getAttachmentLocalFileName(attachmentModel, boardModel));
-                String filename = file.getAbsolutePath();
-                while (downloadingLocker.isLocked(filename)) downloadingLocker.waitUnlock(filename);
+                String localFileName = Attachments.getAttachmentLocalFileName(attachmentModel, boardModel);
+                String lockKey = chan.getChanName() + "/" + localFileName;
+                while (downloadingLocker.isLocked(lockKey)) downloadingLocker.waitUnlock(lockKey);
                 if (callback.isCancelled()) return null;
+                if (DownloadStorage.fileExists(GalleryBackend.this, chan.getChanName(), null, localFileName)) {
+                    file = copyFromDownloadToCache(chan.getChanName(), null, localFileName, attachmentHash, attachmentModel);
+                }
             }
             if (customSubdir != null) {
                 if (file == null || !file.exists() || file.isDirectory() || file.length() == 0) {
-                    File dir = new File(settings.getDownloadDirectory(), chan.getChanName());
-                    dir = new File(dir, customSubdir);
-                    file = new File(dir, Attachments.getAttachmentLocalFileName(attachmentModel, boardModel));
-                    String filename = file.getAbsolutePath();
-                    while (downloadingLocker.isLocked(filename)) downloadingLocker.waitUnlock(filename);
+                    String localFileName = Attachments.getAttachmentLocalFileName(attachmentModel, boardModel);
+                    String lockKey = chan.getChanName() + "/" + customSubdir + "/" + localFileName;
+                    while (downloadingLocker.isLocked(lockKey)) downloadingLocker.waitUnlock(lockKey);
                     if (callback.isCancelled()) return null;
+                    if (DownloadStorage.fileExists(GalleryBackend.this, chan.getChanName(), customSubdir, localFileName)) {
+                        file = copyFromDownloadToCache(chan.getChanName(), customSubdir, localFileName, attachmentHash, attachmentModel);
+                    }
                 }
             }
             if (!file.exists() || file.isDirectory() || file.length() == 0) {
@@ -345,6 +349,25 @@ public class GalleryBackend extends Service {
             return file;
         }
         
+        private File copyFromDownloadToCache(String chanName, String subdirectory, String fileName, String attachmentHash, AttachmentModel attachmentModel) {
+            File cacheFile = fileCache.create(FileCache.PREFIX_ORIGINALS + attachmentHash + Attachments.getAttachmentExtention(attachmentModel));
+            InputStream is = null;
+            OutputStream os = null;
+            try {
+                is = DownloadStorage.openDownloadedFile(GalleryBackend.this, chanName, subdirectory, fileName);
+                os = new FileOutputStream(cacheFile);
+                IOUtils.copyStream(is, os);
+                return cacheFile;
+            } catch (Exception e) {
+                Logger.e(TAG, "Failed to copy downloaded file to cache", e);
+                if (cacheFile != null) fileCache.abort(cacheFile);
+                return null;
+            } finally {
+                IOUtils.closeQuietly(is);
+                IOUtils.closeQuietly(os);
+            }
+        }
+
         public String getAbsoluteUrl(String url) {
             return chan.fixRelativeUrl(url);
         }

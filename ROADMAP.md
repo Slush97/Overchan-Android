@@ -53,7 +53,7 @@ Rebranding Overchan Android → esochan, and modernizing for 2026 Android standa
 - [x] Update `build.gradle` to use `libs.*` references
 
 ### B4: Target SDK 28 → 33 (HIGH RISK — most complex step)
-- [ ] **Scoped storage (SDK 30):** `CompatibilityImpl.getDefaultDownloadDir()` still uses `getExternalStoragePublicDirectory()` (has TODO comment). Remaining storage paths in FileCache, ApplicationSettings, etc. use `getExternalFilesDir()` or are guarded.
+- [x] **Scoped storage (SDK 30):** Downloads use `DownloadStorage` facade — `MediaStore.Downloads` on API 29+, legacy File I/O on API <29. Thread archives use `getExternalFilesDir("saved_threads")`. `hasAccessStorage` returns `true` on API 29+.
 - [x] **Exported components (SDK 31):** Add `android:exported` to all activities/services in manifest
 - [x] **PendingIntent mutability (SDK 31):** Add `FLAG_IMMUTABLE` to all PendingIntent calls in TabsTrackerService, DownloadingService, PostingService
 - [x] **Notification channels (SDK 26+):** Create channels in MainApplication.onCreate() for downloads, posting, tab tracking
@@ -69,7 +69,7 @@ Rebranding Overchan Android → esochan, and modernizing for 2026 Android standa
 - [x] Remove dead `SDK_INT` branches (minSdk is 21)
 - [x] `build.gradle`: targetSdk → 35
 
-**Status:** Phase 1A (A1–A3) and Phase 1B (B1–B5) are complete except: A4 (copyright headers), B4 scoped storage TODO (`getExternalStoragePublicDirectory`).
+**Status:** Phase 1A (A1–A3) and Phase 1B (B1–B5) are complete except: A4 (copyright headers).
 
 ---
 
@@ -153,7 +153,7 @@ This should be done as a single atomic commit with IDE refactoring support.
 
 | Risk | Phase | Impact | Mitigation |
 |------|-------|--------|------------|
-| Scoped storage rewrite | B4 | High — breaks downloads, cache, file browsing | Isolate into helper class, test on API 30+ emulator |
+| ~~Scoped storage rewrite~~ | B4 | ~~High~~ Done | `DownloadStorage` facade, MediaStore on 29+, legacy on <29 |
 | PendingIntent crashes on Android 12+ | B4 | Medium — crash on notification tap | Audit every PendingIntent; use FLAG_IMMUTABLE |
 | Missing foreground service types | B5 | High — service crash on Android 14+ | Straightforward manifest + code fix |
 | JNI symbol rename | Phase 2 | High — native crash if mismatched | Consider RegisterNatives pattern instead |
@@ -168,7 +168,7 @@ This should be done as a single atomic commit with IDE refactoring support.
 | `build.gradle` | SDK versions, deps, namespace, applicationId |
 | `AndroidManifest.xml` | Permissions, services, exported flags, FileProvider |
 | `src/.../common/MainApplication.java` | App entry point, module registration, init |
-| `src/.../cache/FileCache.java` | Storage access — scoped storage rewrite target |
+| `src/.../cache/FileCache.java` | Storage access — uses `getExternalCacheDir()`/`getExternalFilesDir()` (safe) |
 | `src/.../ui/downloading/DownloadingService.java` | Foreground service, notifications, storage |
 | `src/.../ui/tabs/TabsTrackerService.java` | Foreground service, notifications |
 | `src/.../ui/posting/PostingService.java` | Foreground service, file uploads |

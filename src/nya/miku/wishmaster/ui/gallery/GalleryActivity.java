@@ -48,6 +48,7 @@ import nya.miku.wishmaster.ui.AppearanceUtils;
 import nya.miku.wishmaster.ui.Attachments;
 import nya.miku.wishmaster.ui.CompatibilityImpl;
 import nya.miku.wishmaster.ui.ReverseImageSearch;
+import nya.miku.wishmaster.ui.downloading.DownloadStorage;
 import nya.miku.wishmaster.ui.downloading.DownloadingService;
 import nya.miku.wishmaster.ui.presentation.BoardFragment;
 import nya.miku.wishmaster.ui.settings.ApplicationSettings;
@@ -446,7 +447,7 @@ public class GalleryActivity extends Activity implements View.OnClickListener {
         if (DownloadingService.isInQueue(queueItem)) {
             Toast.makeText(this, getString(R.string.notification_download_already_in_queue, itemName), Toast.LENGTH_LONG).show();
         } else {
-            if (new File(new File(settings.getDownloadDirectory(), chan), fileName).exists()) {
+            if (DownloadStorage.fileExists(this, chan, null, fileName)) {
                 Toast.makeText(this, getString(R.string.notification_download_already_exists, fileName), Toast.LENGTH_LONG).show();
             } else {
                 Intent downloadIntent = new Intent(this, DownloadingService.class);

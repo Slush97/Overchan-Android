@@ -209,6 +209,9 @@ public class CompatibilityImpl {
     
     @TargetApi(Build.VERSION_CODES.M)
     public static boolean hasAccessStorage(Activity activity) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            return true;
+        }
         if (activity.checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             activity.requestPermissions(new String[] { Manifest.permission.WRITE_EXTERNAL_STORAGE }, 0);
             return false;
