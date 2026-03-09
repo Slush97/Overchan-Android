@@ -310,7 +310,8 @@ public class GalleryBackend extends Service {
                 }
             }
             if (file == null || !file.exists() || file.isDirectory() || file.length() == 0) {
-                callback.getCallback().showLoading();
+                GalleryGetterCallback cb = callback.getCallback();
+                if (cb != null) cb.showLoading();
                 file = fileCache.create(FileCache.PREFIX_ORIGINALS + attachmentHash + Attachments.getAttachmentExtention(attachmentModel));
                 String filename = file.getAbsolutePath();
                 while (!downloadingLocker.lock(filename)) downloadingLocker.waitUnlock(filename);
@@ -331,12 +332,15 @@ public class GalleryBackend extends Service {
                     success = true;
                 } catch (final Exception e) {
                     if (callback.isCancelled()) return null;
-                    if (e instanceof InteractiveException) {
-                        callback.getCallback().onInteractiveException(new GalleryInteractiveExceptionHolder((InteractiveException) e));
-                    } else if (IOUtils.isENOSPC(e)) {
-                        callback.getCallback().onException(getString(R.string.error_no_space));
-                    } else {
-                        callback.getCallback().onException(e.getMessage());
+                    GalleryGetterCallback errCb = callback.getCallback();
+                    if (errCb != null) {
+                        if (e instanceof InteractiveException) {
+                            errCb.onInteractiveException(new GalleryInteractiveExceptionHolder((InteractiveException) e));
+                        } else if (IOUtils.isENOSPC(e)) {
+                            errCb.onException(getString(R.string.error_no_space));
+                        } else {
+                            errCb.onException(e.getMessage());
+                        }
                     }
                     return null;
                 } finally {
@@ -377,12 +381,13 @@ public class GalleryBackend extends Service {
                 TabsState tabsState = MainApplication.getInstance().tabsState;
                 final TabsSwitcher tabsSwitcher = MainApplication.getInstance().tabsSwitcher;
                 if (tabsSwitcher.currentFragment instanceof BoardFragment) {
+                    final BoardFragment fragment = (BoardFragment) tabsSwitcher.currentFragment;
                     TabModel tab = tabsState.findTabById(tabsSwitcher.currentId);
                     if (tab != null && tab.pageModel != null && tab.pageModel.type == UrlPageModel.TYPE_THREADPAGE) {
                         Async.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                ((BoardFragment) tabsSwitcher.currentFragment).scrollToItem(postNumber);
+                                fragment.scrollToItem(postNumber);
                             }
                         });
                     }
