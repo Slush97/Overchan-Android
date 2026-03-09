@@ -309,7 +309,7 @@ public class GalleryBackend extends Service {
                     }
                 }
             }
-            if (!file.exists() || file.isDirectory() || file.length() == 0) {
+            if (file == null || !file.exists() || file.isDirectory() || file.length() == 0) {
                 callback.getCallback().showLoading();
                 file = fileCache.create(FileCache.PREFIX_ORIGINALS + attachmentHash + Attachments.getAttachmentExtention(attachmentModel));
                 String filename = file.getAbsolutePath();

@@ -255,7 +255,7 @@ public class ApplicationSettings {
     }
     
     public String getQuickAccessListJson() {
-        return preferences.getString(resources.getString(R.string.pref_key_quickaccess_json), "[{}]");
+        return preferences.getString(resources.getString(R.string.pref_key_quickaccess_json), "[{},{\"chan\":\"4chan.org\"}]");
     }
     
     public void saveQuickAccessListJson(String json) {
