@@ -21,7 +21,7 @@ dependencies {
     implementation libs.commons.text
     implementation libs.okhttp
     implementation libs.kryo
-    implementation libs.tagsoup
+    implementation libs.jsoup
     implementation libs.media3.exoplayer
 }
 

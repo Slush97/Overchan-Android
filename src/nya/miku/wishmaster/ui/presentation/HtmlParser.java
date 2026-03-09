@@ -1,22 +1,20 @@
 /*
  * esochan (Meta Imageboard Client)
  * Copyright (C) 2014-2016  miku-nyan <https://github.com/miku-nyan>
- *     
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-//исходная версия - android-22
 
 package nya.miku.wishmaster.ui.presentation;
 
@@ -26,14 +24,13 @@ import nya.miku.wishmaster.ui.presentation.ClickableURLSpan.URLSpanClickListener
 import nya.miku.wishmaster.ui.theme.ThemeUtils;
 import nya.miku.wishmaster.ui.theme.ThemeUtils.ThemeColors;
 
-import org.ccil.cowan.tagsoup.HTMLSchema;
-import org.ccil.cowan.tagsoup.Parser;
-import org.xml.sax.Attributes;
-import org.xml.sax.ContentHandler;
-import org.xml.sax.InputSource;
-import org.xml.sax.Locator;
-import org.xml.sax.SAXException;
-import org.xml.sax.XMLReader;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.nodes.Node;
+import org.jsoup.nodes.TextNode;
+import org.jsoup.select.NodeTraversor;
+import org.jsoup.select.NodeVisitor;
 
 import android.content.res.ColorStateList;
 import android.content.res.Resources;
@@ -59,8 +56,6 @@ import android.text.style.TypefaceSpan;
 import android.text.style.URLSpan;
 import android.text.style.UnderlineSpan;
 
-import java.io.IOException;
-import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -70,38 +65,8 @@ import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- * Парсер HTML в Spanned-строки для отображения в TextView.<br>
- * Основан на исходном коде {@link android.text.Html} (использует TagSoup) с изменениями
- * @author miku-nyan
- *
- */
 public class HtmlParser {
-    
-    /**
-     * Создать Spanned строку из html текста.
-     * @param subject тема (заголовок) сообщения, будет вставлена в начале итоговой Spanned строки.
-     * Может принимать null или пустую строку, тогда заголовок вставлен не будет 
-     * @param source исходный html текст. Поддерживаются тэги, поддерживаемые {@link android.text.Html#fromHtml(String)}, а также:<ul>
-     * <li><b>&lt;ol&gt;</b>, <b>&lt;ul&gt;</b>, <b>&lt;li&gt;</b> - списки</li>
-     * <li><b>&lt;s&gt;</b>, <b>&lt;strike&gt;</b>, <b>&lt;del&gt;</b> - перечёркнутый текст</li>
-     * <li><b>&lt;code&gt;</b> - отображается моноширинным шрифтом</li>
-     * <li><b>&lt;blockquote class="unkfunc"&gt;</b> - форумная цитата (отображается цветом выбранной темы оформления), выделяется абзацами</li>
-     * <li><b>&lt;span class="unkfunc"&gt;</b>, <b>&lt;span class="quote"&gt;</b> - аналогично предыдущему, не выделяется абзацами</li>
-     * <li><b>&lt;span class="spoiler"&gt;</b> - спойлер, затемнённый текст (отображается цветами выбранной темы оформления)</li>
-     * <li><b>&lt;span class="s"&gt;</b> - перечёркнутый текст</li>
-     * <li><b>&lt;span class="u"&gt;</b> - подчёркнутый текст</li>
-     * <li><b>&lt;font style="..."&gt;</b> и <b>&lt;span style="..."&gt;</b> - CSS-стиль, поддерживаются color и background-color</li>
-     * <li><b>&lt;aibquote&gt;</b> и <b>&lt;aibspoiler&gt;</b> - аналогично &lt;span class="unkfunc"&gt; и &lt;span class="spoiler"&gt;.
-     * Может использоваться, если форум выдаёт текст в нестандартном виде, в этом случае можно заменять (при загрузке и парсинге ответа)
-     * выделение цитат и спойлеров на данные псевдотэги, для однозначного соответствия</li></ul>
-     * @param spanClickListener обработчик нажатий на ссылки
-     * @param imageGetter обработчик загрузки изображений (тэг &lt;img&gt; внутри html текста)
-     * @param themeColors объект {@link ThemeUtils.ThemeColors} для текущей темы оформления
-     * @param openSpoilers отображать спойлеры открытыми
-     * @param referer ссылка на этот текущий пост (для задания referer у ссылок)
-     * @return объект SpannableStringBuilder
-     */
+
     public static SpannableStringBuilder createSpanned(String subject, String source,
             URLSpanClickListener spanClickListener, ImageGetter imageGetter, ThemeColors themeColors, boolean openSpoilers, String referer) {
         SpannableStringBuilder spanned = fromHtml(subject, source, themeColors, imageGetter, openSpoilers);
@@ -109,11 +74,7 @@ public class HtmlParser {
         if (!openSpoilers) fixSpoilerSpans(spanned, themeColors);
         return spanned;
     }
-    
-    /** 
-     * Заменить ссылки (URLSpan) на ClickableURLSpan со своим обработчиком нажатия
-     * @param listener обработчик нажатий на ссылки 
-     */
+
     private static void replaceUrls(SpannableStringBuilder builder, URLSpanClickListener listener, ThemeColors themeColors, String referer) {
         URLSpan[] spans = builder.getSpans(0, builder.length(), URLSpan.class);
         if (spans.length > 0) {
@@ -122,10 +83,7 @@ public class HtmlParser {
             }
         }
     }
-    
-    /**
-     * Исправить расположение SpoilerSpan и ForegroundColorSpan цвета ссылок для корректной работы ссылок под спойлерами
-     */
+
     private static void fixSpoilerSpans(SpannableStringBuilder builder, ThemeColors themeColors) {
         SpoilerSpan[] spoilers = builder.getSpans(0, builder.length(), SpoilerSpan.class);
         for (SpoilerSpan span : spoilers) {
@@ -141,80 +99,39 @@ public class HtmlParser {
             builder.setSpan(new ForegroundColorSpan(themeColors.urlLinkForeground), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
     }
-    
-    /**
-     * Обработчик-загрузчик картинок в HTML тэге &lt;img&gt;.
-     */
+
     public static interface ImageGetter {
-        /**
-         * Метод вызывается, когда HTML парсер встречает тэг &lt;img&gt;.
-         * @param source строка из аттрибута "src"
-         * @return должен вернуть представление картинки как Drawable или <code>null</code> для замены на общую картинку (ошибки).
-         * Убедитесь, что был вызван setBounds() на Drawable (если его bounds не были установлены)
-         */
         public Drawable getDrawable(String source);
     }
 
     private HtmlParser() { }
 
-    /**
-     * Lazy initialization holder for HTML parser. This class will
-     * a) be preloaded by the zygote, or b) not loaded until absolutely
-     * necessary.
-     */
-    private static class HtmlParserHolder {
-        private static final HTMLSchema schema = new HTMLSchema();
-    }
-
-    /**
-     * Returns displayable styled text from the provided HTML string.
-     * Any &lt;img&gt; tags in the HTML will use the specified ImageGetter
-     * to request a representation of the image (use null if you don't
-     * want this) and the specified TagHandler to handle unknown tags
-     * (specify null if you don't want this).
-     *
-     * <p>This uses TagSoup to handle real HTML, including all of the brokenness found in the wild.
-     */
     private static SpannableStringBuilder fromHtml(String subject, String source, ThemeColors colors, ImageGetter imageGetter, boolean openSpoilers) {
-        Parser parser = new Parser();
-        try {
-            parser.setProperty(Parser.schemaProperty, HtmlParserHolder.schema);
-        } catch (org.xml.sax.SAXNotRecognizedException e) {
-            // Should not happen.
-            throw new RuntimeException(e);
-        } catch (org.xml.sax.SAXNotSupportedException e) {
-            // Should not happen.
-            throw new RuntimeException(e);
-        }
-
-        HtmlToSpannedConverter converter = new HtmlToSpannedConverter(subject, source, colors, imageGetter, openSpoilers, parser);
+        HtmlToSpannedConverter converter = new HtmlToSpannedConverter(subject, source, colors, imageGetter, openSpoilers);
         return converter.convert();
     }
 
 }
 
-class HtmlToSpannedConverter implements ContentHandler {
-    
+class HtmlToSpannedConverter implements NodeVisitor {
+
     private static final float[] HEADER_SIZES = {
         1.5f, 1.4f, 1.3f, 1.2f, 1.1f, 1f,
     };
-    
+
     private static final Pattern CSS_STYLE_COLOR_RGB_PATTERN = Pattern.compile(".*?color: ?rgb\\((\\d+), ?(\\d+), ?(\\d+)\\).*");
     private static final Pattern CSS_STYLE_COLOR_COMMON_PATTERN = Pattern.compile(".*?color: ?(#?\\w+).*");
 
     private String mSource;
-    private XMLReader mReader;
     private SpannableStringBuilder mSpannableStringBuilder;
-    //костыли для правильной обработки (обрезки) <p>...</p> в начале и в конце
-    private int mStartLength = 0; //длина subject + '\n'
-    private int[] mLastPTagLength = new int[] {-1, -1}; //2 целых числа {before, after}, длина до и после обработки последнего тэга (</p>)
+    private int mStartLength = 0;
+    private int[] mLastPTagLength = new int[] {-1, -1};
     private LinkedList<Object> mListTags = new LinkedList<>();
     private ThemeColors mColors;
     private boolean mOpenSpoilers;
     private HtmlParser.ImageGetter mImageGetter;
-    
-    public HtmlToSpannedConverter(String subject, String source, ThemeColors colors, HtmlParser.ImageGetter imageGetter, boolean openSpoilers,
-            Parser parser) {
+
+    public HtmlToSpannedConverter(String subject, String source, ThemeColors colors, HtmlParser.ImageGetter imageGetter, boolean openSpoilers) {
         mSource = source;
         mSpannableStringBuilder = new SpannableStringBuilder();
         if (!TextUtils.isEmpty(subject)) {
@@ -231,20 +148,12 @@ class HtmlToSpannedConverter implements ContentHandler {
         mColors = colors;
         mOpenSpoilers = openSpoilers;
         mImageGetter = imageGetter;
-        mReader = parser;
     }
 
     public SpannableStringBuilder convert() {
-        mReader.setContentHandler(this);
-        try {
-            mReader.parse(new InputSource(new StringReader(mSource)));
-        } catch (IOException e) {
-            // We are reading from a string. There should not be IO problems.
-            throw new RuntimeException(e);
-        } catch (SAXException e) {
-            // TagSoup doesn't throw parse exceptions.
-            throw new RuntimeException(e);
-        }
+        Document doc = Jsoup.parseBodyFragment(mSource);
+        doc.outputSettings().prettyPrint(false);
+        NodeTraversor.traverse(this, doc.body());
 
         // Fix flags and range for paragraph-type markup.
         Object[] obj = mSpannableStringBuilder.getSpans(0, mSpannableStringBuilder.length(), ParagraphStyle.class);
@@ -252,7 +161,6 @@ class HtmlToSpannedConverter implements ContentHandler {
             int start = mSpannableStringBuilder.getSpanStart(obj[i]);
             int end = mSpannableStringBuilder.getSpanEnd(obj[i]);
 
-            // If the last line of the range is blank, back off by one.
             if (end - 2 >= 0) {
                 if (mSpannableStringBuilder.charAt(end - 1) == '\n' &&
                     mSpannableStringBuilder.charAt(end - 2) == '\n') {
@@ -273,10 +181,64 @@ class HtmlToSpannedConverter implements ContentHandler {
         return mSpannableStringBuilder;
     }
 
-    private void handleStartTag(String tag, Attributes attributes) {
+    @Override
+    public void head(Node node, int depth) {
+        if (node instanceof TextNode) {
+            TextNode textNode = (TextNode) node;
+            appendNormalisedText(textNode);
+        } else if (node instanceof Element) {
+            Element element = (Element) node;
+            String tag = element.tagName();
+            handleStartTag(tag, element);
+        }
+    }
+
+    @Override
+    public void tail(Node node, int depth) {
+        if (node instanceof Element) {
+            Element element = (Element) node;
+            String tag = element.tagName();
+            handleEndTag(tag);
+        }
+    }
+
+    private void appendNormalisedText(TextNode textNode) {
+        String text = textNode.getWholeText();
+        StringBuilder sb = new StringBuilder();
+
+        for (int i = 0; i < text.length(); i++) {
+            char c = text.charAt(i);
+
+            if (c == ' ' || c == '\n') {
+                char pred;
+                int len = sb.length();
+
+                if (len == 0) {
+                    len = mSpannableStringBuilder.length();
+
+                    if (len == 0) {
+                        pred = '\n';
+                    } else {
+                        pred = mSpannableStringBuilder.charAt(len - 1);
+                    }
+                } else {
+                    pred = sb.charAt(len - 1);
+                }
+
+                if (pred != ' ' && pred != '\n') {
+                    sb.append(' ');
+                }
+            } else {
+                sb.append(c);
+            }
+        }
+
+        mSpannableStringBuilder.append(sb);
+    }
+
+    private void handleStartTag(String tag, Element element) {
         if (tag.equalsIgnoreCase("br")) {
-            // We don't need to handle this. TagSoup will ensure that there's a </br> for each <br>
-            // so we can safely emite the linebreaks when we handle the close tag.
+            // handled in tail
         } else if (tag.equalsIgnoreCase("p")) {
             handleP(mSpannableStringBuilder, mStartLength, mLastPTagLength);
         } else if (tag.equalsIgnoreCase("div")) {
@@ -304,9 +266,9 @@ class HtmlToSpannedConverter implements ContentHandler {
         } else if (tag.equalsIgnoreCase("small")) {
             start(mSpannableStringBuilder, new Small());
         } else if (tag.equalsIgnoreCase("font")) {
-            startFont(mSpannableStringBuilder, attributes);
+            startFont(mSpannableStringBuilder, element);
         } else if (tag.equalsIgnoreCase("blockquote")) {
-            String classAttr = attributes.getValue("", "class");
+            String classAttr = element.attr("class");
             handleP(mSpannableStringBuilder, mStartLength, mLastPTagLength);
             start(mSpannableStringBuilder, new Blockquote(classAttr != null && classAttr.equals("unkfunc")));
         } else if (tag.equalsIgnoreCase("tt")) {
@@ -324,7 +286,7 @@ class HtmlToSpannedConverter implements ContentHandler {
         } else if (tag.equalsIgnoreCase("td")) {
             handleTd(mSpannableStringBuilder, true);
         } else if (tag.equalsIgnoreCase("a")) {
-            startA(mSpannableStringBuilder, attributes);
+            startA(mSpannableStringBuilder, element);
         } else if (tag.equalsIgnoreCase("u")) {
             start(mSpannableStringBuilder, new Underline());
         } else if (tag.equalsIgnoreCase("sup")) {
@@ -337,16 +299,14 @@ class HtmlToSpannedConverter implements ContentHandler {
             handleP(mSpannableStringBuilder, mStartLength, mLastPTagLength);
             start(mSpannableStringBuilder, new Header(tag.charAt(1) - '1'));
         } else if (tag.equalsIgnoreCase("img")) {
-            startImg(mSpannableStringBuilder, attributes, mImageGetter);
+            startImg(mSpannableStringBuilder, element, mImageGetter);
         } else if (tag.equalsIgnoreCase("span")) {
-            startSpan(mSpannableStringBuilder, attributes);
+            startSpan(mSpannableStringBuilder, element);
         } else if (tag.equalsIgnoreCase("aibquote")) {
             start(mSpannableStringBuilder, new Aibquote());
         } else if (tag.equalsIgnoreCase("aibspoiler")) {
             start(mSpannableStringBuilder, new Aibspoiler());
-        }/* else if (mTagHandler != null) {
-            mTagHandler.handleTag(true, tag, mSpannableStringBuilder, mReader);
-        }*/
+        }
     }
 
     private void handleEndTag(String tag) {
@@ -373,7 +333,7 @@ class HtmlToSpannedConverter implements ContentHandler {
         } else if (tag.equalsIgnoreCase("strike")) {
             end(mSpannableStringBuilder, Strike.class, new StrikethroughSpan());
         } else if (tag.equalsIgnoreCase("del")) {
-            end(mSpannableStringBuilder, Strike.class, new StrikethroughSpan());    
+            end(mSpannableStringBuilder, Strike.class, new StrikethroughSpan());
         } else if (tag.equalsIgnoreCase("big")) {
             end(mSpannableStringBuilder, Big.class, new RelativeSizeSpan(1.25f));
         } else if (tag.equalsIgnoreCase("small")) {
@@ -392,7 +352,7 @@ class HtmlToSpannedConverter implements ContentHandler {
         } else if (tag.equalsIgnoreCase("ol")) {
             if (!mListTags.isEmpty()) mListTags.removeFirst();
         } else if (tag.equalsIgnoreCase("li")) {
-            //обрабатывается только открывающийся <li>
+            // handled at open tag only
         } else if (tag.equalsIgnoreCase("tr")) {
             handleTr(mSpannableStringBuilder, false);
         } else if (tag.equalsIgnoreCase("td")) {
@@ -416,9 +376,7 @@ class HtmlToSpannedConverter implements ContentHandler {
             end(mSpannableStringBuilder, Aibquote.class, new ForegroundColorSpan(mColors != null ? mColors.quoteForeground : Color.GREEN));
         } else if (tag.equalsIgnoreCase("aibspoiler")) {
             endAibspoiler(mSpannableStringBuilder, mColors, mOpenSpoilers);
-        }/* else if (mTagHandler != null) {
-            mTagHandler.handleTag(false, tag, mSpannableStringBuilder, mReader);
-        }*/
+        }
     }
 
     private static void handleP(SpannableStringBuilder text, int startLength, int[] lastPTagLengthRefs) {
@@ -445,30 +403,26 @@ class HtmlToSpannedConverter implements ContentHandler {
     private static void handleBr(SpannableStringBuilder text) {
         text.append("\n");
     }
-    
+
     private static void handleLi(SpannableStringBuilder text, Object tag, int level) {
         if (tag == null) return;
-        
+
         int len = text.length();
         if (len >= 1 && text.charAt(len - 1) != '\n') text.append("\n");
         for (int i=1; i<level; ++i) text.append("\t");
         if (tag instanceof OlTag) text.append(Integer.toString(((OlTag) tag).curIndex++) + ". ");
         else if (tag instanceof UlTag) text.append("\u2022 ");
     }
-    
+
     private static void handleTd(SpannableStringBuilder text, boolean open) {
         if (!open) text.append(" | ");
     }
-    
+
     private static void handleTr(SpannableStringBuilder text, boolean open) {
         text.append(open ? "| " : "\n");
     }
 
     private static Object getLast(Spanned text, Class<?> kind) {
-        /*
-         * This knows that the last returned object from getSpans()
-         * will be the most recently added.
-         */
         Object[] objs = text.getSpans(0, text.length(), kind);
 
         if (objs.length == 0) {
@@ -495,8 +449,8 @@ class HtmlToSpannedConverter implements ContentHandler {
         }
     }
 
-    private static void startImg(SpannableStringBuilder text, Attributes attributes, HtmlParser.ImageGetter img) {
-        String src = attributes.getValue("", "src");
+    private static void startImg(SpannableStringBuilder text, Element element, HtmlParser.ImageGetter img) {
+        String src = element.attr("src");
         Drawable d = null;
 
         if (img != null) {
@@ -513,11 +467,14 @@ class HtmlToSpannedConverter implements ContentHandler {
 
         text.setSpan(new ImageSpan(d, src), len, text.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
     }
-    
-    private static void startFont(SpannableStringBuilder text, Attributes attributes) {
-        String color = attributes.getValue("", "color");
-        String face = attributes.getValue("", "face");
-        String style = attributes.getValue("", "style");
+
+    private static void startFont(SpannableStringBuilder text, Element element) {
+        String color = element.attr("color");
+        String face = element.attr("face");
+        String style = element.attr("style");
+        if (color.isEmpty()) color = null;
+        if (face.isEmpty()) face = null;
+        if (style.isEmpty()) style = null;
 
         int len = text.length();
         text.setSpan(new Font(color, face, style), len, len, Spannable.SPAN_MARK_MARK);
@@ -553,7 +510,7 @@ class HtmlToSpannedConverter implements ContentHandler {
             if (f.mFace != null) {
                 text.setSpan(new TypefaceSpan(f.mFace), where, len, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
             }
-            
+
             if (f.mStyle != null) {
                 List<Object> styleSpans = parseStyleAttributes(f.mStyle);
                 for (Object span : styleSpans) {
@@ -563,8 +520,9 @@ class HtmlToSpannedConverter implements ContentHandler {
         }
     }
 
-    private static void startA(SpannableStringBuilder text, Attributes attributes) {
-        String href = attributes.getValue("", "href");
+    private static void startA(SpannableStringBuilder text, Element element) {
+        String href = element.attr("href");
+        if (href.isEmpty()) href = null;
 
         int len = text.length();
         text.setSpan(new Href(href), len, len, Spannable.SPAN_MARK_MARK);
@@ -594,7 +552,6 @@ class HtmlToSpannedConverter implements ContentHandler {
 
         text.removeSpan(obj);
 
-        // Back off not to change only the text, not the blank line.
         while (len > where && text.charAt(len - 1) == '\n') {
             len--;
         }
@@ -606,13 +563,13 @@ class HtmlToSpannedConverter implements ContentHandler {
             text.setSpan(new StyleSpan(Typeface.BOLD), where, len, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
     }
-    
+
     private static void endAibspoiler(SpannableStringBuilder text, ThemeColors colors, boolean openSpoilers) {
         int len = text.length();
         Object obj = getLast(text, Aibspoiler.class);
         int where = text.getSpanStart(obj);
         text.removeSpan(obj);
-        
+
         if (where != len && colors != null) {
             if (openSpoilers) {
                 text.setSpan(new ForegroundColorSpan(colors.spoilerForeground), where, len, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -622,13 +579,13 @@ class HtmlToSpannedConverter implements ContentHandler {
             }
         }
     }
-    
+
     private static void endBlockquote(SpannableStringBuilder text, ThemeColors colors) {
         int len = text.length();
         Object obj = getLast(text, Blockquote.class);
         int where = text.getSpanStart(obj);
         text.removeSpan(obj);
-        
+
         if (where != len) {
             Blockquote b = (Blockquote) obj;
             if (b.mIsUnkfunc) {
@@ -640,39 +597,41 @@ class HtmlToSpannedConverter implements ContentHandler {
             }
         }
     }
-    
-    private static void startSpan(SpannableStringBuilder text, Attributes attributes) {
-        String style = attributes.getValue("", "style");
-        String classAttr = attributes.getValue("", "class");
+
+    private static void startSpan(SpannableStringBuilder text, Element element) {
+        String style = element.attr("style");
+        String classAttr = element.attr("class");
+        if (style.isEmpty()) style = null;
+        if (classAttr.isEmpty()) classAttr = null;
         boolean isAibquote = classAttr != null && (classAttr.equals("unkfunc") || classAttr.equals("quote"));
         boolean isAibspoiler = classAttr != null && classAttr.equals("spoiler");
         boolean isUnderline = classAttr != null && classAttr.equals("u");
         boolean isStrike = classAttr != null && classAttr.equals("s");
-        
+
         int len = text.length();
         text.setSpan(new Span(style, isAibquote, isAibspoiler, isUnderline, isStrike), len, len, Spannable.SPAN_MARK_MARK);
     }
-    
+
     private static void endSpan(SpannableStringBuilder text, ThemeColors colors, boolean openSpoilers) {
         int len = text.length();
         Object obj = getLast(text, Span.class);
         int where = text.getSpanStart(obj);
         text.removeSpan(obj);
-        
+
         if (where != len) {
             Span s = (Span) obj;
-            
+
             if (s.mStyle != null) {
                 List<Object> styleSpans = parseStyleAttributes(s.mStyle);
                 for (Object span : styleSpans) {
                     text.setSpan(span, where, len, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                 }
             }
-            
+
             if (colors != null && s.mIsAibquote) {
                 text.setSpan(new ForegroundColorSpan(colors.quoteForeground), where, len, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
             }
-            
+
             if (colors != null && s.mIsAibspoiler) {
                 if (openSpoilers) {
                     text.setSpan(new ForegroundColorSpan(colors.spoilerForeground), where, len, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -681,18 +640,18 @@ class HtmlToSpannedConverter implements ContentHandler {
                     text.setSpan(new SpoilerSpan(colors.spoilerForeground, colors.spoilerBackground), where, len, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                 }
             }
-            
+
             if (s.mIsUnderline) {
                 text.setSpan(new UnderlineSpan(), where, len, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
             }
-            
+
             if (s.mIsStrike) {
                 text.setSpan(new StrikethroughSpan(), where, len, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
             }
-            
+
         }
     }
-    
+
     private static List<Object> parseStyleAttributes(String style) {
         if (TextUtils.isEmpty(style)) return Collections.emptyList();
         int foregroundColor = 0, backgroundColor = 0;
@@ -716,7 +675,7 @@ class HtmlToSpannedConverter implements ContentHandler {
             return spans;
         }
     }
-    
+
     private static int parseColor(String css) {
         if (TextUtils.isEmpty(css)) return 0;
         try {
@@ -731,78 +690,8 @@ class HtmlToSpannedConverter implements ContentHandler {
             if (m.find() && m.groupCount() == 1) {
                 return Color.parseColor(m.group(1));
             }
-        } catch (Exception e) { /*исключение во время парсинга (некорректное значение или неизвестный цвет)*/ }
+        } catch (Exception e) { }
         return 0;
-    }
-
-    public void setDocumentLocator(Locator locator) {
-    }
-
-    public void startDocument() throws SAXException {
-    }
-
-    public void endDocument() throws SAXException {
-    }
-
-    public void startPrefixMapping(String prefix, String uri) throws SAXException {
-    }
-
-    public void endPrefixMapping(String prefix) throws SAXException {
-    }
-
-    public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
-        handleStartTag(localName, attributes);
-    }
-
-    public void endElement(String uri, String localName, String qName) throws SAXException {
-        handleEndTag(localName);
-    }
-
-    public void characters(char ch[], int start, int length) throws SAXException {
-        StringBuilder sb = new StringBuilder();
-
-        /*
-         * Ignore whitespace that immediately follows other whitespace;
-         * newlines count as spaces.
-         */
-
-        for (int i = 0; i < length; i++) {
-            char c = ch[i + start];
-
-            if (c == ' ' || c == '\n') {
-                char pred;
-                int len = sb.length();
-
-                if (len == 0) {
-                    len = mSpannableStringBuilder.length();
-
-                    if (len == 0) {
-                        pred = '\n';
-                    } else {
-                        pred = mSpannableStringBuilder.charAt(len - 1);
-                    }
-                } else {
-                    pred = sb.charAt(len - 1);
-                }
-
-                if (pred != ' ' && pred != '\n') {
-                    sb.append(' ');
-                }
-            } else {
-                sb.append(c);
-            }
-        }
-
-        mSpannableStringBuilder.append(sb);
-    }
-
-    public void ignorableWhitespace(char ch[], int start, int length) throws SAXException {
-    }
-
-    public void processingInstruction(String target, String data) throws SAXException {
-    }
-
-    public void skippedEntity(String name) throws SAXException {
     }
 
     private static class Bold { }
@@ -844,22 +733,22 @@ class HtmlToSpannedConverter implements ContentHandler {
             mLevel = level;
         }
     }
-    
+
     private static class Blockquote {
         public boolean mIsUnkfunc;
-        
+
         public Blockquote(boolean isUnkfunc) {
             mIsUnkfunc = isUnkfunc;
         }
     }
-    
+
     private static class Span {
         private String mStyle;
         private boolean mIsAibquote;
         private boolean mIsAibspoiler;
         private boolean mIsUnderline;
         private boolean mIsStrike;
-        
+
         public Span(String style, boolean isAibquote, boolean isAibspoiler, boolean isUnderline, boolean isStrike) {
             mStyle = style;
             mIsAibquote = isAibquote;
@@ -868,22 +757,14 @@ class HtmlToSpannedConverter implements ContentHandler {
             mIsStrike = isStrike;
         }
     }
-    
+
     private static class UlTag {}
     private static class OlTag {
         public int curIndex = 1;
     }
 }
 
-//скрытый метод android.graphics.Color#getHtmlColor
 class ColorHidden {
-    /**
-     * Converts an HTML color (named or numeric) to an integer RGB value.
-     *
-     * @param color Non-null color string.
-     *
-     * @return A color value, or {@code -1} if the color string could not be interpreted.
-     */
     public static int getHtmlColor(String color) {
         Integer i = sColorNameMap.get(color.toLowerCase(Locale.US));
         if (i != null) {
@@ -925,15 +806,12 @@ class ColorHidden {
         sColorNameMap.put("silver", 0xFFC0C0C0);
         sColorNameMap.put("teal", 0xFF008080);
     }
-    
+
     public static final int xmlUtils_convertValueToInt(CharSequence charSeq, int defaultValue) {
         if (null == charSeq)
             return defaultValue;
 
         String nm = charSeq.toString();
-
-        // XXX This code is copied from Integer.decode() so we don't
-        // have to instantiate an Integer!
 
         @SuppressWarnings("unused")
         int value;
@@ -948,7 +826,6 @@ class ColorHidden {
         }
 
         if ('0' == nm.charAt(index)) {
-            //  Quick check for a zero by itself
             if (index == (len - 1))
                 return 0;
 
@@ -970,5 +847,5 @@ class ColorHidden {
 
         return Integer.parseInt(nm.substring(index), base) * sign;
     }
-    
+
 }
