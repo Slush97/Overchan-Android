@@ -4,9 +4,9 @@ plugins {
 
 configurations.all {
     resolutionStrategy {
-        force libs.kotlin.stdlib
-        force libs.kotlin.stdlib.jdk7
-        force libs.kotlin.stdlib.jdk8
+        force 'org.jetbrains.kotlin:kotlin-stdlib:1.8.22'
+        force 'org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.8.22'
+        force 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.22'
     }
 }
 
@@ -16,7 +16,6 @@ dependencies {
     implementation libs.androidx.viewpager
     implementation libs.androidx.swiperefreshlayout
     implementation libs.androidx.drawerlayout
-    implementation libs.androidx.localbroadcastmanager
     implementation libs.androidx.annotation
     implementation libs.androidx.cursoradapter
     implementation libs.commons.lang3

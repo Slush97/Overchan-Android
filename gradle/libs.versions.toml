@@ -5,7 +5,6 @@ androidx-fragment = "1.6.2"
 androidx-viewpager = "1.0.0"
 androidx-swiperefreshlayout = "1.1.0"
 androidx-drawerlayout = "1.2.0"
-androidx-localbroadcastmanager = "1.1.0"
 androidx-annotation = "1.7.1"
 androidx-cursoradapter = "1.0.0"
 commons-lang3 = "3.4"
@@ -13,7 +12,6 @@ httpclient = "4.3.6"
 kryo = "3.0.3"
 tagsoup = "1.2.1"
 exoplayer = "2.19.1"
-kotlin-stdlib = "1.8.22"
 
 [libraries]
 androidx-core = { group = "androidx.core", name = "core", version.ref = "androidx-core" }
@@ -21,7 +19,6 @@ androidx-fragment = { group = "androidx.fragment", name = "fragment", version.re
 androidx-viewpager = { group = "androidx.viewpager", name = "viewpager", version.ref = "androidx-viewpager" }
 androidx-swiperefreshlayout = { group = "androidx.swiperefreshlayout", name = "swiperefreshlayout", version.ref = "androidx-swiperefreshlayout" }
 androidx-drawerlayout = { group = "androidx.drawerlayout", name = "drawerlayout", version.ref = "androidx-drawerlayout" }
-androidx-localbroadcastmanager = { group = "androidx.localbroadcastmanager", name = "localbroadcastmanager", version.ref = "androidx-localbroadcastmanager" }
 androidx-annotation = { group = "androidx.annotation", name = "annotation", version.ref = "androidx-annotation" }
 androidx-cursoradapter = { group = "androidx.cursoradapter", name = "cursoradapter", version.ref = "androidx-cursoradapter" }
 commons-lang3 = { group = "org.apache.commons", name = "commons-lang3", version.ref = "commons-lang3" }
@@ -29,9 +26,6 @@ httpclient = { group = "cz.msebera.android", name = "httpclient", version.ref = 
 kryo = { group = "com.esotericsoftware", name = "kryo", version.ref = "kryo" }
 tagsoup = { group = "org.ccil.cowan.tagsoup", name = "tagsoup", version.ref = "tagsoup" }
 exoplayer-core = { group = "com.google.android.exoplayer", name = "exoplayer-core", version.ref = "exoplayer" }
-kotlin-stdlib = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib", version.ref = "kotlin-stdlib" }
-kotlin-stdlib-jdk7 = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib-jdk7", version.ref = "kotlin-stdlib" }
-kotlin-stdlib-jdk8 = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib-jdk8", version.ref = "kotlin-stdlib" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
