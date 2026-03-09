@@ -33,8 +33,8 @@ import java.util.List;
 import java.util.Map;
 
 import nya.miku.wishmaster.common.IOUtils;
-import nya.miku.wishmaster.lib.base64.Base64;
-import nya.miku.wishmaster.lib.base64.Base64InputStream;
+import android.util.Base64;
+import android.util.Base64InputStream;
 
 /**
  * Класс инкапсулирует работу с MHTML-файлом для чтения

@@ -36,7 +36,7 @@ import nya.miku.wishmaster.common.IOUtils;
 import nya.miku.wishmaster.common.Logger;
 import nya.miku.wishmaster.common.MainApplication;
 import nya.miku.wishmaster.containers.ReadableContainer;
-import nya.miku.wishmaster.lib.base64.Base64;
+import android.util.Base64;
 import nya.miku.wishmaster.ui.downloading.DownloadingService;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;

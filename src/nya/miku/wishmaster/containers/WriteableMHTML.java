@@ -41,8 +41,8 @@ import nya.miku.wishmaster.api.interfaces.CancellableTask;
 import nya.miku.wishmaster.common.IOUtils;
 import nya.miku.wishmaster.common.Logger;
 import nya.miku.wishmaster.lib.MailDateFormat;
-import nya.miku.wishmaster.lib.base64.Base64;
-import nya.miku.wishmaster.lib.base64.Base64OutputStream;
+import android.util.Base64;
+import android.util.Base64OutputStream;
 
 /**
  * Класс инкапсулирует работу с MHTML-файлом (создание/модификация).<br>
