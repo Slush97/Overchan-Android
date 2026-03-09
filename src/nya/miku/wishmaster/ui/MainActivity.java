@@ -159,9 +159,6 @@ public class MainActivity extends FragmentActivity {
     
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if (!MainApplication.getInstance().settings.showSidePanel() && Build.VERSION.SDK_INT < 11) {
-            menu.add(Menu.NONE, R.id.menu_open_close_drawer, Menu.FIRST, R.string.menu_open_drawer).setIcon(R.drawable.ic_menu_windows);
-        }
         if (tabsAdapter != null && tabsAdapter.getSelectedItem() >= 0) {
             TabModel tab = tabsAdapter.getItem(tabsAdapter.getSelectedItem());
             if (canFavorite(tab)) {

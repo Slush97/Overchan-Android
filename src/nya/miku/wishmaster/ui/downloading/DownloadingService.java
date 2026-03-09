@@ -288,9 +288,6 @@ public class DownloadingService extends Service {
                             if (newProgress == curProgress) return;
                             curProgress = newProgress;
                             progressNotifBuilder.setProgress(100, newProgress, false);
-                            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-                                progressNotifBuilder.setContentText("("+newProgress+"%) "+filename);
-                            }
                             notifyForeground(DOWNLOADING_NOTIFICATION_ID, progressNotifBuilder.build());
                             sendBroadcast(new Intent(BROADCAST_UPDATED));
                         }
@@ -302,9 +299,6 @@ public class DownloadingService extends Service {
                         public void setIndeterminate() {
                             if (curProgress == -1) return;
                             progressNotifBuilder.setProgress(100, 0, true);
-                            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-                                progressNotifBuilder.setContentText(filename);
-                            }
                             notifyForeground(DOWNLOADING_NOTIFICATION_ID, progressNotifBuilder.build());
                             sendBroadcast(new Intent(BROADCAST_UPDATED));
                             curProgress = -1;

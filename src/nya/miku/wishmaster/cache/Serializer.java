@@ -39,11 +39,9 @@ import nya.miku.wishmaster.common.Async;
 import nya.miku.wishmaster.common.IOUtils;
 import nya.miku.wishmaster.common.Logger;
 import nya.miku.wishmaster.common.MainApplication;
-import nya.miku.wishmaster.lib.KryoOutputHC;
 import nya.miku.wishmaster.ui.tabs.TabModel;
 import nya.miku.wishmaster.ui.tabs.TabsIdStack;
 import nya.miku.wishmaster.ui.tabs.TabsState;
-import android.os.Build;
 import androidx.core.util.AtomicFile;
 
 import com.esotericsoftware.kryo.Kryo;
@@ -114,7 +112,7 @@ public class Serializer {
             File file = fileCache.create(filename);
             Output output = null;
             try {
-                output = createOutput(new FileOutputStream(file));
+                output = new Output(new FileOutputStream(file));
                 kryo.writeObject(output, obj);
             } catch (Exception e) {
                 Logger.e(TAG, e);
@@ -218,7 +216,7 @@ public class Serializer {
                     FileOutputStream fileStream = null;
                     try {
                         fileStream = tabsStateFile.startWrite();
-                        Output output = createOutput(fileStream);
+                        Output output = new Output(fileStream);
                         kryo.writeObject(output, state);
                         output.flush();
                         tabsStateFile.finishWrite(fileStream);
@@ -255,7 +253,7 @@ public class Serializer {
         synchronized (kryoLock) {
             Output output = null;
             try {
-                output = createOutput(out);
+                output = new Output(out);
                 output.writeString(title);
                 kryo.writeObject(output, pageModel);
                 kryo.writeObject(output, page);
@@ -304,11 +302,4 @@ public class Serializer {
         }
     }
     
-    private static Output createOutput(OutputStream stream) {
-        return isHoneycomb() ? new KryoOutputHC(stream) : new Output(stream);
-    }
-    
-    private static boolean isHoneycomb() {
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB && Build.VERSION.SDK_INT <= Build.VERSION_CODES.HONEYCOMB_MR2;
-    }
 }

@@ -62,46 +62,36 @@ import android.widget.VideoView;
 public class CompatibilityImpl {
     private CompatibilityImpl() {}
     
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public static void setIcon(Preference preference, int iconResId) {
         preference.setIcon(iconResId);
     }
     
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public static void setIcon(Preference preference, Drawable icon) {
         preference.setIcon(icon);
     }
     
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public static void activeActionBar(Activity activity) {
         activity.getActionBar().setDisplayHomeAsUpEnabled(true);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-            setHomeButtonEnabledTrue(activity.getActionBar());
-        }
+        setHomeButtonEnabledTrue(activity.getActionBar());
     }
     
-    @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
     private static void setHomeButtonEnabledTrue(ActionBar actionBar) {
         actionBar.setHomeButtonEnabled(true);
     }
     
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public static void setShowAsActionIfRoom(MenuItem item) {
         item.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
     }
     
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public static void setShowAsActionAlways(MenuItem item) {
         item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
     }
     
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public static void setActionBarNoIcon(Activity activity) {
         ActionBar actionBar = activity.getActionBar();
         if (actionBar != null) actionBar.setDisplayShowHomeEnabled(false);
     }
     
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public static boolean hideActionBar(Activity activity) {
         ActionBar actionBar = activity.getActionBar();
         if (actionBar == null || !actionBar.isShowing()) return false;
@@ -109,7 +99,6 @@ public class CompatibilityImpl {
         return true;
     }
     
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public static boolean showActionBar(Activity activity) {
         ActionBar actionBar = activity.getActionBar();
         if (actionBar == null || actionBar.isShowing()) return false;
@@ -117,7 +106,6 @@ public class CompatibilityImpl {
         return true;
     }
     
-    @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
     public static void setActionBarCustomFavicon(Activity activity, Drawable icon) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             //activity.getActionBar().setDisplayShowHomeEnabled(true);
@@ -127,7 +115,6 @@ public class CompatibilityImpl {
         }
     }
     
-    @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
     public static void setActionBarDefaultIcon(Activity activity) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             //activity.getActionBar().setDisplayShowHomeEnabled(false);
@@ -142,7 +129,6 @@ public class CompatibilityImpl {
         void onDestroy();
     }
     
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public static void setCustomSelectionActionModeMenuCallback(TextView textView, final int titleRes, final Drawable icon,
             final CustomSelectionActionModeCallback callback) {
         textView.setCustomSelectionActionModeCallback(new ActionMode.Callback() {
@@ -177,64 +163,52 @@ public class CompatibilityImpl {
         });
     }
     
-    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     public static void setLayoutInflater(ViewStub view, LayoutInflater inflater) {
         view.setLayoutInflater(inflater);
     }
     
-    @TargetApi(Build.VERSION_CODES.FROYO)
     public static File getExternalCacheDir(Context context) {
         return context.getExternalCacheDir();
     }
     
-    @TargetApi(Build.VERSION_CODES.FROYO)
     public static File getExternalFilesDir(Context context) {
         return context.getExternalFilesDir(null);
     }
     
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public static void copyToClipboardAPI11(Activity activity, String label, String text) {
         ClipboardManager clipboard = (ClipboardManager) activity.getSystemService(Context.CLIPBOARD_SERVICE);
         ClipData clip = ClipData.newPlainText(label, text);
         clipboard.setPrimaryClip(clip);
     }
     
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
     public static void getDisplaySize(Display display, Point outSize) {
         display.getSize(outSize);
     }
     
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public static boolean isTextSelectable(TextView textView) {
         return textView.isTextSelectable();
     }
     
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public static void setTextIsSelectable(TextView textView) {
         textView.setTextIsSelectable(true);
     }
     
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public static void clearCookies(CookieManager cookieManager) {
         cookieManager.removeAllCookies(null);
     }
     
-    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     public static void removeOnGlobalLayoutListener(View view, OnGlobalLayoutListener onGlobalLayoutListener) {
         view.getViewTreeObserver().removeOnGlobalLayoutListener(onGlobalLayoutListener);
     }
     
-    @TargetApi(Build.VERSION_CODES.KITKAT)
     public static boolean isDocumentUri(Context context, Uri uri) {
         return DocumentsContract.isDocumentUri(context, uri);
     }
     
-    @TargetApi(Build.VERSION_CODES.KITKAT)
     public static String getDocumentId(Uri uri) {
         return DocumentsContract.getDocumentId(uri);
     }
     
-    @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
     public static void setDimAmount(Window window, float f) {
         window.setDimAmount(f);
     }
@@ -245,50 +219,41 @@ public class CompatibilityImpl {
         return Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
     }
     
-    @TargetApi(Build.VERSION_CODES.ECLAIR)
     public static void setScrollbarFadingEnabled(WebView webView, boolean fadeScrollbars) {
         webView.setScrollbarFadingEnabled(fadeScrollbars);
     }
     
     @SuppressWarnings("deprecation")
-    @TargetApi(Build.VERSION_CODES.ECLAIR_MR1)
     public static void setDefaultZoomFAR(WebSettings settings) {
         settings.setDefaultZoom(WebSettings.ZoomDensity.FAR);
     }
     
     @SuppressWarnings("deprecation")
-    @TargetApi(Build.VERSION_CODES.ECLAIR_MR1)
     public static void setDefaultZoomCLOSE(WebSettings settings) {
         settings.setDefaultZoom(WebSettings.ZoomDensity.CLOSE);
     }
     
     @SuppressWarnings("deprecation")
-    @TargetApi(Build.VERSION_CODES.ECLAIR_MR1)
     public static void setDefaultZoomMEDIUM(WebSettings settings) {
         settings.setDefaultZoom(WebSettings.ZoomDensity.MEDIUM);
     }
     
-    @TargetApi(Build.VERSION_CODES.ECLAIR_MR1)
     public static void setLoadWithOverviewMode(WebSettings settings, boolean overview) {
         settings.setLoadWithOverviewMode(overview);
     }
     
-    @TargetApi(Build.VERSION_CODES.FROYO)
     public static void setBlockNetworkLoads(WebSettings settings, boolean flag) {
         settings.setBlockNetworkLoads(flag);
     }
     
-    @TargetApi(Build.VERSION_CODES.ECLAIR)
     public static void setVideoViewZOrderOnTop(VideoView videoView) {
         videoView.setZOrderOnTop(true);
     }
     
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public static void recreateActivity(Activity activity) {
         activity.recreate();
     }
     
-    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     public static void setImageAlpha(ImageView imageView, int alpha) {
         imageView.setImageAlpha(alpha);
     }

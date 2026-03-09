@@ -59,7 +59,7 @@ public class ClickableLinksTextView extends JellyBeanSpanFixTextView {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         // the base TextView class checks if getAutoLinkMask != 0, so I added a similar code for == 0
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB && CompatibilityImpl.isTextSelectable(this) &&
+        if (CompatibilityImpl.isTextSelectable(this) &&
                 this.getText() instanceof Spannable && this.getAutoLinkMask() == 0 && this.getLinksClickable() &&
                 this.isEnabled() && this.getLayout() != null) {
             return this.checkLinksOnTouch(event);
@@ -94,15 +94,6 @@ public class ClickableLinksTextView extends JellyBeanSpanFixTextView {
             }
         }
         
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
-            try {
-                Method startSelectionActionMode = TextView.class.getDeclaredMethod("startSelectionActionMode");
-                startSelectionActionMode.setAccessible(true);
-                startSelectionActionMode.invoke(this);
-            } catch (Exception e) {
-                Logger.e(TAG, e);
-            }
-        }
     }
 
     private boolean checkLinksOnTouch(MotionEvent event) {

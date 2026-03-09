@@ -68,7 +68,7 @@ class CircleImageView extends ImageView {
     }
 
     private boolean elevationSupported() {
-        return android.os.Build.VERSION.SDK_INT >= 21;
+        return true;
     }
 
     @Override

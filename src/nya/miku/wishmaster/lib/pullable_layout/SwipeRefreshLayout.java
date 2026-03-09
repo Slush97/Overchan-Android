@@ -28,8 +28,6 @@ import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Transformation;
-import android.widget.AbsListView;
-import android.widget.ScrollView;
 import nya.miku.wishmaster.ui.CompatibilityUtils;
 
 /**
@@ -335,7 +333,7 @@ public class SwipeRefreshLayout extends ViewGroup {
      * Pre API 11, alpha is used to make the progress circle appear instead of scale.
      */
     private boolean isAlphaUsedForScale() {
-        return android.os.Build.VERSION.SDK_INT < 11;
+        return false;
     }
 
     /**
@@ -365,12 +363,7 @@ public class SwipeRefreshLayout extends ViewGroup {
 
     private void startScaleUpAnimation(AnimationListener listener) {
         mCircleView.setVisibility(View.VISIBLE);
-        if (android.os.Build.VERSION.SDK_INT >= 11) {
-            // Pre API 11, alpha is used in place of scale up to show the
-            // progress circle appearing.
-            // Don't adjust the alpha during appearance otherwise.
-            mProgress.setAlpha(MAX_ALPHA);
-        }
+        mProgress.setAlpha(MAX_ALPHA);
         mScaleAnimation = new Animation() {
             @Override
             public void applyTransformation(float interpolatedTime, Transformation t) {
@@ -590,46 +583,20 @@ public class SwipeRefreshLayout extends ViewGroup {
      *         scroll up. Override this if the child view is a custom view.
      */
     public boolean canChildScrollUp() {
-        if (android.os.Build.VERSION.SDK_INT < 14) {
-            if (mTarget instanceof AbsListView) {
-                final AbsListView absListView = (AbsListView) mTarget;
-                return absListView.getChildCount() > 0
-                        && (absListView.getFirstVisiblePosition() > 0 || absListView.getChildAt(0)
-                                .getTop() < absListView.getPaddingTop());
-            } else {
-                return mTarget.getScrollY() > 0;
-            }
-        } else {
-            return ViewCompat.canScrollVertically(mTarget, -1);
-        }
+        return ViewCompat.canScrollVertically(mTarget, -1);
     }
     
     /**
      * Этот метод добавлен
      */
     public boolean canChildScrollDown() { //изменено
-        if (android.os.Build.VERSION.SDK_INT < 14) {
-            if (mTarget instanceof AbsListView) {
-                final AbsListView absListView = (AbsListView) mTarget;
-                return absListView.getCount() > 0 
-                        && (absListView.getLastVisiblePosition() < absListView.getCount() - 1 || absListView
-                                .getChildAt(absListView.getLastVisiblePosition() - absListView.getFirstVisiblePosition())
-                                .getBottom() > absListView.getPaddingBottom() + getMeasuredHeight());
-            } else if (mTarget instanceof ScrollView) { //если ScrollView
-                return mTarget.getScrollY() + mTarget.getMeasuredHeight() < ((ScrollView)mTarget).getChildAt(0).getMeasuredHeight();
-            } else {
-                return true; //остальные случаи не обрабатываются
-            }
-        } else {
-            return ViewCompat.canScrollVertically(mTarget, 1);
-        }
+        return ViewCompat.canScrollVertically(mTarget, 1);
     }
 
     /**
      * Этот метод добавлен
      */
     private boolean isFastScrollX(MotionEvent ev) {
-        if (android.os.Build.VERSION.SDK_INT < 19) return false; //fast scroll работает не так на Android < 4.4
         if (MotionEventCompat.getActionMasked(ev) != MotionEvent.ACTION_DOWN) return false;
         
         try {
@@ -962,9 +929,6 @@ public class SwipeRefreshLayout extends ViewGroup {
         mCircleView.bringToFront();
         mCircleView.offsetTopAndBottom(offset);
         mCurrentTargetOffsetTop = mCircleView.getTop();
-        if (requiresUpdate && android.os.Build.VERSION.SDK_INT < 11) {
-            invalidate();
-        }
     }
 
     private void onSecondaryPointerUp(MotionEvent ev) {

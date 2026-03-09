@@ -45,7 +45,6 @@ import android.os.Build;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.CookieManager;
-import android.webkit.CookieSyncManager;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
@@ -121,12 +120,7 @@ public class CloudflareChecker {
         processing2 = true;
         currentCookie = null;
         
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            CookieSyncManager.createInstance(activity);
-            CookieManager.getInstance().removeAllCookie();
-        } else {
-            CompatibilityImpl.clearCookies(CookieManager.getInstance());
-        }
+        CompatibilityImpl.clearCookies(CookieManager.getInstance());
         
         final ViewGroup layout = (ViewGroup) activity.getWindow().getDecorView().getRootView();
         final WebViewClient client = new WebViewClient() {

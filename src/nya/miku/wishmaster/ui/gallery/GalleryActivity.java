@@ -222,13 +222,12 @@ public class GalleryActivity extends Activity implements View.OnClickListener {
     
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) requestWindowFeature(Window.FEATURE_PROGRESS);
         settings = getIntent().getParcelableExtra(EXTRA_SETTINGS);
         if (settings == null) settings = GallerySettings.fromSettings(
                 new ApplicationSettings(PreferenceManager.getDefaultSharedPreferences(getApplication()), getResources()));
         settings.getTheme().setTo(this, R.style.Transparent);
         super.onCreate(savedInstanceState);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) CompatibilityImpl.setActionBarNoIcon(this);
+        CompatibilityImpl.setActionBarNoIcon(this);
         
         inflater = getLayoutInflater();
         instantiatedViews = new SparseArray<View>();

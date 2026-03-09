@@ -619,35 +619,31 @@ public class VerticalViewPager extends ViewGroup {
      * @param transformer PageTransformer that will modify each page's animation properties
      */
     public void setPageTransformer(boolean reverseDrawingOrder, PageTransformer transformer) {
-        if (Build.VERSION.SDK_INT >= 11) {
-            final boolean hasTransformer = transformer != null;
-            final boolean needsPopulate = hasTransformer != (mPageTransformer != null);
-            mPageTransformer = transformer;
-            setChildrenDrawingOrderEnabledCompat(hasTransformer);
-            if (hasTransformer) {
-                mDrawingOrder = reverseDrawingOrder ? DRAW_ORDER_REVERSE : DRAW_ORDER_FORWARD;
-            } else {
-                mDrawingOrder = DRAW_ORDER_DEFAULT;
-            }
-            if (needsPopulate) populate();
+        final boolean hasTransformer = transformer != null;
+        final boolean needsPopulate = hasTransformer != (mPageTransformer != null);
+        mPageTransformer = transformer;
+        setChildrenDrawingOrderEnabledCompat(hasTransformer);
+        if (hasTransformer) {
+            mDrawingOrder = reverseDrawingOrder ? DRAW_ORDER_REVERSE : DRAW_ORDER_FORWARD;
+        } else {
+            mDrawingOrder = DRAW_ORDER_DEFAULT;
         }
+        if (needsPopulate) populate();
     }
 
     void setChildrenDrawingOrderEnabledCompat(boolean enable) {
-        if (Build.VERSION.SDK_INT >= 7) {
-            if (mSetChildrenDrawingOrderEnabled == null) {
-                try {
-                    mSetChildrenDrawingOrderEnabled = ViewGroup.class.getDeclaredMethod(
-                            "setChildrenDrawingOrderEnabled", new Class[] { Boolean.TYPE });
-                } catch (NoSuchMethodException e) {
-                    Log.e(TAG, "Can't find setChildrenDrawingOrderEnabled", e);
-                }
-            }
+        if (mSetChildrenDrawingOrderEnabled == null) {
             try {
-                mSetChildrenDrawingOrderEnabled.invoke(this, enable);
-            } catch (Exception e) {
-                Log.e(TAG, "Error changing children drawing order", e);
+                mSetChildrenDrawingOrderEnabled = ViewGroup.class.getDeclaredMethod(
+                        "setChildrenDrawingOrderEnabled", new Class[] { Boolean.TYPE });
+            } catch (NoSuchMethodException e) {
+                Log.e(TAG, "Can't find setChildrenDrawingOrderEnabled", e);
             }
+        }
+        try {
+            mSetChildrenDrawingOrderEnabled.invoke(this, enable);
+        } catch (Exception e) {
+            Log.e(TAG, "Error changing children drawing order", e);
         }
     }
 
@@ -2521,14 +2517,10 @@ public class VerticalViewPager extends ViewGroup {
                     handled = arrowScroll(FOCUS_DOWN);
                     break;
                 case KeyEvent.KEYCODE_TAB:
-                    if (Build.VERSION.SDK_INT >= 11) {
-                        // The focus finder had a bug handling FOCUS_FORWARD and FOCUS_BACKWARD
-                        // before Android 3.0. Ignore the tab key on those devices.
-                        if (event.hasNoModifiers()) {
-                            handled = arrowScroll(FOCUS_FORWARD);
-                        } else if (event.hasModifiers(KeyEvent.META_SHIFT_ON)) {
-                            handled = arrowScroll(FOCUS_BACKWARD);
-                        }
+                    if (event.hasNoModifiers()) {
+                        handled = arrowScroll(FOCUS_FORWARD);
+                    } else if (event.hasModifiers(KeyEvent.META_SHIFT_ON)) {
+                        handled = arrowScroll(FOCUS_BACKWARD);
                     }
                     break;
             }
