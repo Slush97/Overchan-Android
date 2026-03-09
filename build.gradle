@@ -23,7 +23,7 @@ dependencies {
     implementation libs.httpclient
     implementation libs.kryo
     implementation libs.tagsoup
-    implementation libs.exoplayer.core
+    implementation libs.media3.exoplayer
 }
 
 android {

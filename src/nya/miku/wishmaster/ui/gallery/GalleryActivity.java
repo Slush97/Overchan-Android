@@ -102,10 +102,10 @@ import android.graphics.Matrix;
 import android.view.ScaleGestureDetector;
 import android.view.TextureView;
 import androidx.core.content.FileProvider;
-import com.google.android.exoplayer2.ExoPlayer;
-import com.google.android.exoplayer2.MediaItem;
-import com.google.android.exoplayer2.Player;
-import com.google.android.exoplayer2.PlaybackException;
+import androidx.media3.common.MediaItem;
+import androidx.media3.common.PlaybackException;
+import androidx.media3.common.Player;
+import androidx.media3.exoplayer.ExoPlayer;
 
 public class GalleryActivity extends Activity implements View.OnClickListener {
     private static final String TAG = "GalleryActivity";
@@ -1071,7 +1071,7 @@ public class GalleryActivity extends Activity implements View.OnClickListener {
 
                             exoPlayer.addListener(new Player.Listener() {
                                 @Override
-                                public void onVideoSizeChanged(com.google.android.exoplayer2.video.VideoSize videoSize) {
+                                public void onVideoSizeChanged(androidx.media3.common.VideoSize videoSize) {
                                     if (videoSize.width == 0 || videoSize.height == 0) return;
                                     videoNativeSize[0] = videoSize.width;
                                     videoNativeSize[1] = videoSize.height;
