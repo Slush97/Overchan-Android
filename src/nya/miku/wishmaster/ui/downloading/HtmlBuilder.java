@@ -42,7 +42,7 @@ import nya.miku.wishmaster.api.models.UrlPageModel;
 import nya.miku.wishmaster.api.util.ChanModels;
 import nya.miku.wishmaster.cache.SerializablePage;
 import nya.miku.wishmaster.common.MainApplication;
-import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.text.StringEscapeUtils;
 
 import android.content.res.Resources;
 import android.graphics.Color;

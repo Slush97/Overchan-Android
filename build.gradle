@@ -19,6 +19,7 @@ dependencies {
     implementation libs.androidx.annotation
     implementation libs.androidx.cursoradapter
     implementation libs.commons.lang3
+    implementation libs.commons.text
     implementation libs.httpclient
     implementation libs.kryo
     implementation libs.tagsoup

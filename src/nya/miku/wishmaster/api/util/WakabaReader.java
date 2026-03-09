@@ -33,7 +33,7 @@ import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.text.StringEscapeUtils;
 
 import android.graphics.Color;
 import nya.miku.wishmaster.api.models.AttachmentModel;

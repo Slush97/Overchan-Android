@@ -7,7 +7,8 @@ androidx-swiperefreshlayout = "1.1.0"
 androidx-drawerlayout = "1.2.0"
 androidx-annotation = "1.7.1"
 androidx-cursoradapter = "1.0.0"
-commons-lang3 = "3.4"
+commons-lang3 = "3.17.0"
+commons-text = "1.13.0"
 httpclient = "4.3.6"
 kryo = "3.0.3"
 tagsoup = "1.2.1"
@@ -22,6 +23,7 @@ androidx-drawerlayout = { group = "androidx.drawerlayout", name = "drawerlayout"
 androidx-annotation = { group = "androidx.annotation", name = "annotation", version.ref = "androidx-annotation" }
 androidx-cursoradapter = { group = "androidx.cursoradapter", name = "cursoradapter", version.ref = "androidx-cursoradapter" }
 commons-lang3 = { group = "org.apache.commons", name = "commons-lang3", version.ref = "commons-lang3" }
+commons-text = { group = "org.apache.commons", name = "commons-text", version.ref = "commons-text" }
 httpclient = { group = "cz.msebera.android", name = "httpclient", version.ref = "httpclient" }
 kryo = { group = "com.esotericsoftware", name = "kryo", version.ref = "kryo" }
 tagsoup = { group = "org.ccil.cowan.tagsoup", name = "tagsoup", version.ref = "tagsoup" }

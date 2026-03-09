@@ -24,7 +24,7 @@ import java.text.DateFormat;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.text.StringEscapeUtils;
 
 import nya.miku.wishmaster.api.models.PostModel;
 import nya.miku.wishmaster.api.util.WakabaReader;
