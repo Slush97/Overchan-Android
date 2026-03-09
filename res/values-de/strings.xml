@@ -413,15 +413,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     
     <string name="mikuba_password_ignored">(wird ignoriert)</string>
     
-    <string name="dobrochan_prefs_max_rating">Höchste Bewertung</string>
-    <string name="dobrochan_prefs_show_captcha">Always show captcha</string>
-    <string name="dobrochan_prefs_show_captcha_summary">Show the captcha even when it is not required to enter</string>
-    
-    <string name="ponyach_prefs_passcode">Passcode</string>
-    <string name="ponyach_prefs_captcha">Captcha</string>
-    
-    <string name="infinity_tor_message">Um 8chan über Tor zu senden, müssen Sie den .onion Domain verwenden.</string>
-    
     <string name="fourchan_prefs_new_recaptcha">Recaptcha 2.0</string>
     <string name="fourchan_prefs_new_recaptcha_summary">Die neue Version von Recaptcha verwenden</string>
     <string name="fourchan_prefs_new_recaptcha_fallback">Recaptcha 2.0 Fallback</string>

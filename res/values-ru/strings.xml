@@ -420,15 +420,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     
     <string name="mikuba_password_ignored">(игнорируется)</string>
     
-    <string name="dobrochan_prefs_max_rating">Максимальный рейтинг</string>
-    <string name="dobrochan_prefs_show_captcha">Всегда показывать капчу</string>
-    <string name="dobrochan_prefs_show_captcha_summary">Показывать капчу, когда её вводить не требуется</string>
-    
-    <string name="ponyach_prefs_passcode">Пасскод</string>
-    <string name="ponyach_prefs_captcha">Капча</string>
-    
-    <string name="infinity_tor_message">Чтобы постить на 8chan через Tor, вы должны использовать .onion домен.</string>
-    
     <string name="fourchan_prefs_new_recaptcha">Recaptcha 2.0</string>
     <string name="fourchan_prefs_new_recaptcha_summary">Использовать новую версию Recaptcha</string>
     <string name="fourchan_prefs_new_recaptcha_fallback">Recaptcha 2.0 fallback</string>
