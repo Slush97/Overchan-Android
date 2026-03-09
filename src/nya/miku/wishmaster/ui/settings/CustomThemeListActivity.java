@@ -26,7 +26,6 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Environment;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -115,7 +114,7 @@ public class CustomThemeListActivity extends ListActivity {
             if (!CompatibilityUtils.hasAccessStorage(this)) return;
             Intent selectFile = new Intent(this, FileDialogActivity.class);
             selectFile.putExtra(FileDialogActivity.CAN_SELECT_DIR, false);
-            selectFile.putExtra(FileDialogActivity.START_PATH, Environment.getExternalStorageDirectory().getAbsolutePath());
+            selectFile.putExtra(FileDialogActivity.START_PATH, MainApplication.getInstance().settings.getDownloadDirectory().getAbsolutePath());
             selectFile.putExtra(FileDialogActivity.SELECTION_MODE, FileDialogActivity.SELECTION_MODE_OPEN);
             selectFile.putExtra(FileDialogActivity.FORMAT_FILTER, new String[] { "json" });
             startActivityForResult(selectFile, REQUEST_CODE_SELECT_CUSTOM_THEME);

@@ -33,12 +33,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteStatement;
-import android.os.Build;
-import android.os.Environment;
 import android.provider.BaseColumns;
 import nya.miku.wishmaster.common.IOUtils;
 import nya.miku.wishmaster.common.Logger;
-import nya.miku.wishmaster.ui.CompatibilityImpl;
 
 /**
  * Общий файловый кэш (LRU)
@@ -526,22 +523,12 @@ public class FileCache {
     }
     
     private static File getAvailableCacheDir(Context context) {
-        File externalCacheDir = null;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
-            externalCacheDir = CompatibilityImpl.getExternalCacheDir(context);
-        } else if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-            externalCacheDir = new File(Environment.getExternalStorageDirectory(), "/Android/data/" + context.getPackageName() + "/cache/");
-        }
+        File externalCacheDir = context.getExternalCacheDir();
         return externalCacheDir != null ? externalCacheDir : context.getCacheDir();
     }
-    
+
     private static File getAvailableFilesDir(Context context) {
-        File externalFilesDir = null;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
-            externalFilesDir = CompatibilityImpl.getExternalFilesDir(context);
-        } else if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-            externalFilesDir = new File(Environment.getExternalStorageDirectory(), "/Android/data/" + context.getPackageName() + "/files/");
-        }
+        File externalFilesDir = context.getExternalFilesDir(null);
         return externalFilesDir != null ? externalFilesDir : context.getFilesDir();
     }
     

@@ -52,7 +52,6 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.text.InputType;
 import android.view.ContextMenu;
 import android.view.KeyEvent;
@@ -160,7 +159,7 @@ public class PostFormActivity extends Activity implements View.OnClickListener {
         settings.getTheme().setTo(this);
         super.onCreate(savedInstanceState);
         attachments = new ArrayList<File>();
-        currentPath = Environment.getExternalStorageDirectory().getAbsolutePath();
+        currentPath = MainApplication.getInstance().settings.getDownloadDirectory().getAbsolutePath();
         
         ((NotificationManager) getSystemService(NOTIFICATION_SERVICE)).cancel(PostingService.POSTING_NOTIFICATION_ID);
         

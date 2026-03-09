@@ -14,7 +14,6 @@ import android.graphics.Canvas;
 //import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
-import android.os.Environment;
 import android.os.SystemClock;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -2950,7 +2949,7 @@ public class DragSortListView extends ListView {
         private boolean mTracking = false;
 
         public DragSortTracker() {
-            File root = Environment.getExternalStorageDirectory();
+            File root = getContext().getCacheDir();
             mFile = new File(root, "dslv_state.txt");
 
             if (!mFile.exists()) {

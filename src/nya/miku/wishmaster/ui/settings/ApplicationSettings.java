@@ -29,7 +29,6 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Build;
-import android.os.Environment;
 
 public class ApplicationSettings {
     private final SharedPreferences preferences;
@@ -45,10 +44,7 @@ public class ApplicationSettings {
     }
     
     public File getDefaultDownloadDir() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
-            return CompatibilityImpl.getDefaultDownloadDir();
-        }
-        return new File(Environment.getExternalStorageDirectory(), "/Download/");
+        return CompatibilityImpl.getDefaultDownloadDir();
     }
     
     public boolean isHidePersonalData() {

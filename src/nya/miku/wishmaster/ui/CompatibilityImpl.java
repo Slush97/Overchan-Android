@@ -239,8 +239,9 @@ public class CompatibilityImpl {
         window.setDimAmount(f);
     }
     
-    @TargetApi(Build.VERSION_CODES.FROYO)
+    @SuppressWarnings("deprecation")
     public static File getDefaultDownloadDir() {
+        // TODO: Migrate DownloadingService to MediaStore API for proper scoped storage support
         return Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
     }
     
