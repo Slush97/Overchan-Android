@@ -62,6 +62,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import androidx.core.content.ContextCompat;
+import androidx.core.view.WindowCompat;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -233,6 +234,7 @@ public class GalleryActivity extends Activity implements View.OnClickListener {
             setContentView(R.layout.gallery_layout_fullscreen);
             GalleryFullscreen.initFullscreen(this);
         } else {
+            WindowCompat.setDecorFitsSystemWindows(getWindow(), true);
             setContentView(R.layout.gallery_layout);
         }
         

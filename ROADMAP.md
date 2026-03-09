@@ -65,11 +65,11 @@ Rebranding Overchan Android → esochan, and modernizing for 2026 Android standa
 - [x] **Foreground service types (SDK 34):** DownloadingService + TabsTrackerService have `dataSync`; PostingService doesn't use `startForeground()`
 - [x] Add `FOREGROUND_SERVICE_DATA_SYNC` permission
 - [x] Update `startForeground()` calls to pass service type
-- [ ] **Edge-to-edge (SDK 35):** Handle window insets if content is obscured by system bars
+- [x] **Edge-to-edge (SDK 35):** `WindowCompat.setDecorFitsSystemWindows(window, true)` via `ActivityLifecycleCallbacks` for all activities; GalleryActivity fullscreen opts out
 - [x] Remove dead `SDK_INT` branches (minSdk is 21)
 - [x] `build.gradle`: targetSdk → 35
 
-**Status:** Phase 1A (A1–A3) and Phase 1B (B1–B3) are complete. B4 and B5 are nearly complete. Remaining work: A4 (copyright headers), B4 scoped storage TODO (`getExternalStoragePublicDirectory`), B5 edge-to-edge.
+**Status:** Phase 1A (A1–A3) and Phase 1B (B1–B5) are complete except: A4 (copyright headers), B4 scoped storage TODO (`getExternalStoragePublicDirectory`).
 
 ---
 

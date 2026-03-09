@@ -30,6 +30,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import androidx.core.view.WindowCompat;
 import nya.miku.wishmaster.R;
 import nya.miku.wishmaster.common.Async;
 import nya.miku.wishmaster.ui.AppearanceUtils;
@@ -77,6 +78,7 @@ public class GalleryFullscreen {
             galleryNavbarView = (ViewGroup) activity.findViewById(R.id.gallery_navigation_bar_container);
             galleryNavbarView.setAlpha(0.75f);
             
+            WindowCompat.setDecorFitsSystemWindows(window, false);
             setTranslucentPanels();
             showUI(true);
             fixNavbarOverlay();

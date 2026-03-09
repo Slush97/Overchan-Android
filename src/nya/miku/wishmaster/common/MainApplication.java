@@ -43,6 +43,7 @@ import nya.miku.wishmaster.ui.settings.Wifi;
 import nya.miku.wishmaster.ui.tabs.TabsState;
 import nya.miku.wishmaster.ui.tabs.TabsSwitcher;
 
+import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningAppProcessInfo;
 import android.app.Application;
@@ -52,7 +53,12 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Build;
+import android.os.Bundle;
 import android.preference.PreferenceManager;
+
+import androidx.core.view.WindowCompat;
+
+import nya.miku.wishmaster.ui.gallery.GalleryActivity;
 
 /**
  * Класс приложения (расширяет {@link Application}).<br>
@@ -236,6 +242,7 @@ public class MainApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        registerActivityLifecycleCallbacks(new EdgeToEdgeCallbacks());
         if (isGalleryProcess()) return;
         initObjects();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -278,5 +285,25 @@ public class MainApplication extends Application {
         bitmapCache.clearLru();
         draftsCache.clearLru();
     }
-    
+
+    /**
+     * On SDK 35+, Android enforces edge-to-edge rendering (content behind transparent
+     * system bars). Restore the pre-35 default of fitting content within system bars
+     * for all activities except GalleryActivity, which manages its own immersive mode.
+     */
+    private static class EdgeToEdgeCallbacks implements ActivityLifecycleCallbacks {
+        @Override
+        public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
+            if (!(activity instanceof GalleryActivity)) {
+                WindowCompat.setDecorFitsSystemWindows(activity.getWindow(), true);
+            }
+        }
+        @Override public void onActivityStarted(Activity activity) {}
+        @Override public void onActivityResumed(Activity activity) {}
+        @Override public void onActivityPaused(Activity activity) {}
+        @Override public void onActivityStopped(Activity activity) {}
+        @Override public void onActivitySaveInstanceState(Activity activity, Bundle outState) {}
+        @Override public void onActivityDestroyed(Activity activity) {}
+    }
+
 }
