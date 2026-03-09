@@ -28,35 +28,19 @@ import android.view.View;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class CompatibilityUtils {
     
-    @SuppressWarnings("deprecation")
     public static void getDisplaySize(Display display, Point outSize) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB_MR2) {
-            outSize.set(display.getWidth(), display.getHeight());
-        } else {
-            CompatibilityImpl.getDisplaySize(display, outSize);
-        }
+        display.getSize(outSize);
     }
     
-    @SuppressWarnings("deprecation")
     public static void removeOnGlobalLayoutListener(View view, OnGlobalLayoutListener onGlobalLayoutListener) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
-            view.getViewTreeObserver().removeGlobalOnLayoutListener(onGlobalLayoutListener);
-        } else {
-            CompatibilityImpl.removeOnGlobalLayoutListener(view, onGlobalLayoutListener);
-        }
+        view.getViewTreeObserver().removeOnGlobalLayoutListener(onGlobalLayoutListener);
     }
     
-    @SuppressWarnings("deprecation")
     public static void setImageAlpha(ImageView imageView, int alphaValue) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
-            imageView.setAlpha((int) alphaValue);
-        } else {
-            CompatibilityImpl.setImageAlpha(imageView, alphaValue);
-        }
+        imageView.setImageAlpha(alphaValue);
     }
     
     @SuppressWarnings("deprecation")

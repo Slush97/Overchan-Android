@@ -4,7 +4,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
 import nya.miku.wishmaster.common.Logger;
-import nya.miku.wishmaster.ui.CompatibilityImpl;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Build;
@@ -59,7 +58,7 @@ public class ClickableLinksTextView extends JellyBeanSpanFixTextView {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         // the base TextView class checks if getAutoLinkMask != 0, so I added a similar code for == 0
-        if (CompatibilityImpl.isTextSelectable(this) &&
+        if (this.isTextSelectable() &&
                 this.getText() instanceof Spannable && this.getAutoLinkMask() == 0 && this.getLinksClickable() &&
                 this.isEnabled() && this.getLayout() != null) {
             return this.checkLinksOnTouch(event);

@@ -2064,11 +2064,7 @@ public class BoardFragment extends Fragment implements AdapterView.OnItemClickLi
             }
             
             if ((popupWidth != null || fragment().pageType == TYPE_POSTSLIST) && !tag.clickableLinksSet) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-                    CompatibilityImpl.setTextIsSelectable(tag.commentView);
-                } else {
-                    tag.commentView.setMovementMethod(FixedLinkMovementMethod.getInstance());
-                }
+                tag.commentView.setTextIsSelectable(true);
                 tag.headerView.setMovementMethod(FixedLinkMovementMethod.getInstance());
                 tag.repliesView.setMovementMethod(FixedLinkMovementMethod.getInstance());
                 tag.clickableLinksSet = true;

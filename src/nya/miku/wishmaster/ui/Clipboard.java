@@ -19,23 +19,19 @@
 package nya.miku.wishmaster.ui;
 
 import android.app.Activity;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
-import android.os.Build;
-import android.text.ClipboardManager;
 
-@SuppressWarnings("deprecation")
 public class Clipboard {
     private Clipboard() {}
-    
+
     /**
      * Скопировать текст в буфер обмена
      */
     public static void copyText(Activity activity, String text) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
-            ClipboardManager clipboard = (ClipboardManager) activity.getSystemService(Context.CLIPBOARD_SERVICE);
-            clipboard.setText(text);
-        } else {
-            CompatibilityImpl.copyToClipboardAPI11(activity, text, text);
-        }
+        ClipboardManager clipboard = (ClipboardManager) activity.getSystemService(Context.CLIPBOARD_SERVICE);
+        ClipData clip = ClipData.newPlainText(text, text);
+        clipboard.setPrimaryClip(clip);
     }
 }

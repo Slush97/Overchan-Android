@@ -25,32 +25,23 @@ import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.ActionBar;
 import android.app.Activity;
-import android.content.ClipData;
-import android.content.ClipboardManager;
-import android.content.Context;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.content.res.Resources;
-import android.graphics.Point;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.preference.Preference;
-import android.provider.DocumentsContract;
 import android.view.ActionMode;
-import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewStub;
 import android.view.Window;
-import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.webkit.CookieManager;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.VideoView;
 
@@ -167,46 +158,8 @@ public class CompatibilityImpl {
         view.setLayoutInflater(inflater);
     }
     
-    public static File getExternalCacheDir(Context context) {
-        return context.getExternalCacheDir();
-    }
-    
-    public static File getExternalFilesDir(Context context) {
-        return context.getExternalFilesDir(null);
-    }
-    
-    public static void copyToClipboardAPI11(Activity activity, String label, String text) {
-        ClipboardManager clipboard = (ClipboardManager) activity.getSystemService(Context.CLIPBOARD_SERVICE);
-        ClipData clip = ClipData.newPlainText(label, text);
-        clipboard.setPrimaryClip(clip);
-    }
-    
-    public static void getDisplaySize(Display display, Point outSize) {
-        display.getSize(outSize);
-    }
-    
-    public static boolean isTextSelectable(TextView textView) {
-        return textView.isTextSelectable();
-    }
-    
-    public static void setTextIsSelectable(TextView textView) {
-        textView.setTextIsSelectable(true);
-    }
-    
     public static void clearCookies(CookieManager cookieManager) {
         cookieManager.removeAllCookies(null);
-    }
-    
-    public static void removeOnGlobalLayoutListener(View view, OnGlobalLayoutListener onGlobalLayoutListener) {
-        view.getViewTreeObserver().removeOnGlobalLayoutListener(onGlobalLayoutListener);
-    }
-    
-    public static boolean isDocumentUri(Context context, Uri uri) {
-        return DocumentsContract.isDocumentUri(context, uri);
-    }
-    
-    public static String getDocumentId(Uri uri) {
-        return DocumentsContract.getDocumentId(uri);
     }
     
     public static void setDimAmount(Window window, float f) {
@@ -248,14 +201,6 @@ public class CompatibilityImpl {
     
     public static void setVideoViewZOrderOnTop(VideoView videoView) {
         videoView.setZOrderOnTop(true);
-    }
-    
-    public static void recreateActivity(Activity activity) {
-        activity.recreate();
-    }
-    
-    public static void setImageAlpha(ImageView imageView, int alpha) {
-        imageView.setImageAlpha(alpha);
     }
     
     @TargetApi(Build.VERSION_CODES.M)

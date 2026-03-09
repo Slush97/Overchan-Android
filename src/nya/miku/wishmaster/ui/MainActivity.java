@@ -546,7 +546,7 @@ public class MainActivity extends FragmentActivity {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            CompatibilityImpl.recreateActivity(MainActivity.this);
+                            MainActivity.this.recreate();
                         }
                     });
                 }
