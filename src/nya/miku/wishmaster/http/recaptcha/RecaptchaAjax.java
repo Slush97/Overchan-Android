@@ -82,7 +82,7 @@ public class RecaptchaAjax {
                 proxy = ConnRouteParams.getDefaultProxy(httpClient.getParams());
             } catch (Exception e) { /*ignore*/ }
         }
-        if (proxy != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+        if (proxy != null) {
             return Intercepting.getInternal(address, data, task, httpClient);
         } else {
             return getChallengeInternal(address, data, task, proxy);

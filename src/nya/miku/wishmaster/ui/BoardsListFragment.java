@@ -146,19 +146,15 @@ public class BoardsListFragment extends Fragment implements AdapterView.OnItemCl
                         Logger.e(TAG, e);
                     }
                 }
-            }, Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB);
+            }, true);
         }
     }
     
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         MenuItem itemUpdate = menu.add(Menu.NONE, R.id.menu_update, 101, resources.getString(R.string.menu_update));
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            itemUpdate.setIcon(ThemeUtils.getActionbarIcon(activity.getTheme(), resources, R.attr.actionRefresh));
-            CompatibilityImpl.setShowAsActionIfRoom(itemUpdate);
-        } else {
-            itemUpdate.setIcon(R.drawable.ic_menu_refresh);
-        }
+        itemUpdate.setIcon(ThemeUtils.getActionbarIcon(activity.getTheme(), resources, R.attr.actionRefresh));
+        CompatibilityImpl.setShowAsActionIfRoom(itemUpdate);
         
         if (quickAccessList == null) return;
         for (QuickAccess.Entry entry : quickAccessList)
@@ -215,8 +211,7 @@ public class BoardsListFragment extends Fragment implements AdapterView.OnItemCl
         buttonGo = (Button) rootView.findViewById(R.id.boardslist_btn_go);
         buttonGo.setOnClickListener(this);
         activity.setTitle(chan.getDisplayingName());
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH)
-            CompatibilityImpl.setActionBarCustomFavicon(activity, chan.getChanFavicon());
+        CompatibilityImpl.setActionBarCustomFavicon(activity, chan.getChanFavicon());
         update(false);
         return rootView;
     }

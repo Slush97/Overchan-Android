@@ -1968,12 +1968,4 @@ public class FixedSubsamplingScaleImageView extends View {
         return true;
     }
     
-    public boolean canScrollHorizontallyOldAPI(int direction) {
-        return canScrollHorizontally(direction);
-    }
-    
-    public boolean canScrollVerticallyOldAPI(int direction) {
-        return canScrollVertically(direction);
-    }
-    
 }

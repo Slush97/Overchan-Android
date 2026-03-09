@@ -36,31 +36,4 @@ public class WebViewFixed extends WebView {
         }
     }
     
-    /**
-     * Метод {@link #canScrollHorizontally(int)} для использования на старых версиях Android
-     */
-    public boolean canScrollHorizontallyOldAPI(int direction) {
-        final int offset = computeHorizontalScrollOffset();
-        final int range = computeHorizontalScrollRange() - computeHorizontalScrollExtent();
-        if (range == 0) return false;
-        if (direction < 0) {
-            return offset > 0;
-        } else {
-            return offset < range - 1;
-        }
-    }
-    
-    /**
-     * Метод {@link #canScrollVertically(int)} для использования на старых версиях Android
-     */
-    public boolean canScrollVerticallyOldAPI(int direction) {
-        final int offset = computeVerticalScrollOffset();
-        final int range = computeVerticalScrollRange() - computeVerticalScrollExtent();
-        if (range == 0) return false;
-        if (direction < 0) {
-            return offset > 0;
-        } else {
-            return offset < range - 1;
-        }
-    }
 }

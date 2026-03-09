@@ -93,14 +93,9 @@ public class JSWebView {
     public static void setImage(final WebView webView, final File file) {
         fixWebViewTip(webView.getContext());
         
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.GINGERBREAD_MR1) {
-            webView.setDrawingCacheEnabled(true);
-        }
         webView.setBackgroundColor(Color.TRANSPARENT);
         webView.setScrollBarStyle(WebView.SCROLLBARS_OUTSIDE_OVERLAY);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ECLAIR) {
-            CompatibilityImpl.setScrollbarFadingEnabled(webView, true);
-        }
+        CompatibilityImpl.setScrollbarFadingEnabled(webView, true);
         
         WebSettings settings = webView.getSettings();
         settings.setJavaScriptEnabled(true);
@@ -109,9 +104,7 @@ public class JSWebView {
         settings.setAllowFileAccess(true);
         settings.setUseWideViewPort(true);
         settings.setCacheMode(WebSettings.LOAD_NO_CACHE);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
-            CompatibilityImpl.setBlockNetworkLoads(settings, true);
-        }
+        CompatibilityImpl.setBlockNetworkLoads(settings, true);
         
         Runnable setup = new Runnable() {
             @Override

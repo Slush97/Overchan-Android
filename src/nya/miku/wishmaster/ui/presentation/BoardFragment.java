@@ -379,8 +379,7 @@ public class BoardFragment extends Fragment implements AdapterView.OnItemClickLi
         floatingModels = measureFloatingModels(inflater);
         
         activity.setTitle(tabModel.title);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH)
-            CompatibilityImpl.setActionBarCustomFavicon(activity, chan.getChanFavicon());
+        CompatibilityImpl.setActionBarCustomFavicon(activity, chan.getChanFavicon());
         update(forceUpdateFirstTime, false, false);
         return rootView;
     }
@@ -447,15 +446,10 @@ public class BoardFragment extends Fragment implements AdapterView.OnItemClickLi
                 resources.getString(pageType == TYPE_POSTSLIST ? R.string.menu_add_post : R.string.menu_add_thread));
         MenuItem itemUpdate = menu.add(Menu.NONE, R.id.menu_update, 102, 
                 resources.getString(tabModel.type != TabModel.TYPE_LOCAL ? R.string.menu_update : R.string.menu_from_internet));
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            itemAddPost.setIcon(ThemeUtils.getActionbarIcon(activity.getTheme(), resources, R.attr.actionAddPost));
-            itemUpdate.setIcon(ThemeUtils.getActionbarIcon(activity.getTheme(), resources, R.attr.actionRefresh));
-            CompatibilityImpl.setShowAsActionIfRoom(itemAddPost);
-            CompatibilityImpl.setShowAsActionIfRoom(itemUpdate);
-        } else {
-            itemAddPost.setIcon(R.drawable.ic_menu_edit);
-            itemUpdate.setIcon(R.drawable.ic_menu_refresh);
-        }
+        itemAddPost.setIcon(ThemeUtils.getActionbarIcon(activity.getTheme(), resources, R.attr.actionAddPost));
+        itemUpdate.setIcon(ThemeUtils.getActionbarIcon(activity.getTheme(), resources, R.attr.actionRefresh));
+        CompatibilityImpl.setShowAsActionIfRoom(itemAddPost);
+        CompatibilityImpl.setShowAsActionIfRoom(itemUpdate);
         menu.add(Menu.NONE, R.id.menu_catalog, 103, resources.getString(R.string.menu_catalog)).setIcon(R.drawable.ic_menu_list);
         menu.add(Menu.NONE, R.id.menu_search, 104, resources.getString(R.string.menu_search)).setIcon(android.R.drawable.ic_menu_search);
         menu.add(Menu.NONE, R.id.menu_save_page, 105, resources.getString(R.string.menu_save_page)).setIcon(android.R.drawable.ic_menu_save);
@@ -642,7 +636,7 @@ public class BoardFragment extends Fragment implements AdapterView.OnItemClickLi
         if (pageType == TYPE_POSTSLIST) {
             menu.add(Menu.NONE, R.id.context_menu_reply, 1, R.string.context_menu_reply);
             menu.add(Menu.NONE, R.id.context_menu_reply_with_quote, 2, R.string.context_menu_reply_with_quote);
-            menu.add(Menu.NONE, R.id.context_menu_select_text, 3, Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB && isList ?
+            menu.add(Menu.NONE, R.id.context_menu_select_text, 3, isList ?
                     R.string.context_menu_select_text : R.string.context_menu_copy_text);
             menu.add(Menu.NONE, R.id.context_menu_share, 4, R.string.context_menu_share);
             menu.add(Menu.NONE, R.id.context_menu_hide, 5, R.string.context_menu_hide_post);
@@ -782,7 +776,7 @@ public class BoardFragment extends Fragment implements AdapterView.OnItemClickLi
                 openReply(position, true, null);
                 return true;
             case R.id.context_menu_select_text:
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB && lastContextMenuPosition == -1) {
+                if (lastContextMenuPosition == -1) {
                     int firstPosition = listView.getFirstVisiblePosition() - listView.getHeaderViewsCount();
                     int wantedChild = position - firstPosition;
                     if (wantedChild >= 0 && wantedChild < listView.getChildCount()) {
@@ -884,7 +878,7 @@ public class BoardFragment extends Fragment implements AdapterView.OnItemClickLi
     public void onPause() {
         super.onPause();
         activity.setDrawerLock(DrawerLayout.LOCK_MODE_UNLOCKED);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) CompatibilityImpl.showActionBar(activity);
+        CompatibilityImpl.showActionBar(activity);
         saveCurrentPostPosition();
     }
     
@@ -1401,7 +1395,7 @@ public class BoardFragment extends Fragment implements AdapterView.OnItemClickLi
                 /** установить SwipeDismissListViewTouchListener, если требуется (соответствует версия ОС, открыт список тредов, включена настройка);
                  *  возвращает созданный OnScrollListener */
                 private ListView.OnScrollListener setSwipeDismissListener() {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR1 && pageType == TYPE_THREADSLIST &&
+                    if (pageType == TYPE_THREADSLIST &&
                             settings.swipeToHideThread()) {
                         final SwipeDismissListViewTouchListener touchListener = new SwipeDismissListViewTouchListener(listView,
                                 new SwipeDismissListViewTouchListener.DismissCallbacks() {
@@ -1432,9 +1426,8 @@ public class BoardFragment extends Fragment implements AdapterView.OnItemClickLi
                     listView.setAdapter(adapter);
                     listView.requestFocus();
                     final ListView.OnScrollListener swipeDismissOnScrollListener = setSwipeDismissListener();
-                    if (Build.VERSION.SDK_INT > Build.VERSION_CODES.ECLAIR_MR1) {
-                        //busy состояние адаптера, не загружать картинки из интернета, во время скроллинга
-                        listView.setOnScrollListener(new ListView.OnScrollListener() {
+                    //busy состояние адаптера, не загружать картинки из интернета, во время скроллинга
+                    listView.setOnScrollListener(new ListView.OnScrollListener() {
                             @Override
                             public void onScrollStateChanged(AbsListView view, int scrollState) {
                                 if (swipeDismissOnScrollListener != null) swipeDismissOnScrollListener.onScrollStateChanged(view, scrollState);
@@ -1448,8 +1441,7 @@ public class BoardFragment extends Fragment implements AdapterView.OnItemClickLi
                             @Override
                             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
                                 //скрытие actionbar
-                                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB ||
-                                        !staticSettings.hideActionBar || view.getChildCount() <= 0) return;
+                                if (!staticSettings.hideActionBar || view.getChildCount() <= 0) return;
                                 
                                 int firstVisibleTop = view.getChildAt(0).getTop();
                                 int topDelta = firstVisibleTop - lastFirstVisibleTop;
@@ -1492,7 +1484,6 @@ public class BoardFragment extends Fragment implements AdapterView.OnItemClickLi
                                 adapter.setBusy(false);
                             }
                         });
-                    }
                     switchToListView();
                     updateMenu();
                     if (isThreadPage) {
@@ -1852,7 +1843,7 @@ public class BoardFragment extends Fragment implements AdapterView.OnItemClickLi
                 tag.showFullTextView = (TextView) view.findViewById(R.id.post_show_full_text);
                 tag.repliesView = (JellyBeanSpanFixTextView) view.findViewById(R.id.post_replies);
                 tag.postsCountView = (TextView) view.findViewById(R.id.post_posts_count);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB && fragment().pageType == TYPE_POSTSLIST) {
+                if (fragment().pageType == TYPE_POSTSLIST) {
                     CompatibilityImpl.setCustomSelectionActionModeMenuCallback(tag.commentView,
                             R.string.context_menu_reply_with_quote,
                             ThemeUtils.getActionbarIcon(fragment().activity.getTheme(), fragment().resources, R.attr.actionAddPost),
@@ -1879,37 +1870,6 @@ public class BoardFragment extends Fragment implements AdapterView.OnItemClickLi
                                 tag.commentView.setLayoutParams(params);
                                 fragment().scrollDown();
                                 
-                                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
-                                    final int selectionStart = tag.commentView.getSelectionStart();
-                                    final int selectionEnd = tag.commentView.getSelectionEnd();
-                                    AppearanceUtils.callWhenLoaded(tag.commentView, new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            try {
-                                                ViewGroup.LayoutParams params = tag.commentView.getLayoutParams();
-                                                if (params.height != ViewGroup.LayoutParams.WRAP_CONTENT) return;
-                                                params.height = tag.commentView.getHeight() + margin;
-                                                tag.commentView.setLayoutParams(params);
-                                                fragment().scrollDown();
-                                                
-                                                AppearanceUtils.callWhenLoaded(tag.commentView, new Runnable() {
-                                                    @Override
-                                                    public void run() {
-                                                        try {
-                                                            tag.commentView.startSelection();
-                                                            Selection.setSelection(
-                                                                    (Spannable) tag.commentView.getText(), selectionStart, selectionEnd);
-                                                        } catch (Exception e) {
-                                                            Logger.e(TAG, e);
-                                                        }
-                                                    }
-                                                });
-                                            } catch (Exception e) {
-                                                Logger.e(TAG, e);
-                                            }
-                                        }
-                                    });
-                                }
                             } catch (Exception e) {
                                 Logger.e(TAG, e);
                             }
@@ -3032,11 +2992,7 @@ public class BoardFragment extends Fragment implements AdapterView.OnItemClickLi
                     dialog.getWindow().setAttributes(params);
                     
                     //затемнение в планшетном режиме не нужно
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-                        CompatibilityImpl.setDimAmount(dialog.getWindow(), 0.1f);
-                    } else {
-                        dialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-                    }
+                    CompatibilityImpl.setDimAmount(dialog.getWindow(), 0.1f);
                 }
                 dialog.show();
                 dialogs.add(dialog);
@@ -3293,8 +3249,7 @@ public class BoardFragment extends Fragment implements AdapterView.OnItemClickLi
         if (DownloadingService.isInQueue(check)) {
             Toast.makeText(activity, resources.getString(R.string.notification_download_already_in_queue, itemName), Toast.LENGTH_LONG).show();
         } else {
-            Context dialogContext = Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB ?
-                    new ContextThemeWrapper(activity, R.style.Theme_Neutron) : activity;
+            Context dialogContext = activity;
             View saveThreadDialogView = LayoutInflater.from(dialogContext).inflate(R.layout.dialog_save_thread, null);
             final CheckBox saveThumbsChkbox = (CheckBox) saveThreadDialogView.findViewById(R.id.dialog_save_thread_thumbs);
             final CheckBox saveAllChkbox = (CheckBox) saveThreadDialogView.findViewById(R.id.dialog_save_thread_all);
@@ -3647,8 +3602,7 @@ public class BoardFragment extends Fragment implements AdapterView.OnItemClickLi
     
     @SuppressLint("InflateParams")
     private void runDelete(final DeletePostModel deletePostModel, final boolean hasFiles) {
-        Context dialogContext = Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB ?
-                new ContextThemeWrapper(activity, R.style.Theme_Neutron) : activity;
+        Context dialogContext = activity;
         View dlgLayout = LayoutInflater.from(dialogContext).inflate(R.layout.dialog_delete, null);
         final EditText inputField = (EditText) dlgLayout.findViewById(R.id.dialog_delete_password_field);
         final CheckBox onlyFiles = (CheckBox) dlgLayout.findViewById(R.id.dialog_delete_only_files);

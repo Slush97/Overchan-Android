@@ -45,22 +45,18 @@ public class GalleryFullscreen {
     @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
     public static class GalleryFullscreenImpl implements View.OnSystemUiVisibilityChangeListener, GalleryActivity.FullscreenCallback {
         @SuppressLint("InlinedApi")
-        private static final int SYSTEM_UI_VISIBLE = Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2 ?
+        private static final int SYSTEM_UI_VISIBLE =
                 View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
                 View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION |
-                View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN :
-                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
-        
+                View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
+
         @SuppressLint("InlinedApi")
-        private static final int SYSTEM_UI_HIDDEN = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT ?
+        private static final int SYSTEM_UI_HIDDEN =
                 View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN |
                 View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
                 View.SYSTEM_UI_FLAG_FULLSCREEN |
                 View.SYSTEM_UI_FLAG_IMMERSIVE |
-                View.SYSTEM_UI_FLAG_LOW_PROFILE :
-                    View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
-                    View.SYSTEM_UI_FLAG_FULLSCREEN |
-                    View.SYSTEM_UI_FLAG_LOW_PROFILE;
+                View.SYSTEM_UI_FLAG_LOW_PROFILE;
         
         private final Window window;
         private final View decorView;
@@ -76,10 +72,8 @@ public class GalleryFullscreen {
             decorView = activity.getWindow().getDecorView();
             decorView.setOnSystemUiVisibilityChangeListener(this);
             actionBar = activity.getActionBar();
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-                int color = ThemeUtils.getThemeColor(activity.getTheme(), R.attr.materialPrimary, Color.WHITE);
-                actionBar.setBackgroundDrawable(new ColorDrawable(color & Color.argb(192, 255, 255, 255)));
-            }
+            int color = ThemeUtils.getThemeColor(activity.getTheme(), R.attr.materialPrimary, Color.WHITE);
+            actionBar.setBackgroundDrawable(new ColorDrawable(color & Color.argb(192, 255, 255, 255)));
             galleryNavbarView = (ViewGroup) activity.findViewById(R.id.gallery_navigation_bar_container);
             galleryNavbarView.setAlpha(0.75f);
             
@@ -191,11 +185,8 @@ public class GalleryFullscreen {
             decorView.setSystemUiVisibility(SYSTEM_UI_HIDDEN);
         }
         
-        @TargetApi(Build.VERSION_CODES.KITKAT)
         private void setTranslucentPanels() {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION | WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-            }
+            window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION | WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         }
         
     }

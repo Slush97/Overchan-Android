@@ -94,7 +94,7 @@ public class CloudflareChecker {
                 proxy = ConnRouteParams.getDefaultProxy(httpClient.getParams());
             } catch (Exception e) { /*ignore*/ }
         }
-        if (proxy != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+        if (proxy != null) {
             if (httpClient instanceof ExtendedHttpClient) {
                 return InterceptingAntiDDOS.getInstance().check(exception, (ExtendedHttpClient) httpClient, task, activity);
             } else {

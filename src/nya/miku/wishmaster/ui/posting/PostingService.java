@@ -185,9 +185,6 @@ public class PostingService extends Service {
                         if (newProgress == curProgress) return;
                         curProgress = newProgress;
                         progressNotifBuilder.setProgress(100, newProgress, false);
-                        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-                            progressNotifBuilder.setContentTitle("("+newProgress+"%) "+notifTitle);
-                        }
                         notificationManager.notify(POSTING_NOTIFICATION_ID, progressNotifBuilder.build());
                         Intent broadcastIntent = new Intent(BROADCAST_ACTION_PROGRESS);
                         broadcastIntent.putExtra(EXTRA_BROADCAST_PROGRESS_STATUS, newProgress);
@@ -201,9 +198,6 @@ public class PostingService extends Service {
                     public void setIndeterminate() {
                         if (curProgress == -1) return;
                         progressNotifBuilder.setProgress(100, 0, true);
-                        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-                            progressNotifBuilder.setContentTitle(notifTitle);
-                        }
                         notificationManager.notify(POSTING_NOTIFICATION_ID, progressNotifBuilder.build());
                         curProgress = -1;
                         Intent broadcastIntent = new Intent(BROADCAST_ACTION_PROGRESS);

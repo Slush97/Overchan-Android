@@ -78,7 +78,7 @@ public class FavoritesFragment extends Fragment implements AdapterView.OnItemCli
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         activity.setTitle(R.string.tabs_favorites);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) CompatibilityImpl.setActionBarDefaultIcon(activity);
+        CompatibilityImpl.setActionBarDefaultIcon(activity);
         viewPager = (ViewPager) inflater.inflate(R.layout.favorites_fragment, container, false);
         update();
         return viewPager;

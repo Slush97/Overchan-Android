@@ -66,18 +66,14 @@ public class FlowTextHelperImpl {
     public static void setFloatLayoutPosition(View thumbnailView, TextView messageView) {
         RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)messageView.getLayoutParams();
         params.addRule(RelativeLayout.RIGHT_OF, 0);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            removeEndOfRule(params);
-        }
+        removeEndOfRule(params);
         thumbnailView.bringToFront();
     }
     
     public static void setDefaultLayoutPosition(View thumbnailView, TextView messageView) {
         RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)messageView.getLayoutParams();
         params.addRule(RelativeLayout.RIGHT_OF, thumbnailView.getId());
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            addEndOfRule(params, thumbnailView.getId());
-        }
+        addEndOfRule(params, thumbnailView.getId());
     }
     
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)

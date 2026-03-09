@@ -93,11 +93,9 @@ public class ThemeUtils {
         try {
             int id = getThemeResId(theme, attrId);
             Drawable drawable = ResourcesCompat.getDrawable(resources, id, theme);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                int color = getThemeColor(theme, android.R.attr.textColorPrimary, Color.TRANSPARENT);
-                if (color != Color.TRANSPARENT) {
-                    drawable.setColorFilter(color, PorterDuff.Mode.SRC_ATOP);
-                }
+            int color = getThemeColor(theme, android.R.attr.textColorPrimary, Color.TRANSPARENT);
+            if (color != Color.TRANSPARENT) {
+                drawable.setColorFilter(color, PorterDuff.Mode.SRC_ATOP);
             }
             return drawable;
         } catch (Exception e) {

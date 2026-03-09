@@ -41,7 +41,6 @@ public class HttpRequestException extends Exception {
     public static String getMessage(Exception e) {
         if (e instanceof SSLException) return getString(R.string.error_ssl, "SSL/HTTPS Error");
         if (e instanceof SocketTimeoutException) return getString(R.string.error_connection_timeout, "Connection timed out");
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.GINGERBREAD_MR1 && e instanceof UnknownHostException) return "Unable to resolve host";
         if (e != null && e.getMessage() != null) return e.getLocalizedMessage();
         return getString(R.string.error_connection, "Unable to connect to server");
     }

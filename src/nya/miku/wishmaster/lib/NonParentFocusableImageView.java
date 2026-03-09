@@ -14,7 +14,7 @@ import android.widget.ImageView;
 
 public class NonParentFocusableImageView extends ImageView {
     
-    private final boolean needHack = Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN;
+    private final boolean needHack = false;
     
     public NonParentFocusableImageView(Context context) {
         super(context);

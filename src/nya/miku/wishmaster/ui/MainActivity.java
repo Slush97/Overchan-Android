@@ -108,7 +108,7 @@ public class MainActivity extends FragmentActivity {
     
     private void initDrawer() {
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer);
-        if (drawerLayout == null || Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) return;
+        if (drawerLayout == null) return;
 
         drawerToggle = new ActionBarDrawerToogleV7(this, drawerLayout, R.string.drawer_open, R.string.drawer_close) {
             @Override
@@ -537,37 +537,19 @@ public class MainActivity extends FragmentActivity {
     private void restartActivity() {
         MainApplication.getInstance().tabsSwitcher.currentId = null;
         MainApplication.getInstance().tabsSwitcher.currentFragment = null;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            // https://code.google.com/p/android/issues/detail?id=93731
-            Async.runAsync(new Runnable() {
-                @Override
-                public void run() {
-                    try { Thread.sleep(10); } catch (Exception e) {}
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            MainActivity.this.recreate();
+        // https://code.google.com/p/android/issues/detail?id=93731
+        Async.runAsync(new Runnable() {
+            @Override
+            public void run() {
+                try { Thread.sleep(10); } catch (Exception e) {}
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        MainActivity.this.recreate();
                         }
                     });
                 }
             });
-        } else {
-            final Intent i = new Intent(this.getIntent());
-            this.finish();
-            Async.runAsync(new Runnable() {
-                @Override
-                public void run() {
-                    //сначала должно уничтожиться старое activity; onDestroy() старого -> onCreate() нового
-                    while (!isDestroyed) Thread.yield();
-                    Async.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            MainActivity.this.startActivity(i);
-                        }
-                    });
-                }
-            });
-        }
     }
     
     private void handleOrientationChange(Configuration configuration) {
@@ -745,7 +727,6 @@ public class MainActivity extends FragmentActivity {
     }
     
     private boolean focusActionBar() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) return false;
         if (drawerLayout == null || drawerLayout.isDrawerOpen(DRAWER_GRAVITY)) return false;
         try {
             int resId = getResources().getIdentifier("action_bar_container", "id", "android");

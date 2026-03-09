@@ -98,20 +98,9 @@ public class CompatibilityImpl {
     }
     
     public static void setActionBarCustomFavicon(Activity activity, Drawable icon) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            //activity.getActionBar().setDisplayShowHomeEnabled(true);
-            //activity.getActionBar().setIcon(icon);
-        } else {
-            activity.getActionBar().setIcon(icon);
-        }
     }
-    
+
     public static void setActionBarDefaultIcon(Activity activity) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            //activity.getActionBar().setDisplayShowHomeEnabled(false);
-        } else {
-            activity.getActionBar().setIcon(R.drawable.ic_launcher);
-        }
     }
     
     public static interface CustomSelectionActionModeCallback {

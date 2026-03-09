@@ -32,7 +32,7 @@ import android.widget.TextView;
  *
  */
 public class FlowTextHelper {
-    public static final boolean IS_AVAILABLE = Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO;
+    public static final boolean IS_AVAILABLE = true;
     
     private static boolean flowText(SpannableStringBuilder string, int width, int height, int textFullWidth, TextPaint textPaint) {
         if (IS_AVAILABLE && textFullWidth > width) {

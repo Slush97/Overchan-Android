@@ -263,21 +263,6 @@ public class PreferencesActivity extends PreferenceActivity {
             ((PreferenceGroup) getPreferenceManager().findPreference(getString(R.string.pref_key_cat_advanced))).removePreference(p);
         }
         
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.GINGERBREAD_MR1) {
-            Preference p = getPreferenceManager().findPreference(getString(R.string.pref_key_gallery_scaleimageview));
-            ((PreferenceGroup) getPreferenceManager().findPreference(getString(R.string.pref_key_gallery_screen))).removePreference(p);
-        }
-        
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-            Preference p = getPreferenceManager().findPreference(getString(R.string.pref_key_gallery_fullscreen));
-            ((PreferenceGroup) getPreferenceManager().findPreference(getString(R.string.pref_key_gallery_screen))).removePreference(p);
-        }
-        
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
-            Preference p = getPreferenceManager().findPreference(getString(R.string.pref_key_hide_actionbar_on_scroll));
-            ((PreferenceGroup) getPreferenceManager().findPreference(getString(R.string.pref_key_cat_appearance))).removePreference(p);
-        }
-        
         if (!MainApplication.getInstance().settings.isRealTablet()) {
             Preference pHide = getPreferenceManager().findPreference(getString(R.string.pref_key_sidepanel_hide));
             Preference pWidth = getPreferenceManager().findPreference(getString(R.string.pref_key_sidepanel_width));
@@ -405,9 +390,7 @@ public class PreferencesActivity extends PreferenceActivity {
             PreferenceScreen curScreen = getPreferenceManager().createPreferenceScreen(this);
             curScreen.setTitle(chan.getDisplayingName());
             curScreen.setKey("chan_preference_screen_" + chan.getChanName());
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-                CompatibilityImpl.setIcon(curScreen, chan.getChanFavicon());
-            }
+            CompatibilityImpl.setIcon(curScreen, chan.getChanFavicon());
             chansCat.addPreference(curScreen);
             chan.addPreferencesOnScreen(curScreen);
             ++visibleChansCount;

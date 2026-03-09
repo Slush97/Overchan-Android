@@ -576,9 +576,6 @@ public class DownloadingService extends Service {
                                     Attachments.getAttachmentLocalShortName(attachment, item.boardModel));
                             String curThumbElementName = getString(R.string.downloading_thumbnail_format, curElementName);
                             String curHash = ChanModels.hashAttachmentModel(attachment);
-                            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-                                progressNotifBuilder.setContentText("("+i+"/"+attachments.size()+") "+elementName);
-                            }
                             curProgress = Math.round(100f * i / attachments.size());
                             progressNotifBuilder.setProgress(attachments.size(), i, false);
                             notifyForeground(DOWNLOADING_NOTIFICATION_ID, progressNotifBuilder.build());

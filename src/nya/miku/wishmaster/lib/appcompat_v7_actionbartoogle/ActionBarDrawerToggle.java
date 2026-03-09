@@ -201,12 +201,8 @@ public class ActionBarDrawerToggle implements DrawerLayout.DrawerListener {
             mActivityImpl = ((DelegateProvider) activity).getDrawerToggleDelegate();
         } else if (activity instanceof TmpDelegateProvider) {// tmp interface for transition
             mActivityImpl = ((TmpDelegateProvider) activity).getV7DrawerToggleDelegate();
-        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-            mActivityImpl = new JellybeanMr2Delegate(activity);
-        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            mActivityImpl = new HoneycombDelegate(activity);
         } else {
-            mActivityImpl = new DummyDelegate(activity);
+            mActivityImpl = new JellybeanMr2Delegate(activity);
         }
 
         mDrawerLayout = drawerLayout;

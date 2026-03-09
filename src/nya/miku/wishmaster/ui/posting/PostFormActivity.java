@@ -172,7 +172,7 @@ public class PostFormActivity extends Activity implements View.OnClickListener {
         }
         chan = MainApplication.getInstance().getChanModule(sendPostModel.chanName);
         setTitle(sendPostModel.threadNumber == null ? R.string.postform_title_thread : R.string.postform_title_post);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH && chan != null)
+        if (chan != null)
             CompatibilityImpl.setActionBarCustomFavicon(this, chan.getChanFavicon());
         setViews();
         readSendPostModel();
@@ -237,15 +237,10 @@ public class PostFormActivity extends Activity implements View.OnClickListener {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuItem itemAttach = menu.add(Menu.NONE, R.id.menu_attach_file, 1, R.string.menu_attach_file);
         MenuItem itemGallery = menu.add(Menu.NONE, R.id.menu_attach_gallery, 2, R.string.menu_attach_gallery);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            itemAttach.setIcon(ThemeUtils.getActionbarIcon(getTheme(), getResources(), R.attr.actionAddAttachment));
-            itemGallery.setIcon(ThemeUtils.getActionbarIcon(getTheme(), getResources(), R.attr.actionAddGallery));
-            CompatibilityImpl.setShowAsActionIfRoom(itemAttach);
-            CompatibilityImpl.setShowAsActionIfRoom(itemGallery);
-        } else {
-            itemAttach.setIcon(R.drawable.ic_menu_attachment);
-            itemGallery.setIcon(android.R.drawable.ic_menu_gallery);
-        }
+        itemAttach.setIcon(ThemeUtils.getActionbarIcon(getTheme(), getResources(), R.attr.actionAddAttachment));
+        itemGallery.setIcon(ThemeUtils.getActionbarIcon(getTheme(), getResources(), R.attr.actionAddGallery));
+        CompatibilityImpl.setShowAsActionIfRoom(itemAttach);
+        CompatibilityImpl.setShowAsActionIfRoom(itemGallery);
         return super.onCreateOptionsMenu(menu);
     }
     

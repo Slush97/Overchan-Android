@@ -144,11 +144,7 @@ public class GenericThemeEntry implements Parcelable {
     }
     
     public void setToPreferencesActivity(Context context) {
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.HONEYCOMB_MR2 || Build.VERSION.SDK_INT < Build.VERSION_CODES.ECLAIR_0_1) {
-            setTo(context);
-        } else {
-            setBaseStyle(context, BASE_THEME_DARK, fontSizeStyleId);
-        }
+        setTo(context);
     }
     
     private static void setBaseStyle(Context context, int themeId, int fontSizeStyleId) {

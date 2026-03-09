@@ -66,11 +66,6 @@ class ActionBarDrawerToggleHoneycomb {
             try {
                 final ActionBar actionBar = activity.getActionBar();
                 info.setHomeActionContentDescription.invoke(actionBar, contentDescRes);
-                if (Build.VERSION.SDK_INT <= 19) {
-                    // For API 19 and earlier, we need to manually force the
-                    // action bar to generate a new content description.
-                    actionBar.setSubtitle(actionBar.getSubtitle());
-                }
             } catch (Exception e) {
                 Log.w(TAG, "Couldn't set content description via JB-MR2 API", e);
             }

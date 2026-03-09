@@ -159,15 +159,11 @@ public class GalleryActivity extends Activity implements View.OnClickListener {
             GalleryActivity activity = reference.get();
             if (activity == null) return;
             int progress = msg.arg1;
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                if (progress != Window.PROGRESS_END) {
-                    if (activity.progressBar.getVisibility() == View.GONE) activity.progressBar.setVisibility(View.VISIBLE);
-                    activity.progressBar.setProgress(progress);
-                } else {
-                    if (activity.progressBar.getVisibility() == View.VISIBLE) activity.progressBar.setVisibility(View.GONE);
-                }
+            if (progress != Window.PROGRESS_END) {
+                if (activity.progressBar.getVisibility() == View.GONE) activity.progressBar.setVisibility(View.VISIBLE);
+                activity.progressBar.setProgress(progress);
             } else {
-                activity.setProgress(progress);
+                if (activity.progressBar.getVisibility() == View.VISIBLE) activity.progressBar.setVisibility(View.GONE);
             }
         }
     }
@@ -233,7 +229,7 @@ public class GalleryActivity extends Activity implements View.OnClickListener {
         instantiatedViews = new SparseArray<View>();
         tnDownloadingExecutor = Executors.newFixedThreadPool(4, Async.LOW_PRIORITY_FACTORY);
         
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH && settings.fullscreenGallery()) {
+        if (settings.fullscreenGallery()) {
             setContentView(R.layout.gallery_layout_fullscreen);
             GalleryFullscreen.initFullscreen(this);
         } else {
@@ -367,15 +363,10 @@ public class GalleryActivity extends Activity implements View.OnClickListener {
         this.menu = menu;
         MenuItem itemUpdate = menu.add(Menu.NONE, R.id.menu_update, 1, R.string.menu_update);
         MenuItem itemSave = menu.add(Menu.NONE, R.id.menu_save_attachment, 2, R.string.menu_save_attachment);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            itemUpdate.setIcon(ThemeUtils.getActionbarIcon(getTheme(), getResources(), R.attr.actionRefresh));
-            itemSave.setIcon(ThemeUtils.getActionbarIcon(getTheme(), getResources(), R.attr.actionSave));
-            CompatibilityImpl.setShowAsActionIfRoom(itemUpdate);
-            CompatibilityImpl.setShowAsActionIfRoom(itemSave);
-        } else {
-            itemUpdate.setIcon(R.drawable.ic_menu_refresh);
-            itemSave.setIcon(android.R.drawable.ic_menu_save);
-        }
+        itemUpdate.setIcon(ThemeUtils.getActionbarIcon(getTheme(), getResources(), R.attr.actionRefresh));
+        itemSave.setIcon(ThemeUtils.getActionbarIcon(getTheme(), getResources(), R.attr.actionSave));
+        CompatibilityImpl.setShowAsActionIfRoom(itemUpdate);
+        CompatibilityImpl.setShowAsActionIfRoom(itemSave);
         menu.add(Menu.NONE, R.id.menu_open_external, 3, R.string.menu_open).setIcon(R.drawable.ic_menu_set_as);
         menu.add(Menu.NONE, R.id.menu_share, 4, R.string.menu_share).setIcon(android.R.drawable.ic_menu_share);
         menu.add(Menu.NONE, R.id.menu_share_link, 5, R.string.menu_share_link).setIcon(android.R.drawable.ic_menu_share);
@@ -865,7 +856,7 @@ public class GalleryActivity extends Activity implements View.OnClickListener {
     }
     
     private void setStaticImage(final GalleryItemViewTag tag, final File file) {
-        if (!settings.useScaleImageView() || Build.VERSION.SDK_INT < Build.VERSION_CODES.GINGERBREAD_MR1 || Jpeg.isNonStandardGrayscaleImage(file)) {
+        if (!settings.useScaleImageView() || Jpeg.isNonStandardGrayscaleImage(file)) {
             setWebView(tag, file);
             return;
         }
@@ -913,8 +904,7 @@ public class GalleryActivity extends Activity implements View.OnClickListener {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                ImageView iv = Build.VERSION.SDK_INT < Build.VERSION_CODES.FROYO ?
-                        new ImageView(GalleryActivity.this) : new TouchGifView(GalleryActivity.this);
+                ImageView iv = new TouchGifView(GalleryActivity.this);
                 try {
                     GifDrawable drawable = new GifDrawable(file);
                     iv.setTag(drawable);
@@ -939,7 +929,7 @@ public class GalleryActivity extends Activity implements View.OnClickListener {
     }
     
     private void setSvg(GalleryItemViewTag tag, File file) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) setWebView(tag, file); else setOtherFile(tag, file);
+        setWebView(tag, file);
     }
     
     private void setVideo(final GalleryItemViewTag tag, final File file) {
@@ -1258,24 +1248,18 @@ public class GalleryActivity extends Activity implements View.OnClickListener {
                 webView.setBackgroundColor(Color.TRANSPARENT);
                 webView.setInitialScale(100);
                 webView.setScrollBarStyle(WebView.SCROLLBARS_OUTSIDE_OVERLAY);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ECLAIR) {
-                    CompatibilityImpl.setScrollbarFadingEnabled(webView, true);
-                }
+                CompatibilityImpl.setScrollbarFadingEnabled(webView, true);
 
                 WebSettings settings = webView.getSettings();
                 settings.setBuiltInZoomControls(true);
                 settings.setSupportZoom(true);
                 settings.setAllowFileAccess(true);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ECLAIR_MR1) {
-                    CompatibilityImpl.setDefaultZoomFAR(settings);
-                    CompatibilityImpl.setLoadWithOverviewMode(settings, true);
-                }
+                CompatibilityImpl.setDefaultZoomFAR(settings);
+                CompatibilityImpl.setLoadWithOverviewMode(settings, true);
                 settings.setUseWideViewPort(true);
                 settings.setCacheMode(WebSettings.LOAD_NO_CACHE);
 
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
-                    CompatibilityImpl.setBlockNetworkLoads(settings, true);
-                }
+                CompatibilityImpl.setBlockNetworkLoads(settings, true);
                 
                 setScaleWebView(webView);
             }
@@ -1307,15 +1291,13 @@ public class GalleryActivity extends Activity implements View.OnClickListener {
                 int scale = (int)Math.round(Math.min(scaleX, scaleY) * 100d);
                 scale = Math.max(scale, 1);
                 //Logger.d(TAG, "Scale: "+(Math.min(scaleX, scaleY) * 100d));
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ECLAIR_MR1) {
-                    double picdpi = (getResources().getDisplayMetrics().density * 160d) / scaleX;
-                    if (picdpi >= 240) {
-                        CompatibilityImpl.setDefaultZoomFAR(webView.getSettings());
-                    } else if (picdpi <= 120) {
-                        CompatibilityImpl.setDefaultZoomCLOSE(webView.getSettings());
-                    } else {
-                        CompatibilityImpl.setDefaultZoomMEDIUM(webView.getSettings());
-                    }
+                double picdpi = (getResources().getDisplayMetrics().density * 160d) / scaleX;
+                if (picdpi >= 240) {
+                    CompatibilityImpl.setDefaultZoomFAR(webView.getSettings());
+                } else if (picdpi <= 120) {
+                    CompatibilityImpl.setDefaultZoomCLOSE(webView.getSettings());
+                } else {
+                    CompatibilityImpl.setDefaultZoomMEDIUM(webView.getSettings());
                 }
                 
                 webView.setInitialScale(scale);
@@ -1335,7 +1317,7 @@ public class GalleryActivity extends Activity implements View.OnClickListener {
                 if (path.endsWith(".jpg")) return false;
                 if (path.endsWith(".gif")) return false;
                 if (path.endsWith(".jpeg")) return false;
-                if (path.endsWith(".webp") && Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) return false;
+                if (path.endsWith(".webp")) return false;
                 return true;
             }
             

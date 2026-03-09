@@ -295,13 +295,8 @@ public class TouchGifView extends ImageView {
         }
     }
     
-    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     private void compatibilityPostOnAnimation(Runnable runnable) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            postOnAnimation(runnable);
-        } else {
-            postDelayed(runnable, 1000/60);
-        }
+        postOnAnimation(runnable);
     }
     
     private class DoubleTapZoom implements Runnable {
@@ -407,31 +402,6 @@ public class TouchGifView extends ImageView {
         public int getCurrY();
     }
     
-    private static class OldScroller implements IScroller {
-        private Scroller scroller;
-        public void init(Context context) {
-            scroller = new Scroller(context);
-        }
-        public void fling(int startX, int startY, int velocityX, int velocityY, int minX, int maxX, int minY, int maxY) {
-            scroller.fling(startX, startY, velocityX, velocityY, minX, maxX, minY, maxY);            
-        }
-        public void forceFinished(boolean finished) {
-            scroller.forceFinished(finished);            
-        }
-        public boolean isFinished() {
-            return scroller.isFinished();
-        }
-        public boolean computeScrollOffset() {
-            return scroller.computeScrollOffset();
-        }
-        public int getCurrX() {
-            return scroller.getCurrX();
-        }
-        public int getCurrY() {
-            return scroller.getCurrY();
-        }        
-    }
-    
     @TargetApi(Build.VERSION_CODES.GINGERBREAD)
     private static class NewScroller implements TouchGifView.IScroller {
         private OverScroller overScroller;
@@ -463,11 +433,7 @@ public class TouchGifView extends ImageView {
         IScroller scroller;
         int currX, currY;
         Fling(int velocityX, int velocityY) {
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.GINGERBREAD) {
-                scroller = new OldScroller();
-            } else {
-                scroller = new NewScroller();
-            }
+            scroller = new NewScroller();
             scroller.init(context);
             matrix.getValues(m);
             int startX = (int) m[Matrix.MTRANS_X];
@@ -579,14 +545,6 @@ public class TouchGifView extends ImageView {
             return false;
         }
         return true;
-    }
-    
-    public boolean canScrollHorizontallyOldAPI(int direction) {
-        return canScrollHorizontally(direction);
-    }
-    
-    public boolean canScrollVerticallyOldAPI(int direction) {
-        return canScrollVertically(direction);
     }
     
 }

@@ -46,22 +46,13 @@ public class VerticalViewPagerFixed extends VerticalViewPager {
     
     @Override
     protected boolean canScroll(View v, boolean checkV, int dx, int x, int y) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-            if (v instanceof FixedSubsamplingScaleImageView) {
-                return ((FixedSubsamplingScaleImageView) v).canScrollVerticallyOldAPI(-dx);
-            } else if (v instanceof WebViewFixed) {
-                return ((WebViewFixed) v).canScrollVerticallyOldAPI(-dx);
-            } else if (v instanceof TouchGifView) {
-                return ((TouchGifView) v).canScrollVerticallyOldAPI(-dx); 
-            }
-        }
         return super.canScroll(v, checkV, dx, x, y);
     }
     
     private boolean helpImmersiveSwipe = false;
     private int immersiveSwipeHeight;
     private boolean isImmersiveSwipe(MotionEvent ev) {
-        if (!helpImmersiveSwipe || Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) return false;
+        if (!helpImmersiveSwipe) return false;
         return Math.min(ev.getY(), getHeight() - ev.getY()) < immersiveSwipeHeight;
     }
     

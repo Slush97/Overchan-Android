@@ -94,7 +94,7 @@ public class AutohideActivity extends ListActivity {
             changeId = -1; //-1 - создать новое правило
         }
         
-        Context dialogContext = Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB ? new ContextThemeWrapper(this, R.style.Theme_Neutron) : this;
+        Context dialogContext = this;
         View dialogView = LayoutInflater.from(dialogContext).inflate(R.layout.dialog_autohide_rule, null);
         final EditText regexEditText = (EditText) dialogView.findViewById(R.id.dialog_autohide_regex);
         final Spinner chanSpinner = (Spinner) dialogView.findViewById(R.id.dialog_autohide_chan_spinner);

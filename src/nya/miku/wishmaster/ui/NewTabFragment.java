@@ -92,7 +92,7 @@ public class NewTabFragment extends Fragment implements AdapterView.OnItemClickL
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         activity.setTitle(R.string.tabs_newtab);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) CompatibilityImpl.setActionBarDefaultIcon(activity);
+        CompatibilityImpl.setActionBarDefaultIcon(activity);
         View v = inflater.inflate(R.layout.newtab_fragment, container, false);
         listView = (DragSortListView) v.findViewById(android.R.id.list);
         DragSortController controller = new DragSortController(listView, R.id.newtab_quickaccess_drag_handle, DragSortController.ON_DRAG, 0) {

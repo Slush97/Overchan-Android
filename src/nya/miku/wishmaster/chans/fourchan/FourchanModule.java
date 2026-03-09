@@ -85,7 +85,7 @@ public class FourchanModule extends CloudflareChanModule {
     
     static final String CHAN_NAME = "4chan.org";
     
-    private static final boolean NEW_RECAPTCHA_DEFAULT = Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD_MR1;
+    private static final boolean NEW_RECAPTCHA_DEFAULT = true;
     
     private static final String PREF_KEY_NEW_RECAPTCHA = "PREF_KEY_NEW_RECAPTCHA1";
     private static final String PREF_KEY_NEW_RECAPTCHA_FALLBACK = "PREF_KEY_NEW_RECAPTCHA_FALLBACK";

@@ -100,7 +100,7 @@ public class CustomThemeHelper implements LayoutInflaterFactory {
             
             constructor.setAccessible(true);
             View view = constructor.newInstance(args);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN && view instanceof ViewStub)
+            if (view instanceof ViewStub)
                 CompatibilityImpl.setLayoutInflater((ViewStub) view, inflater.cloneInContext(context));
             return view;
         } catch (Exception e) {
@@ -204,8 +204,7 @@ public class CustomThemeHelper implements LayoutInflaterFactory {
     }
     
     private static void processWindow(Context context, SparseIntArray attrs, int textColorPrimaryOriginal, int textColorPrimaryOverridden) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) return;
-        boolean isLollipop = Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP;
+        boolean isLollipop = true;
         
         int materialPrimaryIndex = attrs.indexOfKey(R.attr.materialPrimary);
         int materialPrimaryDarkIndex = attrs.indexOfKey(R.attr.materialPrimaryDark);
