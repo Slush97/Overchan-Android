@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.locks.LockSupport;
 
-import org.apache.commons.lang3.tuple.Triple;
+import nya.miku.wishmaster.common.Tuples.Triple;
 
 import nya.miku.wishmaster.R;
 import nya.miku.wishmaster.api.ChanModule;

@@ -21,7 +21,7 @@ package nya.miku.wishmaster.ui.gallery;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang3.tuple.Triple;
+import nya.miku.wishmaster.common.Tuples.Triple;
 
 import android.os.Parcel;
 import android.os.Parcelable;

@@ -97,7 +97,7 @@ This should be done as a single atomic commit with IDE refactoring support.
 - [ ] Kryo 3.0.3 → Kryo 5.x (or kotlinx.serialization)
 - [ ] `base64-2.3.8.jar` → `java.util.Base64` (built into Java 8+)
 - [ ] Remove local JARs from `libs/` where Maven equivalents exist (minlog, objenesis, reflectasm)
-- [ ] `commons-lang3:3.4` → evaluate if still needed, bump or remove
+- [x] `commons-lang3` → removed direct dependency; replaced Pair/Triple with Java 17 records in `Tuples.java`
 
 ### Bump AndroidX
 - [ ] Review all AndroidX deps for latest stable versions

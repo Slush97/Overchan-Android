@@ -24,7 +24,7 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import org.apache.commons.lang3.tuple.Pair;
+import nya.miku.wishmaster.common.Tuples.Pair;
 
 import nya.miku.wishmaster.api.models.AttachmentModel;
 import nya.miku.wishmaster.api.models.BadgeIconModel;

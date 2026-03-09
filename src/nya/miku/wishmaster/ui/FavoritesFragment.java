@@ -28,7 +28,7 @@ import nya.miku.wishmaster.ui.Database.FavoritesEntry;
 import nya.miku.wishmaster.ui.settings.ApplicationSettings;
 import nya.miku.wishmaster.ui.tabs.UrlHandler;
 
-import org.apache.commons.lang3.tuple.Pair;
+import nya.miku.wishmaster.common.Tuples.Pair;
 
 import android.content.res.Resources;
 import android.os.Build;

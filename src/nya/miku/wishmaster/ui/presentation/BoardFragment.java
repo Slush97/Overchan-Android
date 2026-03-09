@@ -33,7 +33,7 @@ import java.util.TimeZone;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import org.apache.commons.lang3.tuple.Triple;
+import nya.miku.wishmaster.common.Tuples.Triple;
 
 import nya.miku.wishmaster.R;
 import nya.miku.wishmaster.api.ChanModule;

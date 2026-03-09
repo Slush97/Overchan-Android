@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
-import org.apache.commons.lang3.tuple.Triple;
+import nya.miku.wishmaster.common.Tuples.Triple;
 
 import android.app.Service;
 import android.content.Intent;

@@ -20,7 +20,7 @@ package nya.miku.wishmaster.ui;
 
 import java.io.File;
 
-import org.apache.commons.lang3.tuple.Pair;
+import nya.miku.wishmaster.common.Tuples.Pair;
 
 import nya.miku.wishmaster.R;
 import nya.miku.wishmaster.api.models.BoardModel;

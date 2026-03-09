@@ -23,7 +23,7 @@ import java.io.IOException;
 import java.util.Locale;
 import java.util.Random;
 
-import org.apache.commons.lang3.tuple.Pair;
+import nya.miku.wishmaster.common.Tuples.Pair;
 
 import nya.miku.wishmaster.R;
 import nya.miku.wishmaster.api.models.UrlPageModel;

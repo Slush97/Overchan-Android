@@ -38,7 +38,7 @@ import android.util.Base64;
 import nya.miku.wishmaster.ui.AppearanceUtils;
 import nya.miku.wishmaster.ui.CompatibilityUtils;
 
-import org.apache.commons.lang3.tuple.Pair;
+import nya.miku.wishmaster.common.Tuples.Pair;
 import cz.msebera.android.httpclient.Header;
 import cz.msebera.android.httpclient.HttpHeaders;
 import cz.msebera.android.httpclient.NameValuePair;

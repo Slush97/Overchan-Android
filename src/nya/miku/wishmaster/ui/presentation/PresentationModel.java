@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 
-import org.apache.commons.lang3.tuple.Triple;
+import nya.miku.wishmaster.common.Tuples.Triple;
 
 import nya.miku.wishmaster.api.interfaces.CancellableTask;
 import nya.miku.wishmaster.api.models.AttachmentModel;
