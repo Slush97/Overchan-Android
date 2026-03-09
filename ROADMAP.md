@@ -23,9 +23,9 @@ Rebranding Overchan Android → esochan, and modernizing for 2026 Android standa
 - [ ] Remove deprecated `package=` attribute from manifest (AGP reads namespace from build.gradle)
 
 ### A3: Broadcast actions & ACRA (low risk)
-- [ ] Update broadcast action strings in PostingService, TabsTrackerService, DownloadingService, BoardFragment
-- [ ] Disable or replace ACRA (currently points to `miku-nyan.cloudant.com` with embedded credentials)
-- [ ] `proguard-project.txt`: add `dev.esoc.**` keep rule alongside existing `nya.miku.**`
+- [x] Update broadcast action strings in PostingService, TabsTrackerService, DownloadingService, BoardFragment
+- [x] Disable or replace ACRA (currently points to `miku-nyan.cloudant.com` with embedded credentials)
+- [x] `proguard-project.txt`: add `dev.esoc.**` keep rule alongside existing `nya.miku.**`
 
 ### A4: Copyright headers (zero functional risk, bulk change)
 - [ ] Update GPL headers in all 206+ source files: "Overchan Android" → "esochan"
