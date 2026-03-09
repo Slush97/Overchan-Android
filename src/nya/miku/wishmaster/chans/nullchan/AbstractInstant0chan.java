@@ -25,8 +25,6 @@ import java.io.SequenceInputStream;
 import java.text.DateFormat;
 import java.text.DateFormatSymbols;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 import java.util.regex.Matcher;
@@ -36,8 +34,6 @@ import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.preference.PreferenceGroup;
-import cz.msebera.android.httpclient.NameValuePair;
-import cz.msebera.android.httpclient.message.BasicNameValuePair;
 import nya.miku.wishmaster.api.AbstractKusabaModule;
 import nya.miku.wishmaster.api.interfaces.CancellableTask;
 import nya.miku.wishmaster.api.interfaces.ProgressListener;
@@ -139,12 +135,12 @@ public abstract class AbstractInstant0chan extends AbstractKusabaModule {
     }
     
     @Override
-    protected List<? extends NameValuePair> getReportFormAllValues(DeletePostModel model) {
-        List<NameValuePair> pairs = new ArrayList<NameValuePair>();
-        pairs.add(new BasicNameValuePair("board", model.boardName));
-        pairs.add(new BasicNameValuePair("post[]", model.postNumber));
-        pairs.add(new BasicNameValuePair("reportpost", "Отправить"));
-        return pairs;
+    protected okhttp3.RequestBody getReportFormBody(DeletePostModel model) {
+        okhttp3.FormBody.Builder formBuilder = new okhttp3.FormBody.Builder();
+        formBuilder.add("board", model.boardName);
+        formBuilder.add("post[]", model.postNumber);
+        formBuilder.add("reportpost", "Отправить");
+        return formBuilder.build();
     }
     
     @Override

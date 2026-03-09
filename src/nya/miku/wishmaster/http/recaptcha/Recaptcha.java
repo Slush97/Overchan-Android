@@ -20,11 +20,10 @@ package nya.miku.wishmaster.http.recaptcha;
 
 import java.io.InputStream;
 import nya.miku.wishmaster.api.interfaces.CancellableTask;
+import nya.miku.wishmaster.http.client.ExtendedHttpClient;
 import nya.miku.wishmaster.http.streamer.HttpRequestModel;
 import nya.miku.wishmaster.http.streamer.HttpResponseModel;
 import nya.miku.wishmaster.http.streamer.HttpStreamer;
-
-import cz.msebera.android.httpclient.client.HttpClient;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -39,17 +38,17 @@ public class Recaptcha {
     // сюда передавать значение Challenge
     private static final String RECAPTCHA_IMAGE_URL = "://www.google.com/recaptcha/api/image?c=";
     
-    private static interface ChallengeGetter { String get(String key, CancellableTask task, HttpClient httpClient, String scheme) throws Exception; }
+    private static interface ChallengeGetter { String get(String key, CancellableTask task, ExtendedHttpClient httpClient, String scheme) throws Exception; }
     private static final ChallengeGetter[] GETTERS = new ChallengeGetter[] {
         new ChallengeGetter() {
             @Override
-            public String get(String publicKey, CancellableTask task, HttpClient httpClient, String scheme) throws Exception {
+            public String get(String publicKey, CancellableTask task, ExtendedHttpClient httpClient, String scheme) throws Exception {
                 return RecaptchaAjax.getChallenge(publicKey, task, httpClient, scheme);
             }
         },
         new ChallengeGetter() {
             @Override
-            public String get(String publicKey, CancellableTask task, HttpClient httpClient, String scheme) throws Exception {
+            public String get(String publicKey, CancellableTask task, ExtendedHttpClient httpClient, String scheme) throws Exception {
                 return RecaptchaNoscript.getChallenge(publicKey, task, httpClient, scheme);
             }
         },
@@ -68,7 +67,7 @@ public class Recaptcha {
      * @param scheme протокол (http или https), если null, по умолчанию "http"
      * @return модель рекапчи
      */
-    public static Recaptcha obtain(String publicKey, CancellableTask task, HttpClient httpClient, String scheme) throws RecaptchaException {
+    public static Recaptcha obtain(String publicKey, CancellableTask task, ExtendedHttpClient httpClient, String scheme) throws RecaptchaException {
         Exception lastException = null;
         if (scheme == null) scheme = "http";
         Recaptcha recaptcha = new Recaptcha();

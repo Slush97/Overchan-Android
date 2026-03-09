@@ -23,8 +23,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.text.DateFormat;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -32,11 +30,9 @@ import org.apache.commons.text.StringEscapeUtils;
 
 import android.content.SharedPreferences;
 import android.content.res.Resources;
-import cz.msebera.android.httpclient.Header;
-import cz.msebera.android.httpclient.HttpHeaders;
-import cz.msebera.android.httpclient.NameValuePair;
-import cz.msebera.android.httpclient.client.entity.UrlEncodedFormEntity;
-import cz.msebera.android.httpclient.message.BasicNameValuePair;
+import nya.miku.wishmaster.http.HttpHeader;
+import okhttp3.FormBody;
+import okhttp3.RequestBody;
 import nya.miku.wishmaster.api.interfaces.CancellableTask;
 import nya.miku.wishmaster.api.interfaces.ProgressListener;
 import nya.miku.wishmaster.api.models.AttachmentModel;
@@ -107,8 +103,8 @@ public abstract class AbstractKusabaModule extends AbstractWakabaModule {
         try {
             response = HttpStreamer.getInstance().getFromUrl(url, request, httpClient, null, task);
             if (response.statusCode == 302) {
-                for (Header header : response.headers) {
-                    if (header != null && HttpHeaders.LOCATION.equalsIgnoreCase(header.getName())) {
+                for (HttpHeader header : response.headers) {
+                    if (header != null && "Location".equalsIgnoreCase(header.getName())) {
                         return fixRelativeUrl(header.getValue());
                     }
                 }
@@ -128,18 +124,18 @@ public abstract class AbstractKusabaModule extends AbstractWakabaModule {
     @Override
     public String deletePost(DeletePostModel model, ProgressListener listener, CancellableTask task) throws Exception {
         String url = getBoardScriptUrl(model);
-        List<? extends NameValuePair> pairs = getDeleteFormAllValues(model);
-        HttpRequestModel request = HttpRequestModel.builder().setPOST(new UrlEncodedFormEntity(pairs, "UTF-8")).setNoRedirect(true).build();
+        RequestBody entity = getDeleteFormBody(model);
+        HttpRequestModel request = HttpRequestModel.builder().setPOST(entity).setNoRedirect(true).build();
         String result = HttpStreamer.getInstance().getStringFromUrl(url, request, httpClient, listener, task, false);
         checkDeletePostResult(model, result);
         return null;
     }
-    
+
     @Override
     public String reportPost(DeletePostModel model, ProgressListener listener, CancellableTask task) throws Exception {
         String url = getBoardScriptUrl(model);
-        List<? extends NameValuePair> pairs = getReportFormAllValues(model);
-        HttpRequestModel request = HttpRequestModel.builder().setPOST(new UrlEncodedFormEntity(pairs, "UTF-8")).setNoRedirect(true).build();
+        RequestBody entity = getReportFormBody(model);
+        HttpRequestModel request = HttpRequestModel.builder().setPOST(entity).setNoRedirect(true).build();
         String result = HttpStreamer.getInstance().getStringFromUrl(url, request, httpClient, listener, task, false);
         checkReportPostResult(model, result);
         return null;
@@ -176,23 +172,23 @@ public abstract class AbstractKusabaModule extends AbstractWakabaModule {
         postEntityBuilder.addString("postpassword", model.password);
     }
     
-    protected List<? extends NameValuePair> getDeleteFormAllValues(DeletePostModel model) throws Exception {
-        List<NameValuePair> pairs = new ArrayList<NameValuePair>();
-        pairs.add(new BasicNameValuePair("board", model.boardName));
-        pairs.add(new BasicNameValuePair("post[]", model.postNumber));
-        if (model.onlyFiles) pairs.add(new BasicNameValuePair("fileonly", "on"));
-        pairs.add(new BasicNameValuePair("postpassword", model.password));
-        pairs.add(new BasicNameValuePair("deletepost", getDeleteFormValue(model)));
-        return pairs;
+    protected RequestBody getDeleteFormBody(DeletePostModel model) throws Exception {
+        FormBody.Builder formBuilder = new FormBody.Builder();
+        formBuilder.add("board", model.boardName);
+        formBuilder.add("post[]", model.postNumber);
+        if (model.onlyFiles) formBuilder.add("fileonly", "on");
+        formBuilder.add("postpassword", model.password);
+        formBuilder.add("deletepost", getDeleteFormValue(model));
+        return formBuilder.build();
     }
-    
-    protected List<? extends NameValuePair> getReportFormAllValues(DeletePostModel model) throws Exception {
-        List<NameValuePair> pairs = new ArrayList<NameValuePair>();
-        pairs.add(new BasicNameValuePair("board", model.boardName));
-        pairs.add(new BasicNameValuePair("post[]", model.postNumber));
-        pairs.add(new BasicNameValuePair("reportreason", model.reportReason));
-        pairs.add(new BasicNameValuePair("reportpost", getReportFormValue(model)));
-        return pairs;
+
+    protected RequestBody getReportFormBody(DeletePostModel model) throws Exception {
+        FormBody.Builder formBuilder = new FormBody.Builder();
+        formBuilder.add("board", model.boardName);
+        formBuilder.add("post[]", model.postNumber);
+        formBuilder.add("reportreason", model.reportReason);
+        formBuilder.add("reportpost", getReportFormValue(model));
+        return formBuilder.build();
     }
     
     protected void checkDeletePostResult(DeletePostModel model, String result) throws Exception {

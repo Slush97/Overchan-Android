@@ -26,10 +26,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import nya.miku.wishmaster.common.Tuples.Pair;
-import cz.msebera.android.httpclient.Header;
-import cz.msebera.android.httpclient.HttpHeaders;
-import cz.msebera.android.httpclient.entity.mime.content.ByteArrayBody;
-import cz.msebera.android.httpclient.message.BasicHeader;
+import nya.miku.wishmaster.http.HttpHeader;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
@@ -223,7 +220,7 @@ public class SichModule extends AbstractVichanModule {
                         i = Integer.parseInt(fileNo);
                     }
                     if (model.attachments == null || model.attachments.length < i) {
-                        postEntityBuilder.addPart(pair.getKey(), new ByteArrayBody(new byte[0], ""));
+                        postEntityBuilder.addByteArray(pair.getKey(), "", new byte[0], "application/octet-stream");
                     } else {
                         postEntityBuilder.addFile(pair.getKey(), model.attachments[i - 1], model.randomHash);
                     }
@@ -234,7 +231,7 @@ public class SichModule extends AbstractVichanModule {
         }
         
         String url = getUsingUrl() + "post.php";
-        Header[] customHeaders = new Header[] { new BasicHeader(HttpHeaders.REFERER, referer) };
+        HttpHeader[] customHeaders = new HttpHeader[] { new HttpHeader("Referer", referer) };
         HttpRequestModel request =
                 HttpRequestModel.builder().setPOST(postEntityBuilder.build()).setCustomHeaders(customHeaders).setNoRedirect(true).build();
         HttpResponseModel response = null;
@@ -247,8 +244,8 @@ public class SichModule extends AbstractVichanModule {
                 Matcher errorMatcher = ERROR_PATTERN.matcher(htmlResponse);
                 if (errorMatcher.find()) throw new Exception(errorMatcher.group(1));
             } else if (response.statusCode == 303) {
-                for (Header header : response.headers) {
-                    if (header != null && HttpHeaders.LOCATION.equalsIgnoreCase(header.getName())) {
+                for (HttpHeader header : response.headers) {
+                    if (header != null && "Location".equalsIgnoreCase(header.getName())) {
                         return fixRelativeUrl(header.getValue());
                     }
                 }

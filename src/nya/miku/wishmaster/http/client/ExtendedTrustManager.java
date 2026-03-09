@@ -48,6 +48,7 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Locale;
 
+import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLException;
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.SSLSocket;
@@ -59,7 +60,6 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import cz.msebera.android.httpclient.conn.ssl.X509HostnameVerifier;
 import nya.miku.wishmaster.R;
 import nya.miku.wishmaster.common.Logger;
 
@@ -231,9 +231,8 @@ public class ExtendedTrustManager implements X509TrustManager {
         return defaultTrustManager.getAcceptedIssuers();
     }
     
-    /*package*/ X509HostnameVerifier wrapHostnameVerifier(final X509HostnameVerifier defaultVerifier) {
-        if (defaultVerifier == null) throw new IllegalArgumentException("The default verifier may not be null");
-        return new X509HostnameVerifier() {
+    /*package*/ HostnameVerifier wrapHostnameVerifier() {
+        return new HostnameVerifier() {
             private boolean verifyCert(String hostname, X509Certificate cert) {
                 try {
                     if (cert.equals(appKeyStore.getCertificate(hostname.toLowerCase(Locale.US)))) {
@@ -246,10 +245,11 @@ public class ExtendedTrustManager implements X509TrustManager {
                     return false;
                 }
             }
-            
+
             @Override
             public boolean verify(String hostname, SSLSession session) {
-                if (defaultVerifier.verify(hostname, session)) {
+                // Default verification via OkHttp's built-in verifier
+                if (okhttp3.internal.tls.OkHostnameVerifier.INSTANCE.verify(hostname, session)) {
                     Logger.d(TAG, "default verifier accepted " + hostname);
                     return true;
                 }
@@ -260,32 +260,6 @@ public class ExtendedTrustManager implements X509TrustManager {
                     Logger.e(TAG, e);
                     return false;
                 }
-            }
-            
-            @Override
-            public void verify(String host, SSLSocket ssl) throws IOException {
-                try {
-                    defaultVerifier.verify(host, ssl);
-                } catch (Exception e) {
-                    X509Certificate cert = (X509Certificate) ssl.getSession().getPeerCertificates()[0];
-                    if (verifyCert(host, cert)) return;
-                    throw e;
-                }
-            }
-            
-            @Override
-            public void verify(String host, X509Certificate cert) throws SSLException {
-                try {
-                    defaultVerifier.verify(host, cert);
-                } catch (Exception e) {
-                    if (verifyCert(host, cert)) return;
-                    throw e;
-                }
-            }
-            
-            @Override
-            public void verify(String host, String[] cns, String[] subjectAlts) throws SSLException {
-                defaultVerifier.verify(host, cns, subjectAlts);
             }
         };
     }

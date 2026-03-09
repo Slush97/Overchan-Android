@@ -43,7 +43,7 @@ public class NewsReader {
             @Override
             public void run() {
                 try {
-                    ExtendedHttpClient httpClient = new ExtendedHttpClient(null);
+                    ExtendedHttpClient httpClient = new ExtendedHttpClient();
                     HttpRequestModel request = HttpRequestModel.DEFAULT_GET;
                     final String response = HttpStreamer.getInstance().getStringFromUrl(URL, request, httpClient, null, null, false);
                     if (response.length() > 0) {

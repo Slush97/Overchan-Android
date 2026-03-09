@@ -32,12 +32,8 @@ import nya.miku.wishmaster.http.streamer.HttpRequestModel;
 import nya.miku.wishmaster.http.streamer.HttpResponseModel;
 import nya.miku.wishmaster.http.streamer.HttpStreamer;
 
-import cz.msebera.android.httpclient.Header;
-import cz.msebera.android.httpclient.HttpHeaders;
-import cz.msebera.android.httpclient.HttpHost;
-import cz.msebera.android.httpclient.client.HttpClient;
-import cz.msebera.android.httpclient.conn.params.ConnRouteParams;
-import cz.msebera.android.httpclient.message.BasicHeader;
+import nya.miku.wishmaster.http.HttpHeader;
+import nya.miku.wishmaster.http.client.ExtendedHttpClient;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
@@ -59,7 +55,7 @@ public class RecaptchaAjax {
     
     private RecaptchaAjax() {}
     
-    static String getChallenge(String key, CancellableTask task, HttpClient httpClient, String scheme) throws Exception {
+    static String getChallenge(String key, CancellableTask task, ExtendedHttpClient httpClient, String scheme) throws Exception {
         if (scheme == null) scheme = "http";
         String address = scheme + "://127.0.0.1/";
         String data = "<script type=\"text/javascript\"> " +
@@ -73,19 +69,12 @@ public class RecaptchaAjax {
                           "<input type=\"text\" id=\"recaptcha_response_field\" name=\"recaptcha_response_field\" /> " +
                       "</div>" +
                       "<script type=\"text/javascript\" src=\"" + scheme + "://www.google.com/recaptcha/api/challenge?k=" + key + "\"></script>";
-        
-        HttpHost proxy = null;
-        if (httpClient instanceof ExtendedHttpClient) {
-            proxy = ((ExtendedHttpClient) httpClient).getProxy();
-        } else if (httpClient != null) {
-            try {
-                proxy = ConnRouteParams.getDefaultProxy(httpClient.getParams());
-            } catch (Exception e) { /*ignore*/ }
-        }
-        if (proxy != null) {
+
+        boolean hasProxy = httpClient != null && httpClient.getProxyHost() != null;
+        if (hasProxy) {
             return Intercepting.getInternal(address, data, task, httpClient);
         } else {
-            return getChallengeInternal(address, data, task, proxy);
+            return getChallengeInternal(address, data, task);
         }
     }
     
@@ -104,13 +93,8 @@ public class RecaptchaAjax {
         return null;
     }
     
-    private static String getChallengeInternal(final String address, final String data, CancellableTask task, final HttpHost proxy) throws Exception {
-        Logger.d(TAG, "not intercepting; proxy: " + (proxy == null ? "disabled" : "enabled"));
-        if (proxy != null) {
-            Logger.d(TAG, "AJAX recaptcha not using (proxy and old API)");
-            throw new Exception("proxy && old API");
-            //костыль с установкой прокси через reflection не используется, т.к. в отличие от js-antiddos, здесь не критично (получит noscript капчу)
-        }
+    private static String getChallengeInternal(final String address, final String data, CancellableTask task) throws Exception {
+        Logger.d(TAG, "not intercepting; no proxy");
         final Context context = MainApplication.getInstance();
         final Holder holder = new Holder();
         
@@ -159,11 +143,11 @@ public class RecaptchaAjax {
     
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     private static class Intercepting {
-        private static String getInternal(final String url, final String data, final CancellableTask task, final HttpClient client) throws Exception {
+        private static String getInternal(final String url, final String data, final CancellableTask task, final ExtendedHttpClient client) throws Exception {
             Logger.d(TAG, "intercepting");
             final Context context = MainApplication.getInstance();
             final Holder holder = new Holder();
-            Header[] uaHeader = new Header[] { new BasicHeader(HttpHeaders.USER_AGENT, CUSTOM_UA) };
+            HttpHeader[] uaHeader = new HttpHeader[] { new HttpHeader("User-Agent", CUSTOM_UA) };
             final HttpRequestModel rqModel = HttpRequestModel.builder().setGET().setCustomHeaders(uaHeader).build();
             
             Async.runOnUiThread(new Runnable() {

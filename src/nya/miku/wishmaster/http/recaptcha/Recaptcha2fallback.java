@@ -19,8 +19,6 @@
 package nya.miku.wishmaster.http.recaptcha;
 
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -39,13 +37,9 @@ import nya.miku.wishmaster.ui.AppearanceUtils;
 import nya.miku.wishmaster.ui.CompatibilityUtils;
 
 import nya.miku.wishmaster.common.Tuples.Pair;
-import cz.msebera.android.httpclient.Header;
-import cz.msebera.android.httpclient.HttpHeaders;
-import cz.msebera.android.httpclient.NameValuePair;
-import cz.msebera.android.httpclient.client.HttpClient;
-import cz.msebera.android.httpclient.client.entity.UrlEncodedFormEntity;
-import cz.msebera.android.httpclient.message.BasicHeader;
-import cz.msebera.android.httpclient.message.BasicNameValuePair;
+import nya.miku.wishmaster.http.HttpHeader;
+import nya.miku.wishmaster.http.client.ExtendedHttpClient;
+import okhttp3.FormBody;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -100,11 +94,11 @@ public class Recaptcha2fallback extends InteractiveException {
     @Override
     public void handle(final Activity activity, final CancellableTask task, final Callback callback) {
         try {
-            final HttpClient httpClient = ((HttpChanModule) MainApplication.getInstance().getChanModule(chanName)).getHttpClient();
+            final ExtendedHttpClient httpClient = ((HttpChanModule) MainApplication.getInstance().getChanModule(chanName)).getHttpClient();
             final String usingURL = scheme + RECAPTCHA_FALLBACK_URL + publicKey +
                     (sToken != null && sToken.length() > 0 ? ("&stoken=" + sToken) : "");
             String refererURL = baseUrl != null && baseUrl.length() > 0 ? baseUrl : usingURL;
-            Header[] customHeaders = new Header[] { new BasicHeader(HttpHeaders.REFERER, refererURL) };
+            HttpHeader[] customHeaders = new HttpHeader[] { new HttpHeader("Referer", refererURL) };
             String htmlChallenge;
             if (lastChallenge != null && lastChallenge.getLeft().equals(usingURL)) {
                 htmlChallenge = lastChallenge.getRight();
@@ -250,15 +244,15 @@ public class Recaptcha2fallback extends InteractiveException {
                                         @Override
                                         public void run() {
                                             try {
-                                                List<NameValuePair> pairs = new ArrayList<NameValuePair>();
-                                                pairs.add(new BasicNameValuePair("c", challenge));
+                                                FormBody.Builder formBuilder = new FormBody.Builder();
+                                                formBuilder.add("c", challenge);
                                                 for (int i=0; i<isSelected.length; ++i)
-                                                    if (isSelected[i]) pairs.add(new BasicNameValuePair("response", Integer.toString(i)));
-                                                
+                                                    if (isSelected[i]) formBuilder.add("response", Integer.toString(i));
+
                                                 HttpRequestModel request = HttpRequestModel.builder().
-                                                        setPOST(new UrlEncodedFormEntity(pairs, "UTF-8")).
-                                                        setCustomHeaders(new Header[] {
-                                                                new BasicHeader(HttpHeaders.REFERER, usingURL)
+                                                        setPOST(formBuilder.build()).
+                                                        setCustomHeaders(new HttpHeader[] {
+                                                                new HttpHeader("Referer", usingURL)
                                                         }).build();
                                                 String response = HttpStreamer.getInstance().
                                                         getStringFromUrl(usingURL, request, httpClient, null, task, false);

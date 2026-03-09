@@ -29,10 +29,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import cz.msebera.android.httpclient.Header;
-import cz.msebera.android.httpclient.client.entity.UrlEncodedFormEntity;
-import cz.msebera.android.httpclient.message.BasicHeader;
-import cz.msebera.android.httpclient.message.BasicNameValuePair;
+import nya.miku.wishmaster.http.HttpHeader;
 
 import android.content.SharedPreferences;
 import android.content.res.Resources;
@@ -177,8 +174,8 @@ public class Chan420Module extends AbstractChanModule {
         int bVal = (int) (Math.random() * 10000);
         String banana = HttpStreamer.getInstance().getJSONObjectFromUrl((useHttps() ? "https://" : "http://") + "boards.420chan.org/bunker/",
                 HttpRequestModel.builder().
-                setPOST(new UrlEncodedFormEntity(Collections.singletonList(new BasicNameValuePair("b", Integer.toString(bVal))), "UTF-8")).
-                setCustomHeaders(new Header[] { new BasicHeader("X-Requested-With", "XMLHttpRequest") }).
+                setPOST(new okhttp3.FormBody.Builder().add("b", Integer.toString(bVal)).build()).
+                setCustomHeaders(new HttpHeader[] { new HttpHeader("X-Requested-With", "XMLHttpRequest") }).
                 build(), httpClient, null, task, false).optString("response");
         
         String url = (useHttps() ? "https://" : "http://") + "boards.420chan.org/" + model.boardName + "/taimaba.pl";

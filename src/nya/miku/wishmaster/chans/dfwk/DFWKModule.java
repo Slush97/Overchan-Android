@@ -21,15 +21,10 @@ package nya.miku.wishmaster.chans.dfwk;
 import java.io.InputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import cz.msebera.android.httpclient.NameValuePair;
-import cz.msebera.android.httpclient.message.BasicNameValuePair;
 
 import android.content.SharedPreferences;
 import android.content.res.Resources;
@@ -155,14 +150,14 @@ public class DFWKModule extends AbstractKusabaModule {
     }
     
     @Override
-    protected List<? extends NameValuePair> getDeleteFormAllValues(DeletePostModel model) {
-        List<NameValuePair> pairs = new ArrayList<NameValuePair>();
-        pairs.add(new BasicNameValuePair("board", model.boardName));
-        pairs.add(new BasicNameValuePair("del_" + model.postNumber, model.postNumber));
-        if (model.onlyFiles) pairs.add(new BasicNameValuePair("fileonly", "on"));
-        pairs.add(new BasicNameValuePair("postpassword", model.password));
-        pairs.add(new BasicNameValuePair("deletepost", "Удалить"));
-        return pairs;
+    protected okhttp3.RequestBody getDeleteFormBody(DeletePostModel model) {
+        okhttp3.FormBody.Builder formBuilder = new okhttp3.FormBody.Builder();
+        formBuilder.add("board", model.boardName);
+        formBuilder.add("del_" + model.postNumber, model.postNumber);
+        if (model.onlyFiles) formBuilder.add("fileonly", "on");
+        formBuilder.add("postpassword", model.password);
+        formBuilder.add("deletepost", "Удалить");
+        return formBuilder.build();
     }
     
 }

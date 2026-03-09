@@ -21,10 +21,9 @@ package nya.miku.wishmaster.http.recaptcha;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import cz.msebera.android.httpclient.client.HttpClient;
-
 import nya.miku.wishmaster.api.interfaces.CancellableTask;
 import nya.miku.wishmaster.common.Logger;
+import nya.miku.wishmaster.http.client.ExtendedHttpClient;
 import nya.miku.wishmaster.http.streamer.HttpRequestModel;
 import nya.miku.wishmaster.http.streamer.HttpStreamer;
 
@@ -39,7 +38,7 @@ public class RecaptchaNoscript {
     private static final Pattern CHALLENGE_FIRST_PATTERN = Pattern.compile("challenge.?:.?'([\\w-]+)'");
     private static final Pattern CHALLENGE_RELOAD_PATTERN = Pattern.compile("Recaptcha\\.finish_reload\\('(.*?)'");
     
-    static String getChallenge(String publicKey, CancellableTask task, HttpClient httpClient, String scheme) throws Exception {
+    static String getChallenge(String publicKey, CancellableTask task, ExtendedHttpClient httpClient, String scheme) throws Exception {
         if (scheme == null) scheme = "http";
         String response = HttpStreamer.getInstance().getStringFromUrl(scheme + RECAPTCHA_CHALLENGE_URL + publicKey,
                 HttpRequestModel.DEFAULT_GET, httpClient, null, task, false);

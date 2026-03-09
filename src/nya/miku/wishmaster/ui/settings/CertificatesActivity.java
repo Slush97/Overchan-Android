@@ -45,7 +45,7 @@ public class CertificatesActivity extends ListActivity {
         super.onCreate(savedInstanceState);
         setTitle(R.string.ssl_certificates_title);
         try {
-            trustManager = ExtendedSSLSocketFactory.getTrustManager();
+            trustManager = ExtendedSSLSocketFactory.getExtendedTrustManager();
             setListAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, Collections.list(trustManager.getCertificates())));
         } catch (Exception e) {
             Logger.e(TAG, e);
@@ -85,7 +85,7 @@ public class CertificatesActivity extends ListActivity {
     
     public static boolean hasCertificates() {
         try {
-            return ExtendedSSLSocketFactory.getTrustManager().getCertificates().hasMoreElements();
+            return ExtendedSSLSocketFactory.getExtendedTrustManager().getCertificates().hasMoreElements();
         } catch (Exception e) {
             Logger.e(TAG, e);
             return false;

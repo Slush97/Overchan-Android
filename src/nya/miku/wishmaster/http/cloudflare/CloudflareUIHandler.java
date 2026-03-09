@@ -26,7 +26,7 @@ import nya.miku.wishmaster.http.client.ExtendedHttpClient;
 import nya.miku.wishmaster.http.interactive.InteractiveException;
 import nya.miku.wishmaster.http.recaptcha.Recaptcha2;
 import nya.miku.wishmaster.http.recaptcha.Recaptcha2solved;
-import cz.msebera.android.httpclient.cookie.Cookie;
+import nya.miku.wishmaster.http.HttpCookie;
 
 import java.util.Locale;
 
@@ -72,7 +72,7 @@ import android.app.Activity;
                 return;
             }
             
-            Cookie cfCookie = CloudflareChecker.getInstance().checkAntiDDOS(e, chan.getHttpClient(), cfTask, activity);
+            HttpCookie cfCookie = CloudflareChecker.getInstance().checkAntiDDOS(e, chan.getHttpClient(), cfTask, activity);
             if (cfCookie != null) {
                 chan.saveCookie(cfCookie);
                 if (!cfTask.isCancelled()) {
@@ -100,8 +100,8 @@ import android.app.Activity;
                         @Override
                         public void run() {
                             String url = String.format(Locale.US, e.getCheckCaptchaUrlFormat(), Recaptcha2solved.pop(e.getRecaptchaPublicKey()));
-                            Cookie cfCookie = CloudflareChecker.getInstance().
-                                    checkRecaptcha(e, (ExtendedHttpClient) chan.getHttpClient(), cfTask, url);
+                            HttpCookie cfCookie = CloudflareChecker.getInstance().
+                                    checkRecaptcha(e, chan.getHttpClient(), cfTask, url);
                             if (cfCookie != null) {
                                 chan.saveCookie(cfCookie);
                                 if (!cfTask.isCancelled()) {

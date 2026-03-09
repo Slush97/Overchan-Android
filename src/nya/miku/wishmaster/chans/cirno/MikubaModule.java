@@ -24,9 +24,7 @@ import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import cz.msebera.android.httpclient.cookie.Cookie;
-import cz.msebera.android.httpclient.entity.mime.content.ByteArrayBody;
-import cz.msebera.android.httpclient.impl.cookie.BasicClientCookie;
+import nya.miku.wishmaster.http.HttpCookie;
 
 import android.content.SharedPreferences;
 import android.content.res.Resources;
@@ -132,7 +130,7 @@ public class MikubaModule extends CloudflareChanModule {
         super.initHttpClient();
         String sessionCookie = preferences.getString(getSharedKey(PREF_KEY_SESSION_COOKIE), null);
         if (sessionCookie != null) {
-            BasicClientCookie c = new BasicClientCookie(SESSION_COOKIE_NAME, sessionCookie);
+            HttpCookie c = new HttpCookie(SESSION_COOKIE_NAME, sessionCookie);
             c.setDomain(MIKUBA_DOMAIN);
             httpClient.getCookieStore().addCookie(c);
         }
@@ -144,7 +142,7 @@ public class MikubaModule extends CloudflareChanModule {
     }
     
     @Override
-    public void saveCookie(Cookie cookie) {
+    public void saveCookie(HttpCookie cookie) {
         super.saveCookie(cookie);
         if (cookie != null) {
             saveCookieToPreferences(cookie);
@@ -152,10 +150,10 @@ public class MikubaModule extends CloudflareChanModule {
     }
     
     private void saveCookiesToPreferences() {
-        for (Cookie cookie : httpClient.getCookieStore().getCookies()) saveCookieToPreferences(cookie);
+        for (HttpCookie cookie : httpClient.getCookieStore().getCookies()) saveCookieToPreferences(cookie);
     }
-    
-    private void saveCookieToPreferences(Cookie cookie) {
+
+    private void saveCookieToPreferences(HttpCookie cookie) {
         if (cookie.getName().equals(SESSION_COOKIE_NAME)) {
             preferences.edit().putString(getSharedKey(PREF_KEY_SESSION_COOKIE), cookie.getValue()).commit();
         }
@@ -277,7 +275,7 @@ public class MikubaModule extends CloudflareChanModule {
                 addString("email", "");
         if (model.attachments != null && model.attachments.length > 0)
             postEntityBuilder.addFile("image", model.attachments[0], model.randomHash);
-        else postEntityBuilder.addPart("image", new ByteArrayBody(new byte[0], ""));
+        else postEntityBuilder.addByteArray("image", "", new byte[0], "application/octet-stream");
         
         HttpRequestModel request = HttpRequestModel.builder().setPOST(postEntityBuilder.build()).setNoRedirect(true).build();
         HttpResponseModel response = null;

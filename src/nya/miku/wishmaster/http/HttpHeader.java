@@ -16,14 +16,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package nya.miku.wishmaster.api;
+package nya.miku.wishmaster.http;
 
-import nya.miku.wishmaster.http.HttpCookie;
-import nya.miku.wishmaster.http.client.ExtendedHttpClient;
+public class HttpHeader {
+    private final String name;
+    private final String value;
 
-public interface HttpChanModule extends ChanModule {
+    public HttpHeader(String name, String value) {
+        this.name = name;
+        this.value = value;
+    }
 
-    ExtendedHttpClient getHttpClient();
+    public String getName() {
+        return name;
+    }
 
-    void saveCookie(HttpCookie cookie);
+    public String getValue() {
+        return value;
+    }
 }

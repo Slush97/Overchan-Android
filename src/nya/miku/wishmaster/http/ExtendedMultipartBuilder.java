@@ -1,17 +1,17 @@
 /*
  * esochan (Meta Imageboard Client)
  * Copyright (C) 2014-2016  miku-nyan <https://github.com/miku-nyan>
- *     
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -20,8 +20,7 @@ package nya.miku.wishmaster.http;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.net.URLConnection;
 import java.nio.charset.Charset;
 import java.util.Random;
 
@@ -29,187 +28,179 @@ import nya.miku.wishmaster.api.interfaces.CancellableTask;
 import nya.miku.wishmaster.api.interfaces.ProgressListener;
 import nya.miku.wishmaster.common.IOUtils;
 
-import cz.msebera.android.httpclient.Header;
-import cz.msebera.android.httpclient.HttpEntity;
-import cz.msebera.android.httpclient.entity.ContentType;
-import cz.msebera.android.httpclient.entity.mime.HttpMultipartMode;
-import cz.msebera.android.httpclient.entity.mime.MultipartEntityBuilder;
-import cz.msebera.android.httpclient.entity.mime.content.ContentBody;
-import cz.msebera.android.httpclient.entity.mime.content.FileBody;
-import cz.msebera.android.httpclient.entity.mime.content.StringBody;
-
-/**
- * Билдер модифицированных Multipart HttpEntity.
- * Позволяет отслеживать текущий прогресс передачи, или прервать поток.
- * По-другому генерируется boundary (как браузеры, начиная с дефисов, для совместимости с некоторыми бордами).
- * @author miku-nyan
- *
- */
+import okhttp3.Headers;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+import okio.Buffer;
+import okio.BufferedSink;
+import okio.ForwardingSink;
+import okio.Okio;
+import okio.Sink;
 
 public class ExtendedMultipartBuilder {
     private static final int RANDOMHASH_TAIL_SIZE = 6;
-    
+
     private static Random random = new Random();
     private static Random getRandom() {
         if (random == null) random = new Random();
         return random;
     }
-    
-    private final MultipartEntityBuilder builder;
+
+    private final MultipartBody.Builder builder;
     private ProgressListener listener = null;
     private CancellableTask task = null;
-    
+
     public ExtendedMultipartBuilder() {
-        builder = MultipartEntityBuilder.create().setMode(HttpMultipartMode.BROWSER_COMPATIBLE).setBoundary(generateBoundary());
+        builder = new MultipartBody.Builder(generateBoundary()).setType(MultipartBody.FORM);
     }
-    
+
     public static ExtendedMultipartBuilder create() {
         return new ExtendedMultipartBuilder();
     }
-    
+
+    /**
+     * Sets the charset for the multipart entity. OkHttp always uses UTF-8,
+     * so this is a no-op kept for API compatibility.
+     */
     public ExtendedMultipartBuilder setCharset(Charset charset) {
-        builder.setCharset(charset);
+        // OkHttp MultipartBody always uses UTF-8; kept for API compatibility
         return this;
     }
-    
-    public ExtendedMultipartBuilder addPart(String key, ContentBody body) {
-        builder.addPart(key, body);
-        return this;
-    }
-    
-    /**
-     * Добавить строку в кодировке UTF-8
-     * @param key имя (ключ)
-     * @param value строка
-     * @return этот объект
-     */
+
     public ExtendedMultipartBuilder addString(String key, String value) {
-        return addPart(key, new StringBody(value, ContentType.create("text/plain", "UTF-8")));
+        builder.addFormDataPart(key, value);
+        return this;
     }
-    
-    private ExtendedMultipartBuilder addFile(String key, File value, final int randomTail) {
-        return addPart(key, new FileBody(value) {
-            @Override
-            public long getContentLength() {
-                return super.getContentLength() + randomTail;
-            }
-            @Override
-            public void writeTo(OutputStream out) throws IOException {
-                super.writeTo(out);
-                if (randomTail > 0) {
-                    byte[] buf = new byte[randomTail];
-                    getRandom().nextBytes(buf);
-                    out.write(buf);
-                }
-            }
-        });
-    }
-    
-    /**
-     * Добавить файл
-     * @param key имя (ключ)
-     * @param file прикрепляемый файл
-     * @param uniqueHash если true, добавит в конец файла несколько рандомных байтов, чтобы создать уникальный хэш
-     * @return этот объект
-     */
+
     public ExtendedMultipartBuilder addFile(String key, File file, boolean uniqueHash) {
-        return addFile(key, file, uniqueHash ? RANDOMHASH_TAIL_SIZE : 0);
+        String filename = file.getName();
+        String mimeType = URLConnection.guessContentTypeFromName(filename);
+        if (mimeType == null) mimeType = "application/octet-stream";
+        MediaType mediaType = MediaType.parse(mimeType);
+
+        RequestBody fileBody;
+        if (uniqueHash) {
+            final int randomTail = RANDOMHASH_TAIL_SIZE;
+            fileBody = new RequestBody() {
+                @Override
+                public MediaType contentType() { return mediaType; }
+                @Override
+                public long contentLength() { return file.length() + randomTail; }
+                @Override
+                public void writeTo(BufferedSink sink) throws IOException {
+                    okio.Source source = Okio.source(file);
+                    try {
+                        Buffer buf = new Buffer();
+                        long remaining = file.length();
+                        while (remaining > 0) {
+                            long read = source.read(buf, Math.min(8192, remaining));
+                            if (read == -1) break;
+                            sink.write(buf, read);
+                            remaining -= read;
+                        }
+                    } finally {
+                        source.close();
+                    }
+                    byte[] tail = new byte[randomTail];
+                    getRandom().nextBytes(tail);
+                    sink.write(tail);
+                }
+            };
+        } else {
+            fileBody = RequestBody.create(file, mediaType);
+        }
+
+        builder.addFormDataPart(key, filename, fileBody);
+        return this;
     }
-    
-    /**
-     * Добавить файл
-     * @param key имя (ключ)
-     * @param file прикрепляемый файл
-     * @return этот объект
-     */
+
     public ExtendedMultipartBuilder addFile(String key, File file) {
         return addFile(key, file, false);
     }
-    
-    /**
-     * Установить отслеживатель прогресса и отменяемую задачу
-     * @param listener интерфейс отслеживания прогресса
-     * @param task задача, отмена которой прервёт поток
-     * @return этот объект
-     */
+
+    public ExtendedMultipartBuilder addPart(String key, RequestBody body) {
+        builder.addFormDataPart(key, null, body);
+        return this;
+    }
+
+    public ExtendedMultipartBuilder addByteArray(String key, String filename, byte[] data, String mimeType) {
+        MediaType mediaType = mimeType != null ? MediaType.parse(mimeType) : MediaType.parse("application/octet-stream");
+        builder.addFormDataPart(key, filename, RequestBody.create(data, mediaType));
+        return this;
+    }
+
     public ExtendedMultipartBuilder setDelegates(ProgressListener listener, CancellableTask task) {
         this.listener = listener;
         this.task = task;
         return this;
     }
-    
-    public HttpEntity build() {
-        return new HttpEntityWrapper(builder.build(), listener, task);
+
+    public RequestBody build() {
+        RequestBody body = builder.build();
+        if (listener != null || task != null) {
+            return new ProgressRequestBody(body, listener, task);
+        }
+        return body;
     }
-    
+
     protected String generateBoundary() {
         StringBuilder stringBuilder = new StringBuilder();
-        for (int i=0; i<27; ++i) stringBuilder.append("-");
+        for (int i = 0; i < 27; ++i) stringBuilder.append("-");
         int length = 26 + getRandom().nextInt(4);
-        for (int i=0; i<length; ++i) stringBuilder.append(Integer.toString(getRandom().nextInt(10)));
+        for (int i = 0; i < length; ++i) stringBuilder.append(Integer.toString(getRandom().nextInt(10)));
         return stringBuilder.toString();
     }
-    
-    private static class HttpEntityWrapper implements HttpEntity {
-        
-        private final HttpEntity entity;
+
+    private static class ProgressRequestBody extends RequestBody {
+        private final RequestBody delegate;
         private final ProgressListener listener;
         private final CancellableTask task;
-        
-        private HttpEntityWrapper(HttpEntity entity, ProgressListener listener, CancellableTask task) {
-            this.entity = entity;
+
+        ProgressRequestBody(RequestBody delegate, ProgressListener listener, CancellableTask task) {
+            this.delegate = delegate;
             this.listener = listener;
             this.task = task;
         }
-        
-        @SuppressWarnings("deprecation")
-        @Override
-        public void consumeContent() throws IOException {
-            entity.consumeContent();
-        }
 
         @Override
-        public InputStream getContent() throws IOException, IllegalStateException {
-            return entity.getContent();
-        }
+        public MediaType contentType() { return delegate.contentType(); }
 
         @Override
-        public Header getContentEncoding() {
-            return entity.getContentEncoding();
-        }
+        public long contentLength() throws IOException { return delegate.contentLength(); }
 
         @Override
-        public long getContentLength() {
-            return entity.getContentLength();
-        }
-
-        @Override
-        public Header getContentType() {
-            return entity.getContentType();
-        }
-
-        @Override
-        public boolean isChunked() {
-            return entity.isChunked();
-        }
-
-        @Override
-        public boolean isRepeatable() {
-            return entity.isRepeatable();
-        }
-
-        @Override
-        public boolean isStreaming() {
-            return entity.isStreaming();
-        }
-
-        @Override
-        public void writeTo(OutputStream outstream) throws IOException {
-            if (listener != null) listener.setMaxValue(this.getContentLength());
-            entity.writeTo(IOUtils.modifyOutputStream(outstream, listener, task));
+        public void writeTo(BufferedSink sink) throws IOException {
+            if (listener != null) listener.setMaxValue(contentLength());
+            CountingSink countingSink = new CountingSink(sink, listener, task);
+            BufferedSink bufferedSink = Okio.buffer(countingSink);
+            delegate.writeTo(bufferedSink);
+            bufferedSink.flush();
             if (listener != null) listener.setIndeterminate();
         }
-        
     }
-    
+
+    private static class CountingSink extends ForwardingSink {
+        private long bytesWritten = 0;
+        private final ProgressListener listener;
+        private final CancellableTask task;
+
+        CountingSink(Sink delegate, ProgressListener listener, CancellableTask task) {
+            super(delegate);
+            this.listener = listener;
+            this.task = task;
+        }
+
+        @Override
+        public void write(Buffer source, long byteCount) throws IOException {
+            if (task != null && task.isCancelled()) {
+                throw new IOUtils.InterruptedStreamException();
+            }
+            super.write(source, byteCount);
+            bytesWritten += byteCount;
+            if (listener != null) {
+                listener.setProgress(bytesWritten);
+            }
+        }
+    }
 }

@@ -29,11 +29,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import cz.msebera.android.httpclient.NameValuePair;
-import cz.msebera.android.httpclient.client.entity.UrlEncodedFormEntity;
-import cz.msebera.android.httpclient.cookie.Cookie;
-import cz.msebera.android.httpclient.impl.cookie.BasicClientCookie;
-import cz.msebera.android.httpclient.message.BasicNameValuePair;
+import nya.miku.wishmaster.http.HttpCookie;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -175,16 +171,16 @@ public class FourchanModule extends CloudflareChanModule {
                         try {
                             if (passAuthTask.isCancelled()) return;
                             setPasscodeCookie(null, true);
-                            List<NameValuePair> pairs = new ArrayList<NameValuePair>();
-                            pairs.add(new BasicNameValuePair("act", "do_login"));
-                            pairs.add(new BasicNameValuePair("id", token));
-                            pairs.add(new BasicNameValuePair("pin", pin));
-                            HttpRequestModel request = HttpRequestModel.builder().setPOST(new UrlEncodedFormEntity(pairs, "UTF-8")).build();
+                            okhttp3.FormBody.Builder formBuilder = new okhttp3.FormBody.Builder();
+                            formBuilder.add("act", "do_login");
+                            formBuilder.add("id", token);
+                            formBuilder.add("pin", pin);
+                            HttpRequestModel request = HttpRequestModel.builder().setPOST(formBuilder.build()).build();
                             String response = HttpStreamer.getInstance().getStringFromUrl(authUrl, request, httpClient, null, passAuthTask, false);
                             if (passAuthTask.isCancelled()) return;
                             if (response.contains("Your device is now authorized")) {
                                 String passId = null;
-                                for (Cookie cookie : httpClient.getCookieStore().getCookies()) {
+                                for (HttpCookie cookie : httpClient.getCookieStore().getCookies()) {
                                     if (cookie.getName().equals("pass_id")) {
                                         String value = cookie.getValue();
                                         if (!value.equals("0")) {
@@ -267,21 +263,21 @@ public class FourchanModule extends CloudflareChanModule {
         if (saveToPreferences) preferences.edit().putString(getSharedKey(PREF_KEY_PASS_COOKIE), cookie).commit();
         if (cookie.length() > 0) {
             usingPasscode = true;
-            BasicClientCookie c1 = new BasicClientCookie("pass_id", cookie);
+            HttpCookie c1 = new HttpCookie("pass_id", cookie);
             c1.setDomain(".4chan.org");
             c1.setPath("/");
             httpClient.getCookieStore().addCookie(c1);
-            BasicClientCookie c2 = new BasicClientCookie("pass_enabled", "1");
+            HttpCookie c2 = new HttpCookie("pass_enabled", "1");
             c2.setDomain(".4chan.org");
             c2.setPath("/");
             httpClient.getCookieStore().addCookie(c2);
         } else {
             usingPasscode = false;
-            BasicClientCookie c = new BasicClientCookie("pass_id", "0");
+            HttpCookie c = new HttpCookie("pass_id", "0");
             c.setDomain(".4chan.org");
             c.setPath("/");
             httpClient.getCookieStore().addCookie(c);
-            BasicClientCookie c2 = new BasicClientCookie("pass_enabled", "0");
+            HttpCookie c2 = new HttpCookie("pass_enabled", "0");
             c2.setDomain(".4chan.org");
             c2.setPath("/");
             httpClient.getCookieStore().addCookie(c2);

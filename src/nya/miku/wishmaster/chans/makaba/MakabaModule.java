@@ -57,9 +57,8 @@ import nya.miku.wishmaster.lib.org_json.JSONArray;
 import nya.miku.wishmaster.lib.org_json.JSONException;
 import nya.miku.wishmaster.lib.org_json.JSONObject;
 
-import cz.msebera.android.httpclient.HttpEntity;
-import cz.msebera.android.httpclient.cookie.Cookie;
-import cz.msebera.android.httpclient.impl.cookie.BasicClientCookie;
+import nya.miku.wishmaster.http.HttpCookie;
+import okhttp3.RequestBody;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
@@ -138,14 +137,14 @@ public class MakabaModule extends CloudflareChanModule {
     /** Установить cookie к текущему клиенту */
     private void setCookie(String domain, String name, String value) {
         if (value == null || value.equals("")) return;
-        BasicClientCookie c = new BasicClientCookie(name, value);
+        HttpCookie c = new HttpCookie(name, value);
         c.setDomain(domain == null || domain.equals("") ? ("." + this.domain) : domain);
         c.setPath("/");
         httpClient.getCookieStore().addCookie(c);
     }
     
     @Override
-    public void saveCookie(Cookie cookie) {
+    public void saveCookie(HttpCookie cookie) {
         super.saveCookie(cookie);
         if (cookie != null && cookie.getName().equals(USERCODE_COOKIE_NAME)) {
             preferences.edit().
@@ -155,7 +154,7 @@ public class MakabaModule extends CloudflareChanModule {
     }
     
     private void saveUsercodeCookie() {
-        for (Cookie cookie : httpClient.getCookieStore().getCookies()) {
+        for (HttpCookie cookie : httpClient.getCookieStore().getCookies()) {
             if (cookie.getName().equals(USERCODE_COOKIE_NAME) && cookie.getDomain().contains(domain)) saveCookie(cookie);
         }
     }
@@ -429,7 +428,7 @@ public class MakabaModule extends CloudflareChanModule {
             request = HttpRequestModel.DEFAULT_GET;
         } else {
             url = domainUrl + "makaba/makaba.fcgi";
-            HttpEntity postEntity = ExtendedMultipartBuilder.create().
+            RequestBody postEntity = ExtendedMultipartBuilder.create().
                     addString("task", "search").
                     addString("board", boardName).
                     addString("find", searchRequest).

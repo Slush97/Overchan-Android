@@ -36,14 +36,8 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.text.StringEscapeUtils;
 import nya.miku.wishmaster.common.Tuples.Pair;
-import cz.msebera.android.httpclient.Header;
-import cz.msebera.android.httpclient.HttpHeaders;
-import cz.msebera.android.httpclient.NameValuePair;
-import cz.msebera.android.httpclient.client.HttpClient;
-import cz.msebera.android.httpclient.client.entity.UrlEncodedFormEntity;
-import cz.msebera.android.httpclient.entity.mime.content.ByteArrayBody;
-import cz.msebera.android.httpclient.message.BasicHeader;
-import cz.msebera.android.httpclient.message.BasicNameValuePair;
+import nya.miku.wishmaster.http.HttpHeader;
+import nya.miku.wishmaster.http.client.ExtendedHttpClient;
 
 import nya.miku.wishmaster.api.interfaces.CancellableTask;
 import nya.miku.wishmaster.api.interfaces.ProgressListener;
@@ -330,7 +324,7 @@ public abstract class AbstractVichanModule extends AbstractWakabaModule {
                 if (model.attachments != null && model.attachments.length > 0) {
                     postEntityBuilder.addFile(pair.getKey(), model.attachments[0], model.randomHash);
                 } else {
-                    postEntityBuilder.addPart(pair.getKey(), new ByteArrayBody(new byte[0], ""));
+                    postEntityBuilder.addByteArray(pair.getKey(), "", new byte[0], "application/octet-stream");
                 }
             } else {
                 postEntityBuilder.addString(pair.getKey(), val);
@@ -338,7 +332,7 @@ public abstract class AbstractVichanModule extends AbstractWakabaModule {
         }
         
         String url = getUsingUrl() + "post.php";
-        Header[] customHeaders = new Header[] { new BasicHeader(HttpHeaders.REFERER, referer) };
+        HttpHeader[] customHeaders = new HttpHeader[] { new HttpHeader("Referer", referer) };
         HttpRequestModel request =
                 HttpRequestModel.builder().setPOST(postEntityBuilder.build()).setCustomHeaders(customHeaders).setNoRedirect(true).build();
         HttpResponseModel response = null;
@@ -351,8 +345,8 @@ public abstract class AbstractVichanModule extends AbstractWakabaModule {
                 Matcher errorMatcher = ERROR_PATTERN.matcher(htmlResponse);
                 if (errorMatcher.find()) throw new Exception(errorMatcher.group(1));
             } else if (response.statusCode == 303) {
-                for (Header header : response.headers) {
-                    if (header != null && HttpHeaders.LOCATION.equalsIgnoreCase(header.getName())) {
+                for (HttpHeader header : response.headers) {
+                    if (header != null && "Location".equalsIgnoreCase(header.getName())) {
                         return fixRelativeUrl(header.getValue());
                     }
                 }
@@ -366,22 +360,22 @@ public abstract class AbstractVichanModule extends AbstractWakabaModule {
     @Override
     public String deletePost(DeletePostModel model, ProgressListener listener, CancellableTask task) throws Exception {
         String url = getUsingUrl() + "post.php";
-        List<NameValuePair> pairs = new ArrayList<NameValuePair>();
-        pairs.add(new BasicNameValuePair("board", model.boardName));
-        pairs.add(new BasicNameValuePair("delete_" + model.postNumber, "on"));
-        if (model.onlyFiles) pairs.add(new BasicNameValuePair("file", "on"));
-        pairs.add(new BasicNameValuePair("password", model.password));
-        pairs.add(new BasicNameValuePair("delete", getDeleteFormValue(model)));
-        pairs.add(new BasicNameValuePair("reason", ""));
-        
+        okhttp3.FormBody.Builder formBuilder = new okhttp3.FormBody.Builder();
+        formBuilder.add("board", model.boardName);
+        formBuilder.add("delete_" + model.postNumber, "on");
+        if (model.onlyFiles) formBuilder.add("file", "on");
+        formBuilder.add("password", model.password);
+        formBuilder.add("delete", getDeleteFormValue(model));
+        formBuilder.add("reason", "");
+
         UrlPageModel refererPage = new UrlPageModel();
         refererPage.type = UrlPageModel.TYPE_THREADPAGE;
         refererPage.chanName = getChanName();
         refererPage.boardName = model.boardName;
         refererPage.threadNumber = model.threadNumber;
-        Header[] customHeaders = new Header[] { new BasicHeader(HttpHeaders.REFERER, buildUrl(refererPage)) };
+        HttpHeader[] customHeaders = new HttpHeader[] { new HttpHeader("Referer", buildUrl(refererPage)) };
         HttpRequestModel rqModel = HttpRequestModel.builder().
-                setPOST(new UrlEncodedFormEntity(pairs, "UTF-8")).setCustomHeaders(customHeaders).setNoRedirect(true).build();
+                setPOST(formBuilder.build()).setCustomHeaders(customHeaders).setNoRedirect(true).build();
         HttpResponseModel response = null;
         try {
             response = HttpStreamer.getInstance().getFromUrl(url, rqModel, httpClient, listener, task);
@@ -402,21 +396,21 @@ public abstract class AbstractVichanModule extends AbstractWakabaModule {
     @Override
     public String reportPost(DeletePostModel model, ProgressListener listener, CancellableTask task) throws Exception {
         String url = getUsingUrl() + "post.php";
-        List<NameValuePair> pairs = new ArrayList<NameValuePair>();
-        pairs.add(new BasicNameValuePair("board", model.boardName));
-        pairs.add(new BasicNameValuePair("delete_" + model.postNumber, "on"));
-        pairs.add(new BasicNameValuePair("password", ""));
-        pairs.add(new BasicNameValuePair("reason", model.reportReason));
-        pairs.add(new BasicNameValuePair("report", getReportFormValue(model)));
-        
+        okhttp3.FormBody.Builder formBuilder = new okhttp3.FormBody.Builder();
+        formBuilder.add("board", model.boardName);
+        formBuilder.add("delete_" + model.postNumber, "on");
+        formBuilder.add("password", "");
+        formBuilder.add("reason", model.reportReason);
+        formBuilder.add("report", getReportFormValue(model));
+
         UrlPageModel refererPage = new UrlPageModel();
         refererPage.type = UrlPageModel.TYPE_THREADPAGE;
         refererPage.chanName = getChanName();
         refererPage.boardName = model.boardName;
         refererPage.threadNumber = model.threadNumber;
-        Header[] customHeaders = new Header[] { new BasicHeader(HttpHeaders.REFERER, buildUrl(refererPage)) };
+        HttpHeader[] customHeaders = new HttpHeader[] { new HttpHeader("Referer", buildUrl(refererPage)) };
         HttpRequestModel rqModel = HttpRequestModel.builder().
-                setPOST(new UrlEncodedFormEntity(pairs, "UTF-8")).setCustomHeaders(customHeaders).setNoRedirect(true).build();
+                setPOST(formBuilder.build()).setCustomHeaders(customHeaders).setNoRedirect(true).build();
         HttpResponseModel response = null;
         try {
             response = HttpStreamer.getInstance().getFromUrl(url, rqModel, httpClient, listener, task);
@@ -495,11 +489,11 @@ public abstract class AbstractVichanModule extends AbstractWakabaModule {
     }
     
     protected static class VichanAntiBot {
-        public static List<Pair<String, String>> getFormValues(String url, CancellableTask task, HttpClient httpClient) throws Exception {
+        public static List<Pair<String, String>> getFormValues(String url, CancellableTask task, ExtendedHttpClient httpClient) throws Exception {
             return getFormValues(url, HttpRequestModel.DEFAULT_GET, task, httpClient, "<form name=\"post\"", "</form>");
         }
         
-        public static List<Pair<String, String>> getFormValues(String url, HttpRequestModel requestModel, CancellableTask task, HttpClient client,
+        public static List<Pair<String, String>> getFormValues(String url, HttpRequestModel requestModel, CancellableTask task, ExtendedHttpClient client,
                 String startForm, String endForm) throws Exception {
             VichanAntiBot reader = null;
             HttpRequestModel request = requestModel;

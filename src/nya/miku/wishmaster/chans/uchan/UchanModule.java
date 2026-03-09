@@ -23,13 +23,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
-import cz.msebera.android.httpclient.NameValuePair;
-import cz.msebera.android.httpclient.client.entity.UrlEncodedFormEntity;
-import cz.msebera.android.httpclient.message.BasicNameValuePair;
 
 import android.content.SharedPreferences;
 import android.content.res.Resources;
@@ -255,13 +250,13 @@ public class UchanModule extends AbstractWakabaModule {
     public String deletePost(DeletePostModel model, ProgressListener listener, CancellableTask task) throws Exception {
         String url = getUsingUrl() + model.boardName + "/wakaba.pl";
         
-        List<NameValuePair> pairs = new ArrayList<NameValuePair>();
-        pairs.add(new BasicNameValuePair("delete", model.postNumber));
-        pairs.add(new BasicNameValuePair("task", "delete"));
-        if (model.onlyFiles) pairs.add(new BasicNameValuePair("fileonly", "on"));
-        pairs.add(new BasicNameValuePair("password", model.password));
-        
-        HttpRequestModel request = HttpRequestModel.builder().setPOST(new UrlEncodedFormEntity(pairs, "UTF-8")).setNoRedirect(true).build();
+        okhttp3.FormBody.Builder formBuilder = new okhttp3.FormBody.Builder();
+        formBuilder.add("delete", model.postNumber);
+        formBuilder.add("task", "delete");
+        if (model.onlyFiles) formBuilder.add("fileonly", "on");
+        formBuilder.add("password", model.password);
+
+        HttpRequestModel request = HttpRequestModel.builder().setPOST(formBuilder.build()).setNoRedirect(true).build();
         HttpResponseModel response = null;
         try {
             response = HttpStreamer.getInstance().getFromUrl(url, request, httpClient, null, task);

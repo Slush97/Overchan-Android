@@ -22,9 +22,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 import java.util.regex.Matcher;
@@ -37,12 +35,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.preference.PreferenceGroup;
 import androidx.core.content.res.ResourcesCompat;
-import cz.msebera.android.httpclient.Header;
-import cz.msebera.android.httpclient.HttpHeaders;
-import cz.msebera.android.httpclient.NameValuePair;
-import cz.msebera.android.httpclient.client.entity.UrlEncodedFormEntity;
-import cz.msebera.android.httpclient.message.BasicHeader;
-import cz.msebera.android.httpclient.message.BasicNameValuePair;
+import nya.miku.wishmaster.http.HttpHeader;
 import nya.miku.wishmaster.R;
 import nya.miku.wishmaster.api.AbstractChanModule;
 import nya.miku.wishmaster.api.interfaces.CancellableTask;
@@ -67,7 +60,7 @@ public class AnonFmModule extends AbstractChanModule {
     private static final String CHAN_NAME = "anon.fm";
     private static final String DOMAIN = "anon.fm";
     private static final Pattern CID_PATTERN = Pattern.compile("name=\"cid\" value=\"(\\d+)\"");
-    private static final Header[] HTTP_HEADER_FEEDBACK = new Header[] { new BasicHeader(HttpHeaders.REFERER, "http://" + DOMAIN + "/feedback/") };
+    private static final HttpHeader[] HTTP_HEADER_FEEDBACK = new HttpHeader[] { new HttpHeader("Referer", "http://" + DOMAIN + "/feedback/") };
     private static final DateFormat TIMEFORMAT;
     private static final BoardModel BOARD;
     static {
@@ -253,14 +246,14 @@ public class AnonFmModule extends AbstractChanModule {
     @Override
     public String sendPost(SendPostModel model, ProgressListener listener, CancellableTask task) throws Exception {
         if (model.comment.length() > 500) throw new Exception("Максимальная длина сообщения - 500 символов");
-        List<NameValuePair> pairs = new ArrayList<NameValuePair>();
-        pairs.add(new BasicNameValuePair("cid", cid));
-        pairs.add(new BasicNameValuePair("left", Integer.toString(500 - model.comment.length())));
-        pairs.add(new BasicNameValuePair("msg", model.comment));
-        pairs.add(new BasicNameValuePair("check", model.captchaAnswer));
-        
+        okhttp3.FormBody.Builder formBuilder = new okhttp3.FormBody.Builder();
+        formBuilder.add("cid", cid);
+        formBuilder.add("left", Integer.toString(500 - model.comment.length()));
+        formBuilder.add("msg", model.comment);
+        formBuilder.add("check", model.captchaAnswer);
+
         HttpRequestModel request =
-                HttpRequestModel.builder().setPOST(new UrlEncodedFormEntity(pairs, "UTF-8")).setCustomHeaders(HTTP_HEADER_FEEDBACK).build();
+                HttpRequestModel.builder().setPOST(formBuilder.build()).setCustomHeaders(HTTP_HEADER_FEEDBACK).build();
         HttpResponseModel response = null;
         try {
             response = HttpStreamer.getInstance().getFromUrl("http://" + DOMAIN + "/feedback", request, httpClient, null, task);

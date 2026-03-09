@@ -19,17 +19,11 @@
 package nya.miku.wishmaster.chans.dvachnet;
 
 import java.io.ByteArrayOutputStream;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import cz.msebera.android.httpclient.Header;
-import cz.msebera.android.httpclient.HttpHeaders;
-import cz.msebera.android.httpclient.NameValuePair;
-import cz.msebera.android.httpclient.client.entity.UrlEncodedFormEntity;
-import cz.msebera.android.httpclient.message.BasicNameValuePair;
+import nya.miku.wishmaster.http.HttpHeader;
 
 import android.content.SharedPreferences;
 import android.content.res.Resources;
@@ -263,8 +257,8 @@ public class DvachnetModule extends AbstractWakabaModule {
         try {
             response = HttpStreamer.getInstance().getFromUrl(url, request, httpClient, null, task);
             if (response.statusCode == 302) {
-                for (Header header : response.headers) {
-                    if (header != null && HttpHeaders.LOCATION.equalsIgnoreCase(header.getName())) {
+                for (HttpHeader header : response.headers) {
+                    if (header != null && "Location".equalsIgnoreCase(header.getName())) {
                         if (header.getValue() == null || header.getValue().trim().length() == 0) return null;
                         return fixRelativeUrl(header.getValue());
                     }
@@ -301,13 +295,13 @@ public class DvachnetModule extends AbstractWakabaModule {
     public String deletePost(DeletePostModel model, ProgressListener listener, CancellableTask task) throws Exception {
         String url = getUsingUrl() + "cgi/delete";
         
-        List<NameValuePair> pairs = new ArrayList<NameValuePair>();
-        pairs.add(new BasicNameValuePair("board", model.boardName));
-        pairs.add(new BasicNameValuePair("delete_" + model.postNumber, model.postNumber));
-        pairs.add(new BasicNameValuePair("task", "delete"));
-        pairs.add(new BasicNameValuePair("password", model.password));
-        
-        HttpRequestModel request = HttpRequestModel.builder().setPOST(new UrlEncodedFormEntity(pairs, "UTF-8")).setNoRedirect(true).build();
+        okhttp3.FormBody.Builder formBuilder = new okhttp3.FormBody.Builder();
+        formBuilder.add("board", model.boardName);
+        formBuilder.add("delete_" + model.postNumber, model.postNumber);
+        formBuilder.add("task", "delete");
+        formBuilder.add("password", model.password);
+
+        HttpRequestModel request = HttpRequestModel.builder().setPOST(formBuilder.build()).setNoRedirect(true).build();
         HttpResponseModel response = null;
         try {
             response = HttpStreamer.getInstance().getFromUrl(url, request, httpClient, null, task);

@@ -59,7 +59,7 @@ public class AppUpdatesChecker {
             public void run() {
                 JSONObject response;
                 try {
-                    ExtendedHttpClient httpClient = new ExtendedHttpClient(null);
+                    ExtendedHttpClient httpClient = new ExtendedHttpClient();
                     HttpRequestModel request = HttpRequestModel.DEFAULT_GET;
                     response = HttpStreamer.getInstance().getJSONObjectFromUrl(URL, request, httpClient, null, task, false);
                 } catch (Exception e) {

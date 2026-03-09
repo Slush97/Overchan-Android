@@ -22,16 +22,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import cz.msebera.android.httpclient.NameValuePair;
-import cz.msebera.android.httpclient.client.entity.UrlEncodedFormEntity;
-import cz.msebera.android.httpclient.message.BasicNameValuePair;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -317,12 +311,12 @@ public class DvachModule extends AbstractWakabaModule {
     public String deletePost(DeletePostModel model, ProgressListener listener, CancellableTask task) throws Exception {
         String url = getUsingUrl() + model.boardName + "/delete";
         
-        List<NameValuePair> pairs = new ArrayList<NameValuePair>();
-        pairs.add(new BasicNameValuePair("posts[]", model.postNumber));
-        pairs.add(new BasicNameValuePair("password", model.password));
-        pairs.add(new BasicNameValuePair("deletepost", "Удалить"));
-        
-        HttpRequestModel request = HttpRequestModel.builder().setPOST(new UrlEncodedFormEntity(pairs, "UTF-8")).setNoRedirect(true).build();
+        okhttp3.FormBody.Builder formBuilder = new okhttp3.FormBody.Builder();
+        formBuilder.add("posts[]", model.postNumber);
+        formBuilder.add("password", model.password);
+        formBuilder.add("deletepost", "Удалить");
+
+        HttpRequestModel request = HttpRequestModel.builder().setPOST(formBuilder.build()).setNoRedirect(true).build();
         String result = HttpStreamer.getInstance().getStringFromUrl(url, request, httpClient, listener, task, false);
         if (result.contains("Неверный пароль")) throw new Exception("Неверный пароль");
         return null;

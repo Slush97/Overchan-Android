@@ -28,8 +28,8 @@ Rebranding Overchan Android → esochan, and modernizing for 2026 Android standa
 - [x] `proguard-project.txt`: add `dev.esoc.**` keep rule alongside existing `nya.miku.**`
 
 ### A4: Copyright headers (zero functional risk, bulk change)
-- [ ] Update GPL headers in all 206+ source files: "Overchan Android" → "esochan"
-- [ ] Update URLs pointing to `miku-nyan.github.io/Overchan-Android/`
+- [x] Update GPL headers in all 206+ source files: "Overchan Android" → "esochan"
+- [x] Update URLs pointing to `miku-nyan.github.io/Overchan-Android/` (all commented out / disabled)
 
 ---
 
@@ -69,7 +69,7 @@ Rebranding Overchan Android → esochan, and modernizing for 2026 Android standa
 - [x] Remove dead `SDK_INT` branches (minSdk is 21)
 - [x] `build.gradle`: targetSdk → 35
 
-**Status:** Phase 1A (A1–A3) and Phase 1B (B1–B5) are complete except: A4 (copyright headers).
+**Status:** Phase 1A (A1–A4) and Phase 1B (B1–B5) are complete.
 
 ---
 
@@ -91,7 +91,7 @@ This should be done as a single atomic commit with IDE refactoring support.
 ## Phase 3: Dependency Modernization
 
 ### Replace dead/deprecated libraries
-- [ ] Apache HttpClient (`cz.msebera.android:httpclient`) → OkHttp 4.x
+- [x] Apache HttpClient (`cz.msebera.android:httpclient`) → OkHttp 4.12.0
 - [x] ExoPlayer 2.19.1 → Media3 (`androidx.media3:media3-exoplayer 1.8.0`)
 - [ ] TagSoup → Jsoup
 - [ ] Kryo 3.0.3 → Kryo 5.x (or kotlinx.serialization)

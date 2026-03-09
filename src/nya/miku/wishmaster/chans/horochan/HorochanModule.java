@@ -19,9 +19,7 @@
 package nya.miku.wishmaster.chans.horochan;
 
 import java.io.BufferedReader;
-import java.io.Closeable;
 import java.io.File;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -30,12 +28,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import cz.msebera.android.httpclient.HttpEntity;
-import cz.msebera.android.httpclient.HttpResponse;
-import cz.msebera.android.httpclient.StatusLine;
-import cz.msebera.android.httpclient.client.methods.HttpUriRequest;
-import cz.msebera.android.httpclient.client.methods.RequestBuilder;
-import cz.msebera.android.httpclient.util.EntityUtils;
+import okhttp3.RequestBody;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
@@ -375,29 +368,25 @@ public class HorochanModule extends CloudflareChanModule {
     @Override
     public String deletePost(DeletePostModel model, ProgressListener listener, CancellableTask task) throws Exception {
         String url = getUsingUrl(true) + "v1/posts/" + model.postNumber;
-        HttpEntity entity = ExtendedMultipartBuilder.create().setDelegates(listener, task).addString("password", model.password).build();
-        HttpUriRequest request = null;
-        HttpResponse response = null;
-        HttpEntity responseEntity = null;
+        RequestBody entity = ExtendedMultipartBuilder.create().setDelegates(listener, task).addString("password", model.password).build();
+        HttpRequestModel rqModel = HttpRequestModel.builder().setDELETE(entity).build();
+        HttpResponseModel responseModel = null;
+        BufferedReader in = null;
         try {
-            request = RequestBuilder.delete().setUri(url).setEntity(entity).build();
-            response = httpClient.execute(request);
-            StatusLine status = response.getStatusLine();
-            switch (status.getStatusCode()) {
+            responseModel = HttpStreamer.getInstance().getFromUrl(url, rqModel, httpClient, listener, task);
+            switch (responseModel.statusCode) {
                 case 200:
                     return null;
                 case 400:
-                    responseEntity = response.getEntity();
-                    InputStream stream = IOUtils.modifyInputStream(responseEntity.getContent(), null, task);
-                    JSONObject json = new JSONObject(new JSONTokener(new BufferedReader(new InputStreamReader(stream))));
+                    in = new BufferedReader(new InputStreamReader(responseModel.stream));
+                    JSONObject json = new JSONObject(new JSONTokener(in));
                     throw new Exception(json.getString("message"));
                 default:
-                    throw new Exception(status.getStatusCode() + " - " + status.getReasonPhrase());
+                    throw new Exception(responseModel.statusCode + " - " + responseModel.statusReason);
             }
         } finally {
-            try { if (request != null) request.abort(); } catch (Exception e) {}
-            EntityUtils.consumeQuietly(responseEntity);
-            if (response != null && response instanceof Closeable) IOUtils.closeQuietly((Closeable) response);
+            IOUtils.closeQuietly(in);
+            if (responseModel != null) responseModel.release();
         }
     }
     

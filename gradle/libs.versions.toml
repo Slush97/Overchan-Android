@@ -8,7 +8,7 @@ androidx-drawerlayout = "1.2.0"
 androidx-annotation = "1.9.1"
 androidx-cursoradapter = "1.0.0"
 commons-text = "1.13.0"
-httpclient = "4.3.6"
+okhttp = "4.12.0"
 kryo = "3.0.3"
 tagsoup = "1.2.1"
 media3 = "1.8.0"
@@ -22,7 +22,7 @@ androidx-drawerlayout = { group = "androidx.drawerlayout", name = "drawerlayout"
 androidx-annotation = { group = "androidx.annotation", name = "annotation", version.ref = "androidx-annotation" }
 androidx-cursoradapter = { group = "androidx.cursoradapter", name = "cursoradapter", version.ref = "androidx-cursoradapter" }
 commons-text = { group = "org.apache.commons", name = "commons-text", version.ref = "commons-text" }
-httpclient = { group = "cz.msebera.android", name = "httpclient", version.ref = "httpclient" }
+okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }
 kryo = { group = "com.esotericsoftware", name = "kryo", version.ref = "kryo" }
 tagsoup = { group = "org.ccil.cowan.tagsoup", name = "tagsoup", version.ref = "tagsoup" }
 media3-exoplayer = { group = "androidx.media3", name = "media3-exoplayer", version.ref = "media3" }
