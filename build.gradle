@@ -26,7 +26,7 @@ dependencies {
 }
 
 android {
-    namespace 'nya.miku.wishmaster'
+    namespace 'dev.esoc.esochan'
     compileSdk 35
 
     buildFeatures {
@@ -53,7 +53,7 @@ android {
     }
     defaultConfig {
         applicationId "dev.esoc.esochan"
-        minSdk 21
+        minSdk 24
         targetSdk 35
     }
     compileOptions {

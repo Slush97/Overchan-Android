@@ -2,7 +2,7 @@
 
 Rebranding Overchan Android → esochan, and modernizing for 2026 Android standards.
 
-**Source package `nya.miku.wishmaster` is intentionally kept in Phase 1.** AGP 7.0+ decouples `namespace` (R class generation) from `applicationId` (device/store identity). A full source package rename is deferred to Phase 2 because it touches 262 files, 18 JNI symbols in C code, 39 hardcoded class names, and a runtime `isSFW` check. The app will install as `dev.esoc.esochan` on devices while source stays in `nya.miku.wishmaster`.
+Source package renamed from `nya.miku.wishmaster` to `dev.esoc.esochan` in Phase 2. The `applicationId` is `dev.esoc.esochan`.
 
 ---
 
@@ -69,22 +69,25 @@ Rebranding Overchan Android → esochan, and modernizing for 2026 Android standa
 - [x] Remove dead `SDK_INT` branches (minSdk is 21)
 - [x] `build.gradle`: targetSdk → 35
 
-**Status:** Phase 1A (A1–A4) and Phase 1B (B1–B5) are complete.
+**Status:** Phase 1A (A1–A4), Phase 1B (B1–B5), and Phase 2 are complete.
 
 ---
 
-## Phase 2: Source Package Rename (deferred)
+## Phase 2: Source Package Rename
 
-Full rename of `nya.miku.wishmaster` → `dev.esoc.esochan` across the entire source tree. Deferred because it requires:
+Full rename of `nya.miku.wishmaster` → `dev.esoc.esochan` across the entire source tree.
 
-- [ ] Rename 262 Java files' package declarations and all cross-file imports
-- [ ] Rename 18 JNI function symbols in `jni/gif.c` (or switch to `RegisterNatives`)
-- [ ] Update 39 hardcoded class names in `MainApplication.MODULES`
-- [ ] Fix `ApplicationSettings.isSFW` runtime check that depends on package name
-- [ ] Update all hardcoded broadcast action strings
-- [ ] Move source directories: `src/nya/miku/wishmaster/` → `src/dev/esoc/esochan/`
+- [x] Rename all Java/AIDL files' package declarations and cross-file imports
+- [x] Rename 18 JNI function symbols in `jni/gif.c`
+- [x] Update 13 hardcoded class names in `MainApplication.MODULES`
+- [x] Fix `ApplicationSettings.isSFW` runtime check (`.wishmaster` → `.esochan`)
+- [x] Update `build.gradle` namespace
+- [x] Update `AndroidManifest.xml` component references
+- [x] Update layout XMLs with custom view FQCNs
+- [x] Remove old `nya.miku.**` ProGuard keep rule
+- [x] Move source directories: `src/nya/miku/wishmaster/` → `src/dev/esoc/esochan/`
 
-This should be done as a single atomic commit with IDE refactoring support.
+**Status:** Phase 2 complete.
 
 ---
 
@@ -93,14 +96,14 @@ This should be done as a single atomic commit with IDE refactoring support.
 ### Replace dead/deprecated libraries
 - [x] Apache HttpClient (`cz.msebera.android:httpclient`) → OkHttp 4.12.0
 - [x] ExoPlayer 2.19.1 → Media3 (`androidx.media3:media3-exoplayer 1.8.0`)
-- [ ] TagSoup → Jsoup
-- [ ] Kryo 3.0.3 → Kryo 5.x (or kotlinx.serialization)
+- [x] TagSoup → Jsoup
+- [x] Kryo 3.0.3 → Kryo 5.6.0
 - [x] `base64-2.3.8.jar` — N/A; no external base64 library present, already uses `android.util.Base64`
 - [x] Remove local JARs from `libs/` — N/A; no `libs/` directory exists
 - [x] `commons-lang3` → removed direct dependency; replaced Pair/Triple with minimal `Tuples.java` utility
 
 ### Bump AndroidX
-- [ ] Review all AndroidX deps for latest stable versions
+- [x] Review all AndroidX deps for latest stable versions (core stays at 1.16.0 — 1.17.0 requires compileSdk 36)
 - [x] Remove `android.enableJetifier=true` (already absent from gradle.properties)
 
 ---
@@ -129,12 +132,12 @@ This should be done as a single atomic commit with IDE refactoring support.
 
 ## Phase 5: Polish & Infrastructure
 
-- [ ] GitHub Actions CI for building APKs on push/PR
+- [x] GitHub Actions CI for building APKs on push/PR
 - [ ] New app icon and branding assets
-- [ ] Review and trim supported imageboards list (many are dead)
+- [x] Review and trim supported imageboards list (27→13 modules)
 - [ ] Material 3 theming
 - [ ] ViewBinding to replace `findViewById`
-- [ ] Min SDK 21 → 24 (drops Android 5.0-6.x, simplifies code, ~1% of devices)
+- [x] Min SDK 21 → 24 (drops Android 5.0-6.x, simplifies code, <1% of devices)
 - [ ] F-Droid metadata if publishing there
 
 ---

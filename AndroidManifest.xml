@@ -35,7 +35,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <uses-permission android:name="android.permission.VIBRATE" />
     
     <application
-        android:name="nya.miku.wishmaster.common.MainApplication"
+        android:name="dev.esoc.esochan.common.MainApplication"
         android:allowBackup="true"
         android:supportsRtl="false"
         android:icon="@drawable/ic_launcher"
@@ -43,7 +43,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         android:preserveLegacyExternalStorage="true" >
         
         <activity
-            android:name="nya.miku.wishmaster.ui.MainActivity"
+            android:name="dev.esoc.esochan.ui.MainActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:launchMode="singleTask"
             android:exported="true" >
@@ -162,49 +162,49 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         </activity>
         
         <activity
-            android:name="nya.miku.wishmaster.ui.posting.PostFormActivity"
+            android:name="dev.esoc.esochan.ui.posting.PostFormActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:exported="false" />
         
         <activity
-            android:name="nya.miku.wishmaster.ui.gallery.GalleryActivity"
+            android:name="dev.esoc.esochan.ui.gallery.GalleryActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:theme="@style/Transparent"
             android:process=":Gallery"
             android:exported="false" />
         
         <activity
-            android:name="nya.miku.wishmaster.ui.gallery.GalleryInteractiveExceptionHandler"
+            android:name="dev.esoc.esochan.ui.gallery.GalleryInteractiveExceptionHandler"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:theme="@style/Transparent"
             android:exported="false" />
         
         <activity
-            android:name="nya.miku.wishmaster.ui.posting.PostingProgressActivity"
+            android:name="dev.esoc.esochan.ui.posting.PostingProgressActivity"
             android:theme="@style/Theme_Dialog_Switch"
             android:launchMode="singleTask"
             android:exported="false" />
         
         <activity
-            android:name="nya.miku.wishmaster.ui.downloading.DownloadingProgressActivity"
+            android:name="dev.esoc.esochan.ui.downloading.DownloadingProgressActivity"
             android:theme="@style/Theme_Dialog_Switch"
             android:launchMode="singleTask"
             android:exported="false" />
         
         <activity
-            android:name="nya.miku.wishmaster.ui.downloading.DownloadingErrorReportActivity"
+            android:name="dev.esoc.esochan.ui.downloading.DownloadingErrorReportActivity"
             android:theme="@style/Theme_Dialog_Switch"
             android:launchMode="singleTask"
             android:exported="false" />
         
-        <activity android:name="nya.miku.wishmaster.lib.FileDialogActivity" android:exported="false" />
-        <activity android:name="nya.miku.wishmaster.ui.settings.PreferencesActivity" android:exported="false" />
-        <activity android:name="nya.miku.wishmaster.ui.settings.AutohideActivity" android:exported="false" />
-        <activity android:name="nya.miku.wishmaster.ui.settings.ChansSortActivity" android:exported="false" />
-        <activity android:name="nya.miku.wishmaster.ui.settings.CertificatesActivity" android:exported="false" />
-        <activity android:name="nya.miku.wishmaster.ui.settings.CustomThemeListActivity" android:exported="false" />
+        <activity android:name="dev.esoc.esochan.lib.FileDialogActivity" android:exported="false" />
+        <activity android:name="dev.esoc.esochan.ui.settings.PreferencesActivity" android:exported="false" />
+        <activity android:name="dev.esoc.esochan.ui.settings.AutohideActivity" android:exported="false" />
+        <activity android:name="dev.esoc.esochan.ui.settings.ChansSortActivity" android:exported="false" />
+        <activity android:name="dev.esoc.esochan.ui.settings.CertificatesActivity" android:exported="false" />
+        <activity android:name="dev.esoc.esochan.ui.settings.CustomThemeListActivity" android:exported="false" />
         
-        <activity android:name="nya.miku.wishmaster.ui.ShareActivity"
+        <activity android:name="dev.esoc.esochan.ui.ShareActivity"
             android:exported="true" >
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
@@ -224,10 +224,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 android:resource="@xml/file_provider_paths" />
         </provider>
         
-        <service android:name="nya.miku.wishmaster.ui.posting.PostingService" android:exported="false" />
-        <service android:name="nya.miku.wishmaster.ui.downloading.DownloadingService" android:exported="false" android:foregroundServiceType="dataSync" />
-        <service android:name="nya.miku.wishmaster.ui.tabs.TabsTrackerService" android:exported="false" android:foregroundServiceType="dataSync" />
-        <service android:name="nya.miku.wishmaster.ui.gallery.GalleryBackend" android:exported="false" />
+        <service android:name="dev.esoc.esochan.ui.posting.PostingService" android:exported="false" />
+        <service android:name="dev.esoc.esochan.ui.downloading.DownloadingService" android:exported="false" android:foregroundServiceType="dataSync" />
+        <service android:name="dev.esoc.esochan.ui.tabs.TabsTrackerService" android:exported="false" android:foregroundServiceType="dataSync" />
+        <service android:name="dev.esoc.esochan.ui.gallery.GalleryBackend" android:exported="false" />
         
     </application>
 
