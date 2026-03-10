@@ -258,6 +258,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <string name="postform_opmark">OP of thread</string>
     <string name="postform_captcha_hint">Confirmation</string>
     <string name="postform_send">Send</string>
+    <string name="postform_options">Options</string>
     <string name="postform_max_attachments">Cannot attach more files</string>
     <string name="postform_cannot_attach">Cannot attach file</string>
     <string name="postform_required_file">Attach a file to create a new thread</string>

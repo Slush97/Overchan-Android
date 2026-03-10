@@ -1,0 +1,303 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="?attr/activityRootBackground"
+    android:padding="16dp">
+
+    <!-- Drag handle -->
+    <View
+        android:layout_width="40dp"
+        android:layout_height="4dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="12dp"
+        android:background="@android:color/darker_gray" />
+
+    <!-- Title -->
+    <TextView
+        android:id="@+id/post_form_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:layout_marginBottom="12dp" />
+
+    <!-- Comment field -->
+    <EditText
+        android:id="@+id/post_form_comment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/postform_comment"
+        android:inputType="textLongMessage|textMultiLine|textCapSentences"
+        android:maxLength="15000"
+        android:minLines="4"
+        android:gravity="top|start"
+        android:background="?attr/postBackground"
+        android:padding="12dp" />
+
+    <!-- Markup buttons -->
+    <HorizontalScrollView
+        android:id="@+id/post_form_markup_scroll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scrollbars="none"
+        android:layout_marginTop="4dp">
+
+        <LinearLayout
+            android:id="@+id/post_form_markup_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/post_form_mark_quote"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:padding="4dp"
+                android:background="?android:attr/selectableItemBackground"
+                android:src="@drawable/mark_quote"
+                android:contentDescription="@string/mark_quote" />
+            <ImageButton
+                android:id="@+id/post_form_mark_bold"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:padding="4dp"
+                android:background="?android:attr/selectableItemBackground"
+                android:src="@drawable/mark_bold"
+                android:contentDescription="@string/mark_bold" />
+            <ImageButton
+                android:id="@+id/post_form_mark_italic"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:padding="4dp"
+                android:background="?android:attr/selectableItemBackground"
+                android:src="@drawable/mark_italic"
+                android:contentDescription="@string/mark_italic" />
+            <ImageButton
+                android:id="@+id/post_form_mark_underline"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:padding="4dp"
+                android:background="?android:attr/selectableItemBackground"
+                android:src="@drawable/mark_underline"
+                android:contentDescription="@string/mark_underline" />
+            <ImageButton
+                android:id="@+id/post_form_mark_strike"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:padding="4dp"
+                android:background="?android:attr/selectableItemBackground"
+                android:src="@drawable/mark_strike"
+                android:contentDescription="@string/mark_strike" />
+            <ImageButton
+                android:id="@+id/post_form_mark_spoiler"
+                android:layout_width="56dp"
+                android:layout_height="40dp"
+                android:padding="4dp"
+                android:background="?android:attr/selectableItemBackground"
+                android:src="@drawable/mark_spoiler"
+                android:contentDescription="@string/mark_spoiler" />
+        </LinearLayout>
+    </HorizontalScrollView>
+
+    <!-- Attachments area -->
+    <LinearLayout
+        android:id="@+id/post_form_attachments_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginTop="8dp" />
+
+    <!-- Attach + Send row -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="8dp"
+        android:gravity="center_vertical">
+
+        <ImageButton
+            android:id="@+id/post_form_attach_button"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:padding="8dp"
+            android:background="?android:attr/selectableItemBackground"
+            android:src="?attr/actionAddAttachment"
+            android:contentDescription="@string/menu_attach_file" />
+
+        <ImageButton
+            android:id="@+id/post_form_gallery_button"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:padding="8dp"
+            android:background="?android:attr/selectableItemBackground"
+            android:src="?attr/actionAddGallery"
+            android:contentDescription="@string/menu_attach_gallery" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <Button
+            android:id="@+id/post_form_send_button"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:minWidth="120dp"
+            android:text="@string/postform_send"
+            android:textAllCaps="true" />
+    </LinearLayout>
+
+    <!-- Expandable Options section -->
+    <LinearLayout
+        android:id="@+id/post_form_options_toggle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:padding="8dp"
+        android:layout_marginTop="4dp"
+        android:background="?android:attr/selectableItemBackground">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/postform_options"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <ImageView
+            android:id="@+id/post_form_options_arrow"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@android:drawable/arrow_down_float"
+            android:contentDescription="@null" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/post_form_options_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp">
+
+        <EditText
+            android:id="@+id/post_form_subject"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/postform_subject"
+            android:inputType="textShortMessage|textCapSentences"
+            android:maxLength="255"
+            android:singleLine="true" />
+
+        <LinearLayout
+            android:id="@+id/post_form_name_email_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="2">
+
+            <EditText
+                android:id="@+id/post_form_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="@string/postform_name"
+                android:inputType="textShortMessage|textCapSentences"
+                android:maxLength="255"
+                android:singleLine="true" />
+
+            <EditText
+                android:id="@+id/post_form_email"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="@string/postform_email"
+                android:inputType="textEmailAddress"
+                android:maxLength="255"
+                android:singleLine="true" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/post_form_password_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/postform_password" />
+
+            <EditText
+                android:id="@+id/post_form_password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textVisiblePassword"
+                android:typeface="monospace"
+                android:maxLength="255"
+                android:singleLine="true" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/post_form_checkbox_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <CheckBox
+                android:id="@+id/post_form_sage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/postform_sage" />
+
+            <CheckBox
+                android:id="@+id/post_form_custommark"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/postform_opmark" />
+        </LinearLayout>
+
+        <Spinner
+            android:id="@+id/post_form_spinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+    <!-- Captcha area (usually hidden for 4chan interactive captcha) -->
+    <FrameLayout
+        android:id="@+id/post_form_captcha_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp">
+
+        <ImageView
+            android:id="@+id/post_form_captcha_view"
+            android:layout_width="match_parent"
+            android:layout_height="90dp"
+            android:scaleType="fitCenter"
+            android:adjustViewBounds="true"
+            android:contentDescription="@string/captcha" />
+
+        <ProgressBar
+            style="?android:attr/progressBarStyleLarge"
+            android:id="@+id/post_form_captcha_loading"
+            android:layout_width="wrap_content"
+            android:layout_height="90dp"
+            android:layout_gravity="center_horizontal"
+            android:indeterminate="true"
+            android:visibility="gone" />
+    </FrameLayout>
+
+    <EditText
+        android:id="@+id/post_form_captcha_field"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/postform_captcha_hint"
+        android:imeOptions="flagNoExtractUi|flagNoFullscreen|actionSend"
+        android:singleLine="true" />
+
+</LinearLayout>

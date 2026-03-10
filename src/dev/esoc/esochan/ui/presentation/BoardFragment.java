@@ -63,6 +63,7 @@ import dev.esoc.esochan.lib.pullable_layout.SwipeRefreshLayout;
 import dev.esoc.esochan.ui.AppearanceUtils;
 import dev.esoc.esochan.ui.Attachments;
 import dev.esoc.esochan.ui.BoardsListFragment;
+import dev.esoc.esochan.ui.posting.PostFormFragment;
 import dev.esoc.esochan.ui.Clipboard;
 import dev.esoc.esochan.ui.CompatibilityImpl;
 import dev.esoc.esochan.ui.Database;
@@ -2790,11 +2791,8 @@ public class BoardFragment extends Fragment implements AdapterView.OnItemClickLi
             Toast.makeText(activity, resources.getString(R.string.posting_now_posting), Toast.LENGTH_LONG).show();
             return;
         }
-        Intent addPostIntent = new Intent(activity.getApplicationContext(), PostFormActivity.class);
-        addPostIntent.putExtra(PostingService.EXTRA_PAGE_HASH, hash);
-        addPostIntent.putExtra(PostingService.EXTRA_BOARD_MODEL, boardModel);
-        addPostIntent.putExtra(PostingService.EXTRA_SEND_POST_MODEL, sendPostModel);
-        startActivity(addPostIntent);
+        PostFormFragment fragment = PostFormFragment.Companion.newInstance(hash, boardModel, sendPostModel);
+        fragment.show(getParentFragmentManager(), "post_form");
     }
     
     private void openReply(int position, boolean withQuote, String quote) {
