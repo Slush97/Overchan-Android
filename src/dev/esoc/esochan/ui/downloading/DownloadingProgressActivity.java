@@ -19,6 +19,7 @@
 package dev.esoc.esochan.ui.downloading;
 
 import dev.esoc.esochan.R;
+import dev.esoc.esochan.databinding.DownloadingProgressLayoutBinding;
 import dev.esoc.esochan.ui.downloading.DownloadingService.DownloadingServiceBinder;
 import android.app.Activity;
 import android.app.Service;
@@ -45,24 +46,26 @@ public class DownloadingProgressActivity extends Activity implements View.OnClic
     private BroadcastReceiver broadcastReceiver;
     private IntentFilter intentFilter;
     
+    private DownloadingProgressLayoutBinding binding;
     private ProgressBar progressBar = null;
     private TextView currentItemView = null;
     private boolean isIndeterminate = true;
-    
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
+
         setTitle(R.string.downloading_title_simple);
-        setContentView(R.layout.downloading_progress_layout);
+        binding = DownloadingProgressLayoutBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
         getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        
-        findViewById(R.id.downloading_cancel_button).setOnClickListener(this);
-        findViewById(R.id.downloading_hide_button).setOnClickListener(this);
+
+        binding.downloadingCancelButton.setOnClickListener(this);
+        binding.downloadingHideButton.setOnClickListener(this);
         progressBar = (ProgressBar) findViewById(android.R.id.progress);
         progressBar.setMax(100);
         progressBar.setIndeterminate(true);
-        currentItemView = (TextView) findViewById(R.id.downloading_dialog_current_item);
+        currentItemView = binding.downloadingDialogCurrentItem;
         
         bindingIntent = new Intent(this, DownloadingService.class);
         serviceConnection = new ServiceConnection() {

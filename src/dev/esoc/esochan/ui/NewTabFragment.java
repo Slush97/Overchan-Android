@@ -22,6 +22,7 @@ import java.io.File;
 import java.util.List;
 
 import dev.esoc.esochan.R;
+import dev.esoc.esochan.databinding.NewtabFragmentBinding;
 import dev.esoc.esochan.api.ChanModule;
 import dev.esoc.esochan.api.models.UrlPageModel;
 import dev.esoc.esochan.common.Logger;
@@ -88,12 +89,15 @@ public class NewTabFragment extends Fragment implements AdapterView.OnItemClickL
         adapter = new QuickAccessAdapter(activity, list);
     }
     
+    private NewtabFragmentBinding binding;
+
     @SuppressLint("ClickableViewAccessibility")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         activity.setTitle(R.string.tabs_newtab);
         CompatibilityImpl.setActionBarDefaultIcon(activity);
-        View v = inflater.inflate(R.layout.newtab_fragment, container, false);
+        binding = NewtabFragmentBinding.inflate(inflater, container, false);
+        View v = binding.getRoot();
         listView = (DragSortListView) v.findViewById(android.R.id.list);
         DragSortController controller = new DragSortController(listView, R.id.newtab_quickaccess_drag_handle, DragSortController.ON_DRAG, 0) {
             @Override
@@ -120,10 +124,10 @@ public class NewTabFragment extends Fragment implements AdapterView.OnItemClickL
             }
         });
         registerForContextMenu(listView);
-        addressBar = v.findViewById(R.id.newtab_address_bar);
-        openAddressBar = (Button) v.findViewById(R.id.newtab_open_address_bar);
+        addressBar = binding.newtabAddressBar;
+        openAddressBar = binding.newtabOpenAddressBar;
         openAddressBar.setOnClickListener(this);
-        addressField = (EditText) v.findViewById(R.id.newtab_address_field);
+        addressField = binding.newtabAddressField;
         addressField.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
@@ -134,9 +138,9 @@ public class NewTabFragment extends Fragment implements AdapterView.OnItemClickL
                 return false;
             }
         });
-        addressGo = (Button) v.findViewById(R.id.newtab_address_go);
+        addressGo = binding.newtabAddressGo;
         addressGo.setOnClickListener(this);
-        openLocal = (Button) v.findViewById(R.id.newtab_open_local);
+        openLocal = binding.newtabOpenLocal;
         openLocal.setOnClickListener(this);
         return v;
     }

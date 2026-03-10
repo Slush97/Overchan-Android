@@ -113,12 +113,13 @@ Full rename of `nya.miku.wishmaster` → `dev.esoc.esochan` across the entire so
 ### New code in Kotlin
 - [x] Add Kotlin plugin to build (Kotlin 2.1.10, jvmTarget 17)
 - [ ] Write new files in Kotlin, migrate existing files opportunistically
-- [ ] Add coroutines for async operations (replacing raw threads)
+- [x] Add coroutines for async operations (`kotlinx-coroutines 1.10.1`, `AppScope`/`CancellableTaskScope` bridge, Chan4Captcha pilot)
 
 ### ViewModel + state management
-- [ ] Add `androidx.lifecycle:lifecycle-viewmodel` dependency
-- [ ] Migrate MainActivity and BoardFragment state into ViewModels
-- [ ] Use StateFlow/LiveData for UI updates
+- [x] Add `androidx.lifecycle:lifecycle-viewmodel` dependency
+- [x] `TabsViewModel` wraps `TabsState` as `StateFlow`, wired into `MainActivity` + `TabsAdapter`
+- [ ] Migrate BoardFragment state into ViewModel (needs dedicated plan)
+- [ ] Use StateFlow/LiveData for UI updates beyond tabs
 
 ### Storage layer
 - [ ] Consider Room for database access (currently raw SQLite)
@@ -136,7 +137,7 @@ Full rename of `nya.miku.wishmaster` → `dev.esoc.esochan` across the entire so
 - [ ] New app icon and branding assets
 - [x] Review and trim supported imageboards list (27→13 modules)
 - [ ] Material 3 theming
-- [ ] ViewBinding to replace `findViewById`
+- [x] ViewBinding to replace `findViewById`
 - [x] Min SDK 21 → 24 (drops Android 5.0-6.x, simplifies code, <1% of devices)
 - [ ] F-Droid metadata if publishing there
 

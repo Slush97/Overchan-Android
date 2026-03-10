@@ -19,6 +19,7 @@
 package dev.esoc.esochan.ui.posting;
 
 import dev.esoc.esochan.R;
+import dev.esoc.esochan.databinding.PostingProgressLayoutBinding;
 import dev.esoc.esochan.ui.posting.PostingService.PostingServiceBinder;
 import android.app.Activity;
 import android.app.Service;
@@ -44,18 +45,20 @@ public class PostingProgressActivity extends Activity implements View.OnClickLis
     private BroadcastReceiver broadcastReceiver;
     private IntentFilter intentFilter;
     
+    private PostingProgressLayoutBinding binding;
     private ProgressBar progressBar = null;
     private boolean isIndeterminate = true;
-    
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
-        setContentView(R.layout.posting_progress_layout);
+
+        binding = PostingProgressLayoutBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
         getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        
-        findViewById(R.id.posting_cancel_button).setOnClickListener(this);
-        findViewById(R.id.posting_hide_button).setOnClickListener(this);
+
+        binding.postingCancelButton.setOnClickListener(this);
+        binding.postingHideButton.setOnClickListener(this);
         progressBar = (ProgressBar) findViewById(android.R.id.progress);
         progressBar.setMax(100);
         progressBar.setIndeterminate(true);

@@ -31,6 +31,8 @@ import java.util.concurrent.Executors;
 import dev.esoc.esochan.common.Tuples.Triple;
 
 import dev.esoc.esochan.R;
+import dev.esoc.esochan.databinding.GalleryLayoutBinding;
+import dev.esoc.esochan.databinding.GalleryLayoutFullscreenBinding;
 import dev.esoc.esochan.api.interfaces.CancellableTask;
 import dev.esoc.esochan.api.interfaces.ProgressListener;
 import dev.esoc.esochan.api.models.AttachmentModel;
@@ -129,6 +131,8 @@ public class GalleryActivity extends Activity implements View.OnClickListener {
     private BoardModel boardModel;
     private String chan;
     
+    private GalleryLayoutBinding binding;
+    private GalleryLayoutFullscreenBinding bindingFullscreen;
     private ProgressBar progressBar;
     private ViewPager viewPager;
     private TextView navigationInfo;
@@ -231,18 +235,25 @@ public class GalleryActivity extends Activity implements View.OnClickListener {
         tnDownloadingExecutor = Executors.newFixedThreadPool(4, Async.LOW_PRIORITY_FACTORY);
         
         if (settings.fullscreenGallery()) {
-            setContentView(R.layout.gallery_layout_fullscreen);
+            bindingFullscreen = GalleryLayoutFullscreenBinding.inflate(getLayoutInflater());
+            setContentView(bindingFullscreen.getRoot());
             GalleryFullscreen.initFullscreen(this);
+            viewPager = bindingFullscreen.galleryViewpager;
+            navigationInfo = bindingFullscreen.galleryNavigationInfo;
+            bindingFullscreen.galleryNavigationPrevious.setOnClickListener(this);
+            bindingFullscreen.galleryNavigationNext.setOnClickListener(this);
         } else {
             WindowCompat.setDecorFitsSystemWindows(getWindow(), true);
-            setContentView(R.layout.gallery_layout);
+            binding = GalleryLayoutBinding.inflate(getLayoutInflater());
+            setContentView(binding.getRoot());
+            viewPager = binding.galleryViewpager;
+            navigationInfo = binding.galleryNavigationInfo;
+            binding.galleryNavigationPrevious.setOnClickListener(this);
+            binding.galleryNavigationNext.setOnClickListener(this);
         }
-        
+
         progressBar = (ProgressBar) findViewById(android.R.id.progress);
         progressBar.setMax(Window.PROGRESS_END);
-        viewPager = (ViewPager) findViewById(R.id.gallery_viewpager);
-        navigationInfo = (TextView) findViewById(R.id.gallery_navigation_info);
-        for (int id : new int[] { R.id.gallery_navigation_previous, R.id.gallery_navigation_next }) findViewById(id).setOnClickListener(this);
         
         bindService(new Intent(this, GalleryBackend.class), new ServiceConnection() {
             { serviceConnection = this; }

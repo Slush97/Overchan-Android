@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 import dev.esoc.esochan.R;
+import dev.esoc.esochan.databinding.BoardslistFragmentBinding;
 import dev.esoc.esochan.api.ChanModule;
 import dev.esoc.esochan.api.interfaces.CancellableTask;
 import dev.esoc.esochan.api.models.SimpleBoardModel;
@@ -80,6 +81,7 @@ public class BoardsListFragment extends Fragment implements AdapterView.OnItemCl
     private String startItem;
     private int startItemTop;
     
+    private BoardslistFragmentBinding binding;
     private View rootView;
     private View loadingView;
     private View errorView;
@@ -190,14 +192,15 @@ public class BoardsListFragment extends Fragment implements AdapterView.OnItemCl
         }
         startItem = tabModel.startItemNumber;
         startItemTop = tabModel.startItemTop;
-        rootView = inflater.inflate(R.layout.boardslist_fragment, container, false);
-        loadingView = rootView.findViewById(R.id.boardslist_loading);
-        errorView = rootView.findViewById(R.id.boardslist_error);
-        errorTextView = (TextView)errorView.findViewById(R.id.frame_error_text);
-        listView = (ListView)rootView.findViewById(android.R.id.list);
+        binding = BoardslistFragmentBinding.inflate(inflater, container, false);
+        rootView = binding.getRoot();
+        loadingView = binding.boardslistLoading.getRoot();
+        errorView = binding.boardslistError.getRoot();
+        errorTextView = binding.boardslistError.frameErrorText;
+        listView = (ListView) rootView.findViewById(android.R.id.list);
         listView.setOnItemClickListener(this);
         registerForContextMenu(listView);
-        boardField = (EditText) rootView.findViewById(R.id.boardslist_board_field);
+        boardField = binding.boardslistBoardField;
         boardField.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
@@ -208,7 +211,7 @@ public class BoardsListFragment extends Fragment implements AdapterView.OnItemCl
                 return false;
             }
         });
-        buttonGo = (Button) rootView.findViewById(R.id.boardslist_btn_go);
+        buttonGo = binding.boardslistBtnGo;
         buttonGo.setOnClickListener(this);
         activity.setTitle(chan.getDisplayingName());
         CompatibilityImpl.setActionBarCustomFavicon(activity, chan.getChanFavicon());

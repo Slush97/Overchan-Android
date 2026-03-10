@@ -36,6 +36,7 @@ import java.util.concurrent.Executors;
 import dev.esoc.esochan.common.Tuples.Triple;
 
 import dev.esoc.esochan.R;
+import dev.esoc.esochan.databinding.BoardFragmentBinding;
 import dev.esoc.esochan.api.ChanModule;
 import dev.esoc.esochan.api.interfaces.CancellableTask;
 import dev.esoc.esochan.api.models.AttachmentModel;
@@ -198,6 +199,7 @@ public class BoardFragment extends Fragment implements AdapterView.OnItemClickLi
     private Menu menu;
     private Boolean enableQuickAccessMenu = null;
     
+    private BoardFragmentBinding binding;
     private View rootView;
     private View loadingView;
     private View errorView;
@@ -342,21 +344,22 @@ public class BoardFragment extends Fragment implements AdapterView.OnItemClickLi
             Toast.makeText(activity, R.string.error_unknown, Toast.LENGTH_LONG).show();
             return new View(activity);
         }
-        rootView = inflater.inflate(R.layout.board_fragment, container, false);
+        binding = BoardFragmentBinding.inflate(inflater, container, false);
+        rootView = binding.getRoot();
         /*{
             ImageView mikuView = new ImageView(activity);
             mikuView.setImageResource(R.drawable.miku);
             ((FrameLayout) rootView.findViewById(R.id.board_main_frame)).addView(mikuView, new FrameLayout.LayoutParams(
                     FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT, Gravity.RIGHT));
         }*/
-        loadingView = rootView.findViewById(R.id.board_loading);
-        errorView = rootView.findViewById(R.id.board_error);
-        errorTextView = (TextView)errorView.findViewById(R.id.frame_error_text);
-        catalogBarView = (Spinner) rootView.findViewById(R.id.board_catalog_bar);
-        navigationBarView = rootView.findViewById(R.id.board_navigation_bar);
-        searchBarView = rootView.findViewById(R.id.board_search_bar);
-        pullableLayout = (SwipeRefreshLayout)rootView.findViewById(R.id.board_pullable_layout);
-        listView = (ListView)rootView.findViewById(android.R.id.list);
+        loadingView = binding.boardLoading.getRoot();
+        errorView = binding.boardError.getRoot();
+        errorTextView = binding.boardError.frameErrorText;
+        catalogBarView = binding.boardCatalogBar;
+        navigationBarView = binding.boardNavigationBar;
+        searchBarView = binding.boardSearchBar;
+        pullableLayout = binding.boardPullableLayout;
+        listView = (ListView) binding.getRoot().findViewById(android.R.id.list);
         if (pageType != TYPE_POSTSLIST) listView.setOnItemClickListener(this);
         registerForContextMenu(listView);
         
@@ -545,7 +548,7 @@ public class BoardFragment extends Fragment implements AdapterView.OnItemClickLi
             case R.id.menu_search:
                 initSearchBar();
                 searchBarView.setVisibility(View.VISIBLE);
-                ((EditText) searchBarView.findViewById(R.id.board_search_field)).requestFocus();
+                binding.boardSearchField.requestFocus();
                 return true;
             case R.id.menu_save_page:
                 saveThisPage();
@@ -2492,15 +2495,15 @@ public class BoardFragment extends Fragment implements AdapterView.OnItemClickLi
         if (presentationModel == null) return;
         if (tabModel.pageModel.type == UrlPageModel.TYPE_BOARDPAGE) {
             View.OnClickListener navigationBarOnClickListener = new NavigationBarOnClickListener(this);
-            for (int id : new int[] {R.id.board_navigation_previous, R.id.board_navigation_next, R.id.board_navigation_page }) {
-                navigationBarView.findViewById(id).setOnClickListener(navigationBarOnClickListener);
-            }
-            ((TextView) navigationBarView.findViewById(R.id.board_navigation_page)).setText(String.valueOf(tabModel.pageModel.boardPage));
+            binding.boardNavigationPrevious.setOnClickListener(navigationBarOnClickListener);
+            binding.boardNavigationNext.setOnClickListener(navigationBarOnClickListener);
+            binding.boardNavigationPage.setOnClickListener(navigationBarOnClickListener);
+            binding.boardNavigationPage.setText(String.valueOf(tabModel.pageModel.boardPage));
             if (tabModel.pageModel.boardPage == presentationModel.source.boardModel.firstPage) {
-                navigationBarView.findViewById(R.id.board_navigation_previous).setVisibility(View.INVISIBLE);
+                binding.boardNavigationPrevious.setVisibility(View.INVISIBLE);
             }
             if (tabModel.pageModel.boardPage == presentationModel.source.boardModel.lastPage) {
-                navigationBarView.findViewById(R.id.board_navigation_next).setVisibility(View.INVISIBLE);
+                binding.boardNavigationNext.setVisibility(View.INVISIBLE);
             }
             
         } else if (tabModel.pageModel.type == UrlPageModel.TYPE_CATALOGPAGE) {
@@ -2596,8 +2599,8 @@ public class BoardFragment extends Fragment implements AdapterView.OnItemClickLi
     
     private void initSearchBar() {
         if (searchBarInitialized) return;
-        final EditText field = (EditText) searchBarView.findViewById(R.id.board_search_field);
-        final TextView results = (TextView) searchBarView.findViewById(R.id.board_search_result);
+        final EditText field = binding.boardSearchField;
+        final TextView results = binding.boardSearchResult;
         if (pageType == TYPE_POSTSLIST) {
             field.setHint(R.string.search_bar_in_thread_hint);
         }
@@ -2639,9 +2642,9 @@ public class BoardFragment extends Fragment implements AdapterView.OnItemClickLi
                 }
             }
         };
-        for (int id : new int[] { R.id.board_search_close, R.id.board_search_previous, R.id.board_search_next }) {
-            searchBarView.findViewById(id).setOnClickListener(searchOnClickListener);
-        }
+        binding.boardSearchClose.setOnClickListener(searchOnClickListener);
+        binding.boardSearchPrevious.setOnClickListener(searchOnClickListener);
+        binding.boardSearchNext.setOnClickListener(searchOnClickListener);
         field.setOnKeyListener(new View.OnKeyListener() {
             private boolean searchUsingChan() {
                 if (pageType != TYPE_THREADSLIST) return false;
@@ -2722,10 +2725,10 @@ public class BoardFragment extends Fragment implements AdapterView.OnItemClickLi
                             boolean firstTime = !searchHighlightActive;
                             searchHighlightActive = true;
                             adapter.notifyDataSetChanged();
-                            searchBarView.findViewById(R.id.board_search_next).setVisibility(View.VISIBLE);
-                            searchBarView.findViewById(R.id.board_search_previous).setVisibility(View.VISIBLE);
-                            searchBarView.findViewById(R.id.board_search_result).setVisibility(View.VISIBLE);
-                            searchOnClickListener.onClick(firstTime ? null : searchBarView.findViewById(R.id.board_search_next));
+                            binding.boardSearchNext.setVisibility(View.VISIBLE);
+                            binding.boardSearchPrevious.setVisibility(View.VISIBLE);
+                            binding.boardSearchResult.setVisibility(View.VISIBLE);
+                            searchOnClickListener.onClick(firstTime ? null : binding.boardSearchNext);
                         }
                     }
                     try {
@@ -2759,9 +2762,9 @@ public class BoardFragment extends Fragment implements AdapterView.OnItemClickLi
                 fragmentRef.get().searchHighlightActive = false;
                 fragmentRef.get().adapter.notifyDataSetChanged();
             }
-            fragmentRef.get().searchBarView.findViewById(R.id.board_search_next).setVisibility(View.GONE);
-            fragmentRef.get().searchBarView.findViewById(R.id.board_search_previous).setVisibility(View.GONE);
-            fragmentRef.get().searchBarView.findViewById(R.id.board_search_result).setVisibility(View.GONE);
+            fragmentRef.get().binding.boardSearchNext.setVisibility(View.GONE);
+            fragmentRef.get().binding.boardSearchPrevious.setVisibility(View.GONE);
+            fragmentRef.get().binding.boardSearchResult.setVisibility(View.GONE);
         }
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -2770,9 +2773,9 @@ public class BoardFragment extends Fragment implements AdapterView.OnItemClickLi
     }
     
     private void resetSearchCache() {
-        searchBarView.findViewById(R.id.board_search_next).setVisibility(View.GONE);
-        searchBarView.findViewById(R.id.board_search_previous).setVisibility(View.GONE);
-        searchBarView.findViewById(R.id.board_search_result).setVisibility(View.GONE);
+        binding.boardSearchNext.setVisibility(View.GONE);
+        binding.boardSearchPrevious.setVisibility(View.GONE);
+        binding.boardSearchResult.setVisibility(View.GONE);
         searchHighlightActive = false;
         cachedSearchHighlightedSpanables = null;
         cachedSearchRequest = null;
@@ -2781,10 +2784,10 @@ public class BoardFragment extends Fragment implements AdapterView.OnItemClickLi
     
     private void finalizeSearchBar() {
         if (!searchBarInitialized) return;
-        for (int id : new int[] { R.id.board_search_close, R.id.board_search_previous, R.id.board_search_next }) {
-            searchBarView.findViewById(id).setOnClickListener(null);
-        }
-        final EditText field = (EditText) searchBarView.findViewById(R.id.board_search_field);
+        binding.boardSearchClose.setOnClickListener(null);
+        binding.boardSearchPrevious.setOnClickListener(null);
+        binding.boardSearchNext.setOnClickListener(null);
+        final EditText field = binding.boardSearchField;
         field.setOnKeyListener(null);
     }
     

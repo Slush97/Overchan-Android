@@ -24,6 +24,7 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 import dev.esoc.esochan.R;
+import dev.esoc.esochan.databinding.DialogAutohideRuleBinding;
 import dev.esoc.esochan.api.ChanModule;
 import dev.esoc.esochan.common.MainApplication;
 import dev.esoc.esochan.lib.org_json.JSONArray;
@@ -95,14 +96,15 @@ public class AutohideActivity extends ListActivity {
         }
         
         Context dialogContext = this;
-        View dialogView = LayoutInflater.from(dialogContext).inflate(R.layout.dialog_autohide_rule, null);
-        final EditText regexEditText = (EditText) dialogView.findViewById(R.id.dialog_autohide_regex);
-        final Spinner chanSpinner = (Spinner) dialogView.findViewById(R.id.dialog_autohide_chan_spinner);
-        final EditText boardEditText = (EditText) dialogView.findViewById(R.id.dialog_autohide_boardname);
-        final EditText threadEditText = (EditText) dialogView.findViewById(R.id.dialog_autohide_threadnum);
-        final CheckBox inCommentCheckBox = (CheckBox) dialogView.findViewById(R.id.dialog_autohide_in_comment);
-        final CheckBox inSubjectCheckBox = (CheckBox) dialogView.findViewById(R.id.dialog_autohide_in_subject);
-        final CheckBox inNameCheckBox = (CheckBox) dialogView.findViewById(R.id.dialog_autohide_in_name);
+        DialogAutohideRuleBinding dialogBinding = DialogAutohideRuleBinding.inflate(LayoutInflater.from(dialogContext));
+        View dialogView = dialogBinding.getRoot();
+        final EditText regexEditText = dialogBinding.dialogAutohideRegex;
+        final Spinner chanSpinner = dialogBinding.dialogAutohideChanSpinner;
+        final EditText boardEditText = dialogBinding.dialogAutohideBoardname;
+        final EditText threadEditText = dialogBinding.dialogAutohideThreadnum;
+        final CheckBox inCommentCheckBox = dialogBinding.dialogAutohideInComment;
+        final CheckBox inSubjectCheckBox = dialogBinding.dialogAutohideInSubject;
+        final CheckBox inNameCheckBox = dialogBinding.dialogAutohideInName;
         
         chanSpinner.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, chans));
         if (changeId != -1) {

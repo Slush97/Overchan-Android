@@ -17,6 +17,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import dev.esoc.esochan.R;
+import dev.esoc.esochan.databinding.FiledialogMainBinding;
 import dev.esoc.esochan.common.MainApplication;
 import android.app.AlertDialog;
 import android.app.ListActivity;
@@ -98,6 +99,7 @@ public class FileDialogActivity extends ListActivity {
      */
     public static final String CAN_SELECT_DIR = "CAN_SELECT_DIR";
 
+    private FiledialogMainBinding binding;
     private List<String> path = null;
     private TextView myPath;
     private EditText mFileName;
@@ -131,13 +133,14 @@ public class FileDialogActivity extends ListActivity {
         setResult(RESULT_CANCELED, getIntent());
 
         setTitle(R.string.filedialog_title);
-        setContentView(R.layout.filedialog_main);
-        myPath = (TextView) findViewById(R.id.path);
-        mFileName = (EditText) findViewById(R.id.filedialog_EditTextFile);
+        binding = FiledialogMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+        myPath = binding.path;
+        mFileName = binding.filedialogEditTextFile;
 
         inputManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
 
-        selectButton = (Button) findViewById(R.id.filedialog_ButtonSelect);
+        selectButton = binding.filedialogButtonSelect;
         selectButton.setEnabled(false);
         selectButton.setOnClickListener(new OnClickListener() {
 
@@ -151,7 +154,7 @@ public class FileDialogActivity extends ListActivity {
             }
         });
 
-        final Button newButton = (Button) findViewById(R.id.filedialog_ButtonNew);
+        final Button newButton = binding.filedialogButtonNew;
         newButton.setOnClickListener(new OnClickListener() {
 
             @Override
@@ -173,11 +176,11 @@ public class FileDialogActivity extends ListActivity {
             newButton.setEnabled(false);
         }
 
-        layoutSelect = (LinearLayout) findViewById(R.id.filedialog_LinearLayoutSelect);
-        layoutCreate = (LinearLayout) findViewById(R.id.filedialog_LinearLayoutCreate);
+        layoutSelect = binding.filedialogLinearLayoutSelect;
+        layoutCreate = binding.filedialogLinearLayoutCreate;
         layoutCreate.setVisibility(View.GONE);
 
-        final Button cancelButton = (Button) findViewById(R.id.filedialog_ButtonCancel);
+        final Button cancelButton = binding.filedialogButtonCancel;
         cancelButton.setOnClickListener(new OnClickListener() {
 
             @Override
@@ -186,7 +189,7 @@ public class FileDialogActivity extends ListActivity {
             }
 
         });
-        final Button createButton = (Button) findViewById(R.id.filedialog_ButtonCreate);
+        final Button createButton = binding.filedialogButtonCreate;
         createButton.setOnClickListener(new OnClickListener() {
 
             @Override

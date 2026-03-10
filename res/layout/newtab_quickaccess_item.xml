@@ -32,11 +32,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         android:paddingRight="16dp"
         android:visibility="visible" />
     
-    <include
-        layout="@android:layout/simple_list_item_1"
+    <TextView
         android:id="@+id/newtab_quickaccess_text"
         android:layout_weight="1"
         android:layout_width="0dp"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceListItemSmall"
+        android:gravity="center_vertical"
+        android:paddingStart="?android:attr/listPreferredItemPaddingStart"
+        android:paddingEnd="?android:attr/listPreferredItemPaddingEnd"
+        android:minHeight="?android:attr/listPreferredItemHeightSmall" />
  
 </LinearLayout>

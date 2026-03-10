@@ -19,6 +19,7 @@
 package dev.esoc.esochan.ui.downloading;
 
 import dev.esoc.esochan.R;
+import dev.esoc.esochan.databinding.DownloadingErrorReportLayoutBinding;
 import dev.esoc.esochan.common.Async;
 import dev.esoc.esochan.common.Logger;
 import dev.esoc.esochan.common.MainApplication;
@@ -38,19 +39,21 @@ import android.widget.Toast;
 public class DownloadingErrorReportActivity extends Activity implements View.OnClickListener {
     private static final String TAG = "DownloadingErrorReportActivity";
     
+    private DownloadingErrorReportLayoutBinding binding;
     private TextView textView;
     private NotificationManager notificationManager;
     private String errorItemsData;
-    
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setTitle(R.string.downloading_error_title);
-        setContentView(R.layout.downloading_error_report_layout);
+        binding = DownloadingErrorReportLayoutBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
         getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-        textView = (TextView) findViewById(R.id.downloading_error_report_view);
-        findViewById(R.id.downloading_error_report_ok_btn).setOnClickListener(this);
-        findViewById(R.id.downloading_error_report_retry_btn).setOnClickListener(this);
+        textView = binding.downloadingErrorReportView;
+        binding.downloadingErrorReportOkBtn.setOnClickListener(this);
+        binding.downloadingErrorReportRetryBtn.setOnClickListener(this);
         notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         updateErrorInfo();
     }

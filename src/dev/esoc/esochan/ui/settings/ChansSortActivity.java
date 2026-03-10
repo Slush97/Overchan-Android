@@ -34,6 +34,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import dev.esoc.esochan.R;
+import dev.esoc.esochan.databinding.SidebarTabitemBinding;
 import dev.esoc.esochan.api.ChanModule;
 import dev.esoc.esochan.common.MainApplication;
 import dev.esoc.esochan.lib.dslv.DragSortController;
@@ -64,11 +65,18 @@ public class ChansSortActivity extends Activity {
             LayoutInflater inflater = LayoutInflater.from(ChansSortActivity.this);
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
-                View view = convertView == null ? inflater.inflate(R.layout.sidebar_tabitem, parent, false) : convertView;
-                View dragHandler = view.findViewById(R.id.tab_drag_handle);
-                ImageView favIcon = (ImageView)view.findViewById(R.id.tab_favicon);
-                TextView title = (TextView)view.findViewById(R.id.tab_text_view);
-                ImageView closeBtn = (ImageView)view.findViewById(R.id.tab_close_button);
+                SidebarTabitemBinding binding;
+                if (convertView == null) {
+                    binding = SidebarTabitemBinding.inflate(inflater, parent, false);
+                    binding.getRoot().setTag(binding);
+                } else {
+                    binding = (SidebarTabitemBinding) convertView.getTag();
+                }
+                View view = binding.getRoot();
+                View dragHandler = binding.tabDragHandle;
+                ImageView favIcon = binding.tabFavicon;
+                TextView title = binding.tabTextView;
+                ImageView closeBtn = binding.tabCloseButton;
                 dragHandler.getLayoutParams().width = ViewGroup.LayoutParams.WRAP_CONTENT;
                 dragHandler.setLayoutParams(dragHandler.getLayoutParams());
                 view.setBackgroundColor(Color.TRANSPARENT);

@@ -24,6 +24,8 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 
 import dev.esoc.esochan.R;
+import dev.esoc.esochan.databinding.PostformLayoutBinding;
+import dev.esoc.esochan.databinding.PostformLayoutPinnedMarkupBinding;
 import dev.esoc.esochan.api.ChanModule;
 import dev.esoc.esochan.api.interfaces.CancellableTask;
 import dev.esoc.esochan.api.models.BoardModel;
@@ -78,7 +80,8 @@ public class PostFormActivity extends Activity implements View.OnClickListener {
     private static final int REQUEST_CODE_ATTACH_GALLERY = 2;
     
     private ApplicationSettings settings;
-    
+    private PostformLayoutBinding binding;
+
     private View nameLayout;
     private EditText nameField;
     private EditText emailField;
@@ -419,28 +422,35 @@ public class PostFormActivity extends Activity implements View.OnClickListener {
     }
 
     private void setViews() {
-        setContentView(settings.isPinnedMarkup() ? R.layout.postform_layout_pinned_markup : R.layout.postform_layout);
-        nameLayout = findViewById(R.id.postform_name_email_layout);
-        nameField = (EditText) findViewById(R.id.postform_name_field);
-        emailField = (EditText) findViewById(R.id.postform_email_field);
-        passwordLayout = findViewById(R.id.postform_password_layout);
-        passwordField = (EditText) findViewById(R.id.postform_password_field);
-        chkboxLayout = findViewById(R.id.postform_checkbox_layout);
-        sageChkbox = (CheckBox) findViewById(R.id.postform_sage_checkbox);
+        if (settings.isPinnedMarkup()) {
+            PostformLayoutPinnedMarkupBinding pinnedBinding = PostformLayoutPinnedMarkupBinding.inflate(getLayoutInflater());
+            setContentView(pinnedBinding.getRoot());
+            binding = PostformLayoutBinding.bind(pinnedBinding.getRoot());
+        } else {
+            binding = PostformLayoutBinding.inflate(getLayoutInflater());
+            setContentView(binding.getRoot());
+        }
+        nameLayout = binding.postformNameEmailLayout;
+        nameField = binding.postformNameField;
+        emailField = binding.postformEmailField;
+        passwordLayout = binding.postformPasswordLayout;
+        passwordField = binding.postformPasswordField;
+        chkboxLayout = binding.postformCheckboxLayout;
+        sageChkbox = binding.postformSageCheckbox;
         sageChkbox.setOnClickListener(this);
-        custommarkChkbox = (CheckBox) findViewById(R.id.postform_custommark_checkbox);
-        attachmentsLayout = (LinearLayout) findViewById(R.id.postform_attachments_layout);
-        spinner = (Spinner) findViewById(R.id.postform_spinner);
-        subjectField = (EditText) findViewById(R.id.postform_subject_field);
-        commentField = (EditText) findViewById(R.id.postform_comment_field);
-        markLayout = (LinearLayout) findViewById(R.id.postform_mark_layout);
+        custommarkChkbox = binding.postformCustommarkCheckbox;
+        attachmentsLayout = binding.postformAttachmentsLayout;
+        spinner = binding.postformSpinner;
+        subjectField = binding.postformSubjectField;
+        commentField = binding.postformCommentField;
+        markLayout = binding.postformMarkLayout;
         for (int i=0, len=markLayout.getChildCount(); i<len; ++i) markLayout.getChildAt(i).setOnClickListener(this);
-        captchaLayout = findViewById(R.id.postform_captcha_layout);
-        captchaView = (ImageView) findViewById(R.id.postform_captcha_view);
+        captchaLayout = binding.postformCaptchaLayout;
+        captchaView = binding.postformCaptchaView;
         captchaView.setOnClickListener(this);
         captchaView.setOnCreateContextMenuListener(this);
-        captchaLoading = findViewById(R.id.postform_captcha_loading);
-        captchaField = (EditText) findViewById(R.id.postform_captcha_field);
+        captchaLoading = binding.postformCaptchaLoading;
+        captchaField = binding.postformCaptchaField;
         captchaField.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
@@ -451,7 +461,7 @@ public class PostFormActivity extends Activity implements View.OnClickListener {
                 return false;
             }
         });
-        sendButton = (Button) findViewById(R.id.postform_send_button);
+        sendButton = binding.postformSendButton;
         sendButton.setOnClickListener(this);
         
         if (settings.isHidePersonalData()) {
@@ -477,12 +487,12 @@ public class PostFormActivity extends Activity implements View.OnClickListener {
         };
         if (markupEnabled[0] || markupEnabled[1] || markupEnabled[2] || markupEnabled[3] || markupEnabled[4] || markupEnabled[5]) {
             markLayout.setVisibility(View.VISIBLE);
-            if (!markupEnabled[0]) markLayout.findViewById(R.id.postform_mark_quote).setVisibility(View.GONE);
-            if (!markupEnabled[1]) markLayout.findViewById(R.id.postform_mark_bold).setVisibility(View.GONE);
-            if (!markupEnabled[2]) markLayout.findViewById(R.id.postform_mark_italic).setVisibility(View.GONE);
-            if (!markupEnabled[3]) markLayout.findViewById(R.id.postform_mark_underline).setVisibility(View.GONE);
-            if (!markupEnabled[4]) markLayout.findViewById(R.id.postform_mark_strike).setVisibility(View.GONE);
-            if (!markupEnabled[5]) markLayout.findViewById(R.id.postform_mark_spoiler).setVisibility(View.GONE);
+            if (!markupEnabled[0]) binding.postformMarkQuote.setVisibility(View.GONE);
+            if (!markupEnabled[1]) binding.postformMarkBold.setVisibility(View.GONE);
+            if (!markupEnabled[2]) binding.postformMarkItalic.setVisibility(View.GONE);
+            if (!markupEnabled[3]) binding.postformMarkUnderline.setVisibility(View.GONE);
+            if (!markupEnabled[4]) binding.postformMarkStrike.setVisibility(View.GONE);
+            if (!markupEnabled[5]) binding.postformMarkSpoiler.setVisibility(View.GONE);
         } else {
             markLayout.setVisibility(View.GONE);
         }
