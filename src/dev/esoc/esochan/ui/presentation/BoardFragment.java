@@ -364,6 +364,13 @@ public class BoardFragment extends Fragment implements AdapterView.OnItemClickLi
         listView = (ListView) binding.getRoot().findViewById(android.R.id.list);
         if (pageType != TYPE_POSTSLIST) listView.setOnItemClickListener(this);
         registerForContextMenu(listView);
+
+        binding.boardFabPost.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openPostForm(tabModel.hash, presentationModel.source.boardModel, getSendPostModel());
+            }
+        });
         
         pullableLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -550,6 +557,9 @@ public class BoardFragment extends Fragment implements AdapterView.OnItemClickLi
             menu.findItem(R.id.menu_download_all_images).setVisible(downloadAllImagesMenuVisible);
             menu.findItem(R.id.menu_board_gallery).setVisible(boardGallryMenuVisible);
             menu.findItem(R.id.menu_quickaccess_add).setVisible(quickaccessAddMenuVisible);
+            if (binding != null) {
+                binding.boardFabPost.setVisibility(addPostMenuVisible ? View.VISIBLE : View.GONE);
+            }
         } catch (NullPointerException e) {
             Logger.e(TAG, e);
         }

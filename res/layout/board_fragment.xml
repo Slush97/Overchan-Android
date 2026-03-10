@@ -110,6 +110,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             android:layout_gravity="center"
             layout="@layout/frame_error"
             android:visibility="gone" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/board_fab_post"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="16dp"
+            android:src="?attr/actionAddPost"
+            android:contentDescription="@string/menu_add_post"
+            android:visibility="gone" />
     </FrameLayout>
     
     <LinearLayout
