@@ -1,5 +1,6 @@
 [versions]
 agp = "8.7.3"
+kotlin = "2.1.10"
 androidx-core = "1.16.0"
 androidx-fragment = "1.8.9"
 androidx-viewpager = "1.1.0"
@@ -29,3 +30,4 @@ media3-exoplayer = { group = "androidx.media3", name = "media3-exoplayer", versi
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }

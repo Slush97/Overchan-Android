@@ -111,7 +111,7 @@ Full rename of `nya.miku.wishmaster` → `dev.esoc.esochan` across the entire so
 ## Phase 4: Architecture Improvements (ongoing)
 
 ### New code in Kotlin
-- [ ] Add Kotlin plugin to build
+- [x] Add Kotlin plugin to build (Kotlin 2.1.10, jvmTarget 17)
 - [ ] Write new files in Kotlin, migrate existing files opportunistically
 - [ ] Add coroutines for async operations (replacing raw threads)
 

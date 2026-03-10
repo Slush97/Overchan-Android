@@ -11,3 +11,4 @@
 -keep class java.beans.** { *; }
 -keep class androidx.media3.** { *; }
 -dontwarn androidx.media3.**
+-dontwarn com.google.re2j.**
