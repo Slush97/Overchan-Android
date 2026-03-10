@@ -40,13 +40,13 @@ import dev.esoc.esochan.databinding.BoardFragmentBinding;
 import dev.esoc.esochan.api.ChanModule;
 import dev.esoc.esochan.api.interfaces.CancellableTask;
 import dev.esoc.esochan.api.models.AttachmentModel;
+import androidx.lifecycle.ViewModelProvider;
 import dev.esoc.esochan.api.models.BoardModel;
 import dev.esoc.esochan.api.models.DeletePostModel;
 import dev.esoc.esochan.api.models.PostModel;
 import dev.esoc.esochan.api.models.SendPostModel;
 import dev.esoc.esochan.api.models.UrlPageModel;
 import dev.esoc.esochan.api.util.ChanModels;
-import dev.esoc.esochan.api.util.PageLoaderFromChan;
 import dev.esoc.esochan.cache.BitmapCache;
 import dev.esoc.esochan.cache.PagesCache;
 import dev.esoc.esochan.cache.SerializablePage;
@@ -221,12 +221,10 @@ public class BoardFragment extends Fragment implements AdapterView.OnItemClickLi
     private FloatingModel[] floatingModels;
     private ImageGetter imageGetter;
     private URLSpanClickListener spanClickListener;
-    private CancellableTask currentTask;
+    private BoardViewModel viewModel;
     private CancellableTask imagesDownloadTask = new CancellableTask.BaseCancellableTask();
     private ExecutorService imagesDownloadExecutor = Executors.newFixedThreadPool(4, Async.LOW_PRIORITY_FACTORY);
     private OpenedDialogs dialogs = new OpenedDialogs();
-    
-    private boolean updatingNow = false;
     
     /** измеряется при вызове {@link #measureFloatingModels(LayoutInflater)} */
     private int postItemWidth = 0;
@@ -335,6 +333,9 @@ public class BoardFragment extends Fragment implements AdapterView.OnItemClickLi
                 Logger.e(TAG, "cannot open local file", e);
             }
         }
+        viewModel = new ViewModelProvider(this,
+                new BoardViewModel.Factory(tabModel.hash, pageType, chan, tabModel)
+        ).get(BoardViewModel.class);
     }
     
     @Override
@@ -371,7 +372,7 @@ public class BoardFragment extends Fragment implements AdapterView.OnItemClickLi
                     setPullableNoRefreshing();
                     openFromChan();
                 } else {
-                    update(true, false, false);
+                    viewModel.loadPage(true, false);
                 }
             }
         });
@@ -384,7 +385,30 @@ public class BoardFragment extends Fragment implements AdapterView.OnItemClickLi
         
         activity.setTitle(tabModel.title);
         CompatibilityImpl.setActionBarCustomFavicon(activity, chan.getChanFavicon());
-        update(forceUpdateFirstTime, false, false);
+
+        viewModel.getUiState().observe(getViewLifecycleOwner(), state -> {
+            if (state instanceof BoardUiState.Loading) {
+                switchToLoadingView();
+            } else if (state instanceof BoardUiState.Error) {
+                BoardUiState.Error error = (BoardUiState.Error) state;
+                switchToErrorView(error.getMessage(), error.getSilent());
+            } else if (state instanceof BoardUiState.Content) {
+                handleContent((BoardUiState.Content) state);
+            } else if (state instanceof BoardUiState.Updated) {
+                handleUpdated((BoardUiState.Updated) state);
+            }
+        });
+        viewModel.getEvents().observe(getViewLifecycleOwner(), event -> {
+            if (event instanceof BoardEvent.InteractiveRequired) {
+                handleInteractive((BoardEvent.InteractiveRequired) event);
+            }
+        });
+
+        if (tabModel.type != TabModel.TYPE_LOCAL) {
+            viewModel.loadPage(forceUpdateFirstTime, false);
+        } else {
+            loadLocalTab(forceUpdateFirstTime);
+        }
         return rootView;
     }
     
@@ -535,7 +559,8 @@ public class BoardFragment extends Fragment implements AdapterView.OnItemClickLi
                 if (tabModel.type == TabModel.TYPE_LOCAL) {
                     openFromChan();
                 } else {
-                    update();
+                    pullableLayout.setRefreshing(true);
+                    viewModel.loadPage(true, false);
                 }
                 return true;
             case R.id.menu_catalog:
@@ -899,9 +924,7 @@ public class BoardFragment extends Fragment implements AdapterView.OnItemClickLi
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        if (currentTask != null) {
-            currentTask.cancel();
-        }
+        viewModel.cancelLoad();
         if (imagesDownloadTask != null) {
             imagesDownloadTask.cancel();
         }
@@ -1091,27 +1114,18 @@ public class BoardFragment extends Fragment implements AdapterView.OnItemClickLi
         setNavigationCatalogBar();
     }
     
-    private class PageGetter extends CancellableTask.BaseCancellableTask implements Runnable {
-        private final boolean forceUpdate;
-        private final boolean silent;
-        
-        private PageLoaderFromChan pageLoader = null;
-        private final boolean isThreadPage;
-        
-        public PageGetter(boolean forceUpdate, boolean silent) {
-            this.forceUpdate = forceUpdate;
-            this.silent = silent;
-            isThreadPage = pageType == TYPE_POSTSLIST;
-        }
-        
-        @Override
-        public void run() {
-            if (forceUpdate) saveHistory();
-            
-            while (TabsTrackerService.getCurrentUpdatingTabId() == tabModel.id) Thread.yield();
-            
-            //обработать случай, когда вкладка - локально сохранённая страница
-            if (tabModel.type == TabModel.TYPE_LOCAL) {
+    /**
+     * Load a local (TYPE_LOCAL) tab. Bypasses the ViewModel since it needs ReadableContainer.
+     */
+    private void loadLocalTab(final boolean forceUpdate) {
+        switchToLoadingView();
+        final CancellableTask.BaseCancellableTask localTask = new CancellableTask.BaseCancellableTask();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                if (forceUpdate) saveHistory();
+                while (TabsTrackerService.getCurrentUpdatingTabId() == tabModel.id) Thread.yield();
+                boolean isThreadPage = pageType == TYPE_POSTSLIST;
                 if (!forceUpdate) {
                     presentationModel = pagesCache.getPresentationModel(tabModel.hash);
                     if (presentationModel != null) {
@@ -1120,8 +1134,8 @@ public class BoardFragment extends Fragment implements AdapterView.OnItemClickLi
                         ((VolatileSpanClickListener)presentationModel.spanClickListener).setListener(BoardFragment.this);
                         presentationModel.setFloatingModels(floatingModels);
                         if (presentationModel == null) return;
-                        if (presentationModel.isNotReady()) presentationModel.updateViewModels(true, this, null);
-                        toListView(forceUpdate);
+                        if (presentationModel.isNotReady()) presentationModel.updateViewModels(true, localTask, null);
+                        toListView(forceUpdate, false);
                         return;
                     }
                 }
@@ -1134,7 +1148,7 @@ public class BoardFragment extends Fragment implements AdapterView.OnItemClickLi
                         page = null;
                     }
                     if (page != null) {
-                        createPresentationModel(page, false, false);
+                        buildPresentationModelAndShow(page, forceUpdate, false, isThreadPage, localTask);
                         return;
                     }
                 }
@@ -1144,382 +1158,377 @@ public class BoardFragment extends Fragment implements AdapterView.OnItemClickLi
                         switchToErrorView(resources.getString(R.string.error_open_local));
                     }
                 });
-                return;
             }
-            
-            //нужно ли пытаться получить из кэша/десериализовать
-            boolean tryGetFromCache = !listLoaded && (!forceUpdate || isThreadPage);
-            
-            if (tryGetFromCache) {
-                //попробовать получить сразу PresentationModel из LRU-кэша PagesCache в памяти
-                presentationModel = pagesCache.getPresentationModel(tabModel.hash);
-                if (presentationModel != null) {
-                    ((AsyncImageGetter)presentationModel.imageGetter).setObjects(
-                            imagesDownloadExecutor, imagesDownloadTask, listView, Async.UI_HANDLER, staticSettings);
-                    ((VolatileSpanClickListener)presentationModel.spanClickListener).setListener(BoardFragment.this);
-                    presentationModel.setFloatingModels(floatingModels);
-                    if (presentationModel == null) return;
-                    if (presentationModel.isNotReady()) presentationModel.updateViewModels(isThreadPage, this, null);
-                    toListView(forceUpdate);
-                } else {
-                    SerializablePage pageFromFileCache = pagesCache.getSerializablePage(tabModel.hash);
-                    if (pageFromFileCache != null) {
-                        createPresentationModel(pageFromFileCache, forceUpdate, false);
-                    } else {
-                        loadFromChan();
-                    }
-                }
-            } else if (forceUpdate) {
-                loadFromChan();
-            }
-            
-        }
-        
-        /** после загрузки с чана отправляет на ListView */
-        private void loadFromChan() {
-            final SerializablePage pageFromChan;
-            final boolean fromScratch;
-            if (presentationModel != null && presentationModel.source != null) {
-                pageFromChan = presentationModel.source;
-                fromScratch = false;
-            } else {
-                pageFromChan = new SerializablePage();
-                pageFromChan.pageModel = tabModel.pageModel;
-                fromScratch = true;
-            }
-            final int itemsCountBefore =
-                    pageFromChan.posts != null ? pageFromChan.posts.length :
-                        (pageFromChan.threads != null ? pageFromChan.threads.length : 0);
-            pageLoader = new PageLoaderFromChan(pageFromChan, new PageLoaderFromChan.PageLoaderCallback() {
-                @Override
-                public void onSuccess() {
-                    updatingNow = false;
-                    if (isCancelled()) return;
-                    BackgroundThumbDownloader.download(pageFromChan, imagesDownloadTask);
-                    MainApplication.getInstance().subscriptions.checkOwnPost(pageFromChan, itemsCountBefore);
-                    if (isCancelled()) return;
-                    if (fromScratch) {
-                        createPresentationModel(pageFromChan, false, true);
-                    } else {
-                        presentationModel.updateViewModels(isThreadPage, PageGetter.this, new PresentationModel.RebuildCallback() {
-                            @Override
-                            public void onRebuild() {
-                                try {
-                                    View v = listView.getChildAt(0);
-                                    nullAdapterSavedPosition = listView.getPositionForView(v);
-                                    nullAdapterSavedTop = v.getTop();
-                                    nullAdapterSavedNumber = adapter.getItem(nullAdapterSavedPosition).sourceModel.number;
-                                } catch (Exception e) {
-                                    Logger.e(TAG, e);
-                                }
-                                nullAdapterIsSet = true;
-                                nullAdapter();
-                            }
-                        });
-                        presentationModel = new PresentationModel(presentationModel); //обновить immutable-значение postsCount
-                        pagesCache.putPresentationModel(tabModel.hash, presentationModel);
-                        if (isCancelled()) return;
-                        if (startItem != null) {
-                            for (int i=0; i<presentationModel.presentationList.size(); ++i) {
-                                if (presentationModel.presentationList.get(i).sourceModel.number.equals(startItem)) {
-                                    startItemPosition = i;
-                                    break;
-                                }
-                            }
-                        }
-                        startItem = null; //уже загрузили с чана а не из кэша, так что дальше искать якорь на данный пост смысла нет
-                        if (isCancelled()) return;
-                        int checkSubscriptions = subscriptions.checkSubscriptions(pageFromChan, itemsCountBefore);
-                        final String newSubscription = checkSubscriptions >= 0 ? pageFromChan.posts[checkSubscriptions].number : null;
-                        if (isCancelled()) return;
+        }).start();
+    }
+
+    /**
+     * Handle BoardUiState.Content from ViewModel (cache hit or from-scratch network load).
+     */
+    private void handleContent(BoardUiState.Content content) {
+        boolean isThreadPage = pageType == TYPE_POSTSLIST;
+        if (content.getCachedPresentationModel() != null) {
+            // LRU cache hit — rebind transient fields
+            presentationModel = content.getCachedPresentationModel();
+            ((AsyncImageGetter) presentationModel.imageGetter).setObjects(
+                    imagesDownloadExecutor, imagesDownloadTask, listView, Async.UI_HANDLER, staticSettings);
+            ((VolatileSpanClickListener) presentationModel.spanClickListener).setListener(this);
+            presentationModel.setFloatingModels(floatingModels);
+            if (presentationModel.isNotReady()) {
+                // Run updateViewModels on background thread, then show
+                final CancellableTask.BaseCancellableTask rebuildTask = new CancellableTask.BaseCancellableTask();
+                Async.runAsync(new Runnable() {
+                    @Override
+                    public void run() {
+                        presentationModel.updateViewModels(isThreadPage, rebuildTask, null);
                         Async.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                if (presentationModel == null || presentationModel.isNotReady() || adapter == null)
-                                    Toast.makeText(activity, R.string.error_unknown, Toast.LENGTH_LONG).show();
-                                
-                                if (adapter == null) return;
-                                if (nullAdapterIsSet) {
-                                    listView.setAdapter(adapter);
-                                    listView.requestFocus();
-                                    hackListViewSetPosition(listView, nullAdapterSavedPosition, nullAdapterSavedTop);
-                                    nullAdapterIsSet = false;
-                                }
-                                adapter.notifyDataSetChanged();
-                                if (isThreadPage && adapter.getCount() != itemsCountBefore) resetSearchCache();
-                                setPullableNoRefreshing();
-                                if (startItemPosition != -1) {
-                                    hackListViewSetPosition(listView, startItemPosition, startItemTop);
-                                    startItemPosition = -1;
-                                }
-                                String notification;
-                                boolean toastToNewPosts = false;
-                                if (isThreadPage) {
-                                    int newPostsCount = adapter.getCount() - itemsCountBefore;
-                                    if (newPostsCount <= 0) {
-                                        notification = resources.getString(R.string.postslist_no_new_posts);
-                                    } else {
-                                        notification = resources.getQuantityString(
-                                                R.plurals.postslist_new_posts_quantity, newPostsCount, newPostsCount);
-                                        toastToNewPosts = true;
-                                        if (silent && activity.isPaused()) {
-                                            TabsTrackerService.setUnread();
-                                            if (newSubscription != null) {
-                                                TabsTrackerService.addSubscriptionNotification(tabModel.webUrl, newSubscription, tabModel.title);
-                                            }
-                                        }
-                                    }
-                                } else {
-                                    notification = resources.getString(R.string.postslist_list_updated);
-                                }
-                                if (!silent) {
-                                    if (toastToNewPosts) {
-                                        ClickableToast.showText(activity, notification, new ClickableToast.OnClickListener() {
-                                            @Override
-                                            public void onClick() {
-                                                listView.setSelection(itemsCountBefore);
-                                            }
-                                        });
-                                    } else {
-                                        Toast.makeText(activity, notification, Toast.LENGTH_LONG).show();
-                                    }
-                                }
+                                showContentInListView(content.getNeedUpdateAfter(), false);
                             }
                         });
                     }
-                }
+                });
+            } else {
+                showContentInListView(content.getNeedUpdateAfter(), false);
+            }
+        } else {
+            // File cache hit or from-scratch network load — create new PresentationModel on background thread
+            final CancellableTask.BaseCancellableTask buildTask = new CancellableTask.BaseCancellableTask();
+            Async.runAsync(new Runnable() {
                 @Override
-                public void onError(final String message) {
-                    updatingNow = false;
-                    if (isCancelled()) return;
-                    Async.runOnUiThread(new Runnable() {
+                public void run() {
+                    buildPresentationModelAndShow(content.getPage(), content.getNeedUpdateAfter(),
+                            content.getPutToFileCache(), isThreadPage, buildTask);
+                }
+            });
+        }
+    }
+
+    /**
+     * Handle BoardUiState.Updated from ViewModel (incremental network update on existing data).
+     */
+    private void handleUpdated(BoardUiState.Updated updated) {
+        boolean isThreadPage = pageType == TYPE_POSTSLIST;
+        SerializablePage pageFromChan = updated.getPage();
+        int itemsCountBefore = updated.getItemsCountBefore();
+        String newSubscription = updated.getNewSubscriptionPostNumber();
+        boolean silent = false; // Updated state always from explicit user action unless silent flag is tracked
+
+        BackgroundThumbDownloader.download(pageFromChan, imagesDownloadTask);
+
+        // updateViewModels + UI update on background thread, then post to UI
+        final CancellableTask.BaseCancellableTask updateTask = new CancellableTask.BaseCancellableTask();
+        Async.runAsync(new Runnable() {
+            @Override
+            public void run() {
+                presentationModel.updateViewModels(isThreadPage, updateTask, new PresentationModel.RebuildCallback() {
+                    @Override
+                    public void onRebuild() {
+                        try {
+                            View v = listView.getChildAt(0);
+                            nullAdapterSavedPosition = listView.getPositionForView(v);
+                            nullAdapterSavedTop = v.getTop();
+                            nullAdapterSavedNumber = adapter.getItem(nullAdapterSavedPosition).sourceModel.number;
+                        } catch (Exception e) {
+                            Logger.e(TAG, e);
+                        }
+                        nullAdapterIsSet = true;
+                        nullAdapter();
+                    }
+                });
+                presentationModel = new PresentationModel(presentationModel);
+                pagesCache.putPresentationModel(tabModel.hash, presentationModel);
+                if (updateTask.isCancelled()) return;
+                if (startItem != null) {
+                    for (int i = 0; i < presentationModel.presentationList.size(); ++i) {
+                        if (presentationModel.presentationList.get(i).sourceModel.number.equals(startItem)) {
+                            startItemPosition = i;
+                            break;
+                        }
+                    }
+                }
+                startItem = null;
+                if (updateTask.isCancelled()) return;
+                Async.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (presentationModel == null || presentationModel.isNotReady() || adapter == null)
+                            Toast.makeText(activity, R.string.error_unknown, Toast.LENGTH_LONG).show();
+
+                        if (adapter == null) return;
+                        if (nullAdapterIsSet) {
+                            listView.setAdapter(adapter);
+                            listView.requestFocus();
+                            hackListViewSetPosition(listView, nullAdapterSavedPosition, nullAdapterSavedTop);
+                            nullAdapterIsSet = false;
+                        }
+                        adapter.notifyDataSetChanged();
+                        if (isThreadPage && adapter.getCount() != itemsCountBefore) resetSearchCache();
+                        setPullableNoRefreshing();
+                        if (startItemPosition != -1) {
+                            hackListViewSetPosition(listView, startItemPosition, startItemTop);
+                            startItemPosition = -1;
+                        }
+                        String notification;
+                        boolean toastToNewPosts = false;
+                        if (isThreadPage) {
+                            int newPostsCount = adapter.getCount() - itemsCountBefore;
+                            if (newPostsCount <= 0) {
+                                notification = resources.getString(R.string.postslist_no_new_posts);
+                            } else {
+                                notification = resources.getQuantityString(
+                                        R.plurals.postslist_new_posts_quantity, newPostsCount, newPostsCount);
+                                toastToNewPosts = true;
+                                if (activity.isPaused()) {
+                                    TabsTrackerService.setUnread();
+                                    if (newSubscription != null) {
+                                        TabsTrackerService.addSubscriptionNotification(tabModel.webUrl, newSubscription, tabModel.title);
+                                    }
+                                }
+                            }
+                        } else {
+                            notification = resources.getString(R.string.postslist_list_updated);
+                        }
+                        if (toastToNewPosts) {
+                            ClickableToast.showText(activity, notification, new ClickableToast.OnClickListener() {
+                                @Override
+                                public void onClick() {
+                                    listView.setSelection(itemsCountBefore);
+                                }
+                            });
+                        } else {
+                            Toast.makeText(activity, notification, Toast.LENGTH_LONG).show();
+                        }
+                    }
+                });
+            }
+        });
+    }
+
+    /**
+     * Handle BoardEvent.InteractiveRequired from ViewModel.
+     */
+    private void handleInteractive(BoardEvent.InteractiveRequired event) {
+        if (event.getWasSilent() && activity.isPaused()) {
+            setPullableNoRefreshing();
+            return;
+        }
+        CancellableTask.BaseCancellableTask interactiveTask = new CancellableTask.BaseCancellableTask();
+        event.getException().handle(activity, interactiveTask, new InteractiveException.Callback() {
+            @Override
+            public void onSuccess() {
+                viewModel.loadPage(true, false);
+            }
+            @Override
+            public void onError(String message) {
+                switchToErrorView(message);
+            }
+        });
+    }
+
+    /**
+     * Build a PresentationModel from a SerializablePage and show in list view. Called from background thread.
+     */
+    private void buildPresentationModelAndShow(SerializablePage serializablePage, boolean needUpdateAfter,
+            boolean putToFileCache, boolean isThreadPage, CancellableTask task) {
+        presentationModel = new PresentationModel(
+                serializablePage,
+                settings.isLocalTime(),
+                settings.isReduceNames(),
+                spanClickListener,
+                imageGetter,
+                activity.getTheme(),
+                pageType == TYPE_THREADSLIST ? null : floatingModels);
+        presentationModel.updateViewModels(isThreadPage, task, null);
+        pagesCache.putPresentationModel(tabModel.hash, presentationModel, putToFileCache);
+        if (task.isCancelled()) return;
+        activity.sendBroadcast(new Intent(BROADCAST_PAGE_LOADED));
+        toListView(needUpdateAfter, false);
+    }
+
+    /**
+     * Show the content in list view when the PresentationModel is already set and ready.
+     * Called from the UI thread.
+     */
+    private void showContentInListView(boolean needUpdateAfter, boolean silent) {
+        // Delegate to toListView which runs on background thread parts then posts to UI
+        Async.runAsync(new Runnable() {
+            @Override
+            public void run() {
+                toListView(needUpdateAfter, silent);
+            }
+        });
+    }
+
+    private volatile boolean nullAdapterFlag;
+    /** Null out the adapter on UI thread from a background thread, and wait for it to complete */
+    private void nullAdapter() {
+        nullAdapterFlag = true;
+        Async.runOnUiThread(new Runnable() {
+            public void run() {
+                listView.setAdapter(null);
+                nullAdapterFlag = false;
+            }
+        });
+        while (nullAdapterFlag) Thread.yield();
+    }
+
+    /** @param needUpdateAfter - requires page refresh from network after display */
+    private void toListView(final boolean needUpdateAfter, final boolean silent) {
+        if (presentationModel == null || presentationModel.presentationList == null) return;
+        adapter = new PostsListAdapter(BoardFragment.this);
+        if (presentationModel == null) return;
+        boolean isThreadPage = pageType == TYPE_POSTSLIST;
+        if (pageType == TYPE_POSTSLIST && tabModel.firstUnreadPosition == 0) {
+            resetFirstUnreadPosition();
+        }
+        String oldTabTitle = tabModel.title != null ? tabModel.title : "";
+        if (presentationModel == null) return;
+        if (isThreadPage && presentationModel.presentationList.size() > 0) {
+            String tabTitle;
+            String subject = presentationModel.presentationList.get(0).sourceModel.subject;
+            if (subject != null && subject.length() != 0) {
+                tabTitle = subject;
+            } else {
+                tabTitle = presentationModel.presentationList.get(0).spannedComment.toString().replace('\n', ' ');
+                if (tabTitle.length() > MAX_TITLE_LENGHT) {
+                    tabTitle = tabTitle.substring(0, MAX_TITLE_LENGHT);
+                }
+            }
+            tabModel.title = resources.getString(R.string.tabs_title_threadpage_loaded, tabModel.pageModel.boardName, tabTitle);
+        } else if (tabModel.pageModel.type == UrlPageModel.TYPE_BOARDPAGE
+                && tabModel.pageModel.boardPage == presentationModel.source.boardModel.firstPage) {
+            tabModel.title = resources.getString(R.string.tabs_title_boardpage_first, tabModel.pageModel.boardName);
+        }
+        final boolean tabTitleChanged = !oldTabTitle.equals(tabModel.title);
+        if (tabTitleChanged) updateHistoryFavorites();
+        if (startItem != null) {
+            for (int i=0; i<presentationModel.presentationList.size(); ++i) {
+                if (presentationModel.presentationList.get(i).sourceModel.number.equals(startItem)) {
+                    startItemPosition = i;
+                    startItem = null;
+                    break;
+                }
+            }
+        }
+        listLoaded = true;
+        Async.runOnUiThread(new Runnable() {
+            /** Set SwipeDismissListViewTouchListener if needed; returns the created OnScrollListener */
+            private ListView.OnScrollListener setSwipeDismissListener() {
+                if (pageType == TYPE_THREADSLIST &&
+                        settings.swipeToHideThread()) {
+                    final SwipeDismissListViewTouchListener touchListener = new SwipeDismissListViewTouchListener(listView,
+                            new SwipeDismissListViewTouchListener.DismissCallbacks() {
+                        @Override
+                        public void onDismiss(ListView listView, int[] reverseSortedPositions) {
+                            for (int i : reverseSortedPositions) {
+                                adapter.getItem(i).hidden = true;
+                                database.addHidden(tabModel.pageModel.chanName, tabModel.pageModel.boardName,
+                                        adapter.getItem(i).sourceModel.number, null);
+                                adapter.notifyDataSetChanged();
+                            }
+                        }
+                        @Override
+                        public boolean canDismiss(int position) {
+                            return !adapter.getItem(position).hidden;
+                        }
+                    });
+                    listView.setOnTouchListener(touchListener);
+                    return touchListener.makeScrollListener();
+                }
+                return null;
+            }
+            @Override
+            public void run() {
+                if (presentationModel == null || presentationModel.isNotReady())
+                    Toast.makeText(activity, R.string.error_unknown, Toast.LENGTH_LONG).show();
+
+                listView.setAdapter(adapter);
+                listView.requestFocus();
+                final ListView.OnScrollListener swipeDismissOnScrollListener = setSwipeDismissListener();
+                listView.setOnScrollListener(new ListView.OnScrollListener() {
+                        @Override
+                        public void onScrollStateChanged(AbsListView view, int scrollState) {
+                            if (swipeDismissOnScrollListener != null) swipeDismissOnScrollListener.onScrollStateChanged(view, scrollState);
+                            if (scrollState == ListView.OnScrollListener.SCROLL_STATE_IDLE) {
+                                adapter.setBusy(false);
+                            } else {
+                                adapter.setBusy(true);
+                            }
+                        }
+
+                        @Override
+                        public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                            if (!staticSettings.hideActionBar || view.getChildCount() <= 0) return;
+
+                            int firstVisibleTop = view.getChildAt(0).getTop();
+                            int topDelta = firstVisibleTop - lastFirstVisibleTop;
+                            if (firstVisibleItem == lastFirstVisibleItem && Math.abs(topDelta) < maxTopDelta) {
+                                if ((currentTopDelta < 0) == (topDelta < 0)) currentTopDelta += topDelta; else currentTopDelta = topDelta;
+                            } else if (firstVisibleItem != lastFirstVisibleItem && adapter.isBusy) {
+                                currentTopDelta = Integer.signum(lastFirstVisibleItem - firstVisibleItem) * (maxTopDelta + 1);
+                            } else {
+                                currentTopDelta = 0;
+                            }
+
+                            boolean top = firstVisibleItem == 0 && firstVisibleTop == 0;
+                            long currentTime = System.currentTimeMillis();
+                            if (top || currentTime - lastActionTime > 1000) {
+                                if (currentTopDelta < -maxTopDelta) {
+                                    if (CompatibilityImpl.hideActionBar(activity)) {
+                                        lastActionTime = currentTime;
+                                        currentTopDelta = 0;
+                                    }
+                                } else if (top || currentTopDelta > maxTopDelta) {
+                                    if (CompatibilityImpl.showActionBar(activity)) {
+                                        lastActionTime = currentTime;
+                                        currentTopDelta = 0;
+                                    }
+                                }
+                            }
+
+                            lastFirstVisibleItem = firstVisibleItem;
+                            lastFirstVisibleTop = firstVisibleTop;
+                        }
+                        private int lastFirstVisibleItem = Integer.MAX_VALUE;
+                        private int lastFirstVisibleTop = Integer.MAX_VALUE;
+                        private int currentTopDelta = 0;
+                        private int maxTopDelta = (int) (resources.getDisplayMetrics().density * 24 + 0.5f);
+                        private long lastActionTime = System.currentTimeMillis();
+                    });
+                    pullableLayout.setOnEdgeReachedListener(new SwipeRefreshLayout.OnEdgeReachedListener() {
+                        @Override
+                        public void onEdgeReached() {
+                            adapter.setBusy(false);
+                        }
+                    });
+                switchToListView();
+                updateMenu();
+                boolean isThreadPage = pageType == TYPE_POSTSLIST;
+                if (isThreadPage) {
+                    activity.setTitle(tabModel.title);
+                } else if (pageType == TYPE_THREADSLIST) {
+                    if (presentationModel != null) activity.setTitle(presentationModel.source.boardModel.boardDescription);
+                }
+                if (activity.tabsAdapter != null && tabTitleChanged) {
+                    activity.tabsAdapter.notifyDataSetChanged();
+                }
+                if (startItemPosition != -1) {
+                    hackListViewSetPosition(listView, startItemPosition, startItemTop);
+                    startItemPosition = -1;
+                }
+                if (needUpdateAfter) {
+                    AppearanceUtils.callWhenLoaded(pullableLayout, new Runnable() {
                         @Override
                         public void run() {
-                            switchToErrorView(message, silent);
+                            pullableLayout.setRefreshing(true);
+                            viewModel.loadPage(true, silent);
                         }
                     });
                 }
-                @Override
-                public void onInteractiveException(final InteractiveException e) {
-                    if (isCancelled()) return;
-                    if (silent && activity.isPaused()) {
-                        Async.runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                setPullableNoRefreshing();
-                            }
-                        });
-                        return;
-                    }
-                    e.handle(activity, PageGetter.this, new InteractiveException.Callback() {
-                        @Override public void onSuccess() { updatingNow = false; update(true, false, false); }
-                        @Override public void onError(String message) { updatingNow = false; switchToErrorView(message); }
-                    });
-                }
-            }, chan, this);
-            if (isCancelled()) return;
-            updatingNow = true;
-            pageLoader.run();
-        }
-        
-        /**
-         * Создаёт (с нуля) {@link PresentationModel} и отправляет на listView
-         * @param serializablePage
-         * @param needUpdateAfter требуется ли обновить страницу на чане после создания и показа {@link PresentationModel}
-         * @param putToFileCache положить соответствующую сериализованную модель SerializablePage в файловый кэш
-         */
-        private void createPresentationModel(SerializablePage serializablePage, boolean needUpdateAfter, boolean putToFileCache) {
-            presentationModel = new PresentationModel(
-                    serializablePage,
-                    settings.isLocalTime(),
-                    settings.isReduceNames(),
-                    spanClickListener,
-                    imageGetter,
-                    activity.getTheme(),
-                    pageType == TYPE_THREADSLIST ? null : floatingModels);
-            presentationModel.updateViewModels(isThreadPage, PageGetter.this, null);
-            pagesCache.putPresentationModel(tabModel.hash, presentationModel, putToFileCache);
-            if (isCancelled()) return;
-            activity.sendBroadcast(new Intent(BROADCAST_PAGE_LOADED));
-            toListView(needUpdateAfter);
-        }
-        
-        private volatile boolean nullAdapterFlag;
-        /** обнулить адаптер listView (пока производятся манипуляции с внутренним list), из не-UI потока */
-        private void nullAdapter() {
-            nullAdapterFlag = true;
-            Async.runOnUiThread(new Runnable() {
-                public void run() {
-                    listView.setAdapter(null);
-                    nullAdapterFlag = false;
-                }
-            });
-            while (nullAdapterFlag) Thread.yield();
-        }
-        
-        /** @param needUpdateAfter - требуется ли обновить страницу на чане после показа */
-        private void toListView(final boolean needUpdateAfter) {
-            if (presentationModel == null || presentationModel.presentationList == null) return;
-            adapter = new PostsListAdapter(BoardFragment.this);
-            if (presentationModel == null) return;
-            if (pageType == TYPE_POSTSLIST && tabModel.firstUnreadPosition == 0) {
-                resetFirstUnreadPosition();
             }
-            String oldTabTitle = tabModel.title != null ? tabModel.title : "";
-            if (presentationModel == null) return;
-            if (isThreadPage && presentationModel.presentationList.size() > 0) {
-                String tabTitle;
-                String subject = presentationModel.presentationList.get(0).sourceModel.subject;
-                if (subject != null && subject.length() != 0) {
-                    tabTitle = subject;
-                } else {
-                    tabTitle = presentationModel.presentationList.get(0).spannedComment.toString().replace('\n', ' ');
-                    if (tabTitle.length() > MAX_TITLE_LENGHT) {
-                        tabTitle = tabTitle.substring(0, MAX_TITLE_LENGHT);
-                    }
-                }
-                tabModel.title = resources.getString(R.string.tabs_title_threadpage_loaded, tabModel.pageModel.boardName, tabTitle);
-            } else if (tabModel.pageModel.type == UrlPageModel.TYPE_BOARDPAGE
-                    && tabModel.pageModel.boardPage == presentationModel.source.boardModel.firstPage) {
-                tabModel.title = resources.getString(R.string.tabs_title_boardpage_first, tabModel.pageModel.boardName);
-            }
-            final boolean tabTitleChanged = !oldTabTitle.equals(tabModel.title);
-            if (tabTitleChanged) updateHistoryFavorites();
-            if (startItem != null) {
-                for (int i=0; i<presentationModel.presentationList.size(); ++i) {
-                    if (presentationModel.presentationList.get(i).sourceModel.number.equals(startItem)) {
-                        startItemPosition = i;
-                        startItem = null;
-                        break;
-                    }
-                }
-            }
-            listLoaded = true;
-            Async.runOnUiThread(new Runnable() {
-                /** установить SwipeDismissListViewTouchListener, если требуется (соответствует версия ОС, открыт список тредов, включена настройка);
-                 *  возвращает созданный OnScrollListener */
-                private ListView.OnScrollListener setSwipeDismissListener() {
-                    if (pageType == TYPE_THREADSLIST &&
-                            settings.swipeToHideThread()) {
-                        final SwipeDismissListViewTouchListener touchListener = new SwipeDismissListViewTouchListener(listView,
-                                new SwipeDismissListViewTouchListener.DismissCallbacks() {
-                            @Override
-                            public void onDismiss(ListView listView, int[] reverseSortedPositions) {
-                                for (int i : reverseSortedPositions) {
-                                    adapter.getItem(i).hidden = true;
-                                    database.addHidden(tabModel.pageModel.chanName, tabModel.pageModel.boardName,
-                                            adapter.getItem(i).sourceModel.number, null);
-                                    adapter.notifyDataSetChanged();
-                                }
-                            }
-                            @Override
-                            public boolean canDismiss(int position) {
-                                return !adapter.getItem(position).hidden;
-                            }
-                        });
-                        listView.setOnTouchListener(touchListener);
-                        return touchListener.makeScrollListener();
-                    }
-                    return null;
-                }
-                @Override
-                public void run() {
-                    if (presentationModel == null || presentationModel.isNotReady())
-                        Toast.makeText(activity, R.string.error_unknown, Toast.LENGTH_LONG).show();
-                    
-                    listView.setAdapter(adapter);
-                    listView.requestFocus();
-                    final ListView.OnScrollListener swipeDismissOnScrollListener = setSwipeDismissListener();
-                    //busy состояние адаптера, не загружать картинки из интернета, во время скроллинга
-                    listView.setOnScrollListener(new ListView.OnScrollListener() {
-                            @Override
-                            public void onScrollStateChanged(AbsListView view, int scrollState) {
-                                if (swipeDismissOnScrollListener != null) swipeDismissOnScrollListener.onScrollStateChanged(view, scrollState);
-                                if (scrollState == ListView.OnScrollListener.SCROLL_STATE_IDLE) {
-                                    adapter.setBusy(false);
-                                } else {
-                                    adapter.setBusy(true);
-                                }
-                            }
-                            
-                            @Override
-                            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-                                //скрытие actionbar
-                                if (!staticSettings.hideActionBar || view.getChildCount() <= 0) return;
-                                
-                                int firstVisibleTop = view.getChildAt(0).getTop();
-                                int topDelta = firstVisibleTop - lastFirstVisibleTop;
-                                if (firstVisibleItem == lastFirstVisibleItem && Math.abs(topDelta) < maxTopDelta) {
-                                    if ((currentTopDelta < 0) == (topDelta < 0)) currentTopDelta += topDelta; else currentTopDelta = topDelta;
-                                } else if (firstVisibleItem != lastFirstVisibleItem && adapter.isBusy) {
-                                    currentTopDelta = Integer.signum(lastFirstVisibleItem - firstVisibleItem) * (maxTopDelta + 1);
-                                } else {
-                                    currentTopDelta = 0;
-                                }
-                                
-                                boolean top = firstVisibleItem == 0 && firstVisibleTop == 0;
-                                long currentTime = System.currentTimeMillis();
-                                if (top || currentTime - lastActionTime > 1000) {
-                                    if (currentTopDelta < -maxTopDelta) {
-                                        if (CompatibilityImpl.hideActionBar(activity)) {
-                                            lastActionTime = currentTime;
-                                            currentTopDelta = 0;
-                                        }
-                                    } else if (top || currentTopDelta > maxTopDelta) {
-                                        if (CompatibilityImpl.showActionBar(activity)) {
-                                            lastActionTime = currentTime;
-                                            currentTopDelta = 0;
-                                        }
-                                    }
-                                }
-                                
-                                lastFirstVisibleItem = firstVisibleItem;
-                                lastFirstVisibleTop = firstVisibleTop;
-                            }
-                            private int lastFirstVisibleItem = Integer.MAX_VALUE;
-                            private int lastFirstVisibleTop = Integer.MAX_VALUE;
-                            private int currentTopDelta = 0;
-                            private int maxTopDelta = (int) (resources.getDisplayMetrics().density * 24 + 0.5f);
-                            private long lastActionTime = System.currentTimeMillis();
-                        });
-                        pullableLayout.setOnEdgeReachedListener(new SwipeRefreshLayout.OnEdgeReachedListener() {
-                            @Override
-                            public void onEdgeReached() {
-                                adapter.setBusy(false);
-                            }
-                        });
-                    switchToListView();
-                    updateMenu();
-                    if (isThreadPage) {
-                        activity.setTitle(tabModel.title);
-                    } else if (pageType == TYPE_THREADSLIST) {
-                        if (presentationModel != null) activity.setTitle(presentationModel.source.boardModel.boardDescription);
-                    }
-                    if (activity.tabsAdapter != null && tabTitleChanged) {
-                        activity.tabsAdapter.notifyDataSetChanged();
-                    }
-                    if (startItemPosition != -1) {
-                        hackListViewSetPosition(listView, startItemPosition, startItemTop);
-                        startItemPosition = -1;
-                    }
-                    if (needUpdateAfter) {
-                        AppearanceUtils.callWhenLoaded(pullableLayout, new Runnable() {
-                            @Override
-                            public void run() {
-                                update(true, true, silent);
-                            }
-                        });
-                    }
-                }
-            });
-        }
-        
-        @Override
-        public void cancel() {
-            super.cancel();
-            updatingNow = false;
-        }
-        
+        });
     }
     
     private static void hackListViewSetPosition(final ListView listView, final int position, final int top) {
@@ -2390,45 +2399,21 @@ public class BoardFragment extends Fragment implements AdapterView.OnItemClickLi
      * Обновить страницу
      */
     public void update() {
-       update(true, true, false); 
+        pullableLayout.setRefreshing(true);
+        viewModel.loadPage(true, false);
     }
-    
+
     /**
      * Обновить страницу, без вывода всплывающего уведомления
      */
     public void updateSilent() {
         if (!listLoaded) {
             Logger.e(TAG, "called updateSilent() but the list is not loaded");
-        } else if (updatingNow) {
+        } else if (viewModel.isUpdatingNow()) {
             Logger.d(TAG, "already updating now");
         } else {
-            update(true, true, true);
-        }
-    }
-    
-    /**
-     * Загрузить или обновить страницу
-     * @param forceUpdate нужно ли обновлять страницу из интернета, если её версия уже есть в кэше
-     * @param setRefreshingLayout установить обновление pullableLayout, вызывает {@link SwipeRefreshLayout#setRefreshing(boolean)}
-     * @param silent не выводить уведомление (Toast) после обновления
-     */
-    private void update(boolean forceUpdate, boolean setRefreshingLayout, boolean silent) {
-        if (currentTask != null) {
-            currentTask.cancel();
-        }
-        if (listLoaded) {
-            if (setRefreshingLayout) {
-                pullableLayout.setRefreshing(true);
-            }
-        } else {
-            switchToLoadingView();
-        }
-        PageGetter pageGetter = new PageGetter(forceUpdate, silent);
-        currentTask = pageGetter;
-        if (listLoaded) {
-            Async.runAsync(pageGetter);
-        } else {
-            new Thread(pageGetter).start();
+            pullableLayout.setRefreshing(true);
+            viewModel.loadPage(true, true);
         }
     }
     
@@ -3625,7 +3610,7 @@ public class BoardFragment extends Fragment implements AdapterView.OnItemClickLi
         DialogInterface.OnClickListener dlgOnClick = new DialogInterface.OnClickListener() {
             @Override
             public void onClick(final DialogInterface dialog, final int which) {
-                if (currentTask != null) currentTask.cancel();
+                viewModel.cancelLoad();
                 if (pullableLayout.isRefreshing()) setPullableNoRefreshing();
                 deletePostModel.onlyFiles = onlyFiles.isChecked();
                 deletePostModel.password = inputField.getText().toString();
@@ -3684,7 +3669,8 @@ public class BoardFragment extends Fragment implements AdapterView.OnItemClickLi
                                 progressDlg.dismiss();
                                 if (success) {
                                     if (result == null) {
-                                        update();
+                                        pullableLayout.setRefreshing(true);
+                                        viewModel.loadPage(true, false);
                                     } else {
                                         UrlHandler.open(result, activity);
                                     }
@@ -3720,7 +3706,7 @@ public class BoardFragment extends Fragment implements AdapterView.OnItemClickLi
         DialogInterface.OnClickListener dlgOnClick = new DialogInterface.OnClickListener() {
             @Override
             public void onClick(final DialogInterface dialog, final int which) {
-                if (currentTask != null) currentTask.cancel();
+                viewModel.cancelLoad();
                 if (pullableLayout.isRefreshing()) setPullableNoRefreshing();
                 reportPostModel.reportReason = inputField.getText().toString();
                 final ProgressDialog progressDlg = new ProgressDialog(activity);
@@ -3778,7 +3764,8 @@ public class BoardFragment extends Fragment implements AdapterView.OnItemClickLi
                                 progressDlg.dismiss();
                                 if (success) {
                                     if (result == null) {
-                                        update();
+                                        pullableLayout.setRefreshing(true);
+                                        viewModel.loadPage(true, false);
                                     } else {
                                         UrlHandler.open(result, activity);
                                     }
