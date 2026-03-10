@@ -38,10 +38,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
-import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
-import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
 import android.preference.Preference;
 import android.preference.PreferenceGroup;
@@ -64,13 +61,8 @@ import dev.esoc.esochan.api.models.SimpleBoardModel;
 import dev.esoc.esochan.api.models.ThreadModel;
 import dev.esoc.esochan.api.models.UrlPageModel;
 import dev.esoc.esochan.api.util.ChanModels;
-import dev.esoc.esochan.api.util.LazyPreferences;
 import dev.esoc.esochan.common.Async;
 import dev.esoc.esochan.http.ExtendedMultipartBuilder;
-import dev.esoc.esochan.http.interactive.SimpleCaptchaException;
-import dev.esoc.esochan.http.recaptcha.Recaptcha;
-import dev.esoc.esochan.http.recaptcha.Recaptcha2;
-import dev.esoc.esochan.http.recaptcha.Recaptcha2solved;
 import dev.esoc.esochan.http.streamer.HttpRequestModel;
 import dev.esoc.esochan.http.streamer.HttpStreamer;
 import dev.esoc.esochan.http.streamer.HttpWrongStatusCodeException;
@@ -81,24 +73,13 @@ public class FourchanModule extends CloudflareChanModule {
     
     static final String CHAN_NAME = "4chan.org";
     
-    private static final boolean NEW_RECAPTCHA_DEFAULT = true;
-    
-    private static final String PREF_KEY_NEW_RECAPTCHA = "PREF_KEY_NEW_RECAPTCHA1";
-    private static final String PREF_KEY_NEW_RECAPTCHA_FALLBACK = "PREF_KEY_NEW_RECAPTCHA_FALLBACK";
     private static final String PREF_KEY_PASS_TOKEN = "PREF_KEY_PASS_TOKEN";
     private static final String PREF_KEY_PASS_PIN = "PREF_KEY_PASS_PIN";
     private static final String PREF_KEY_PASS_COOKIE = "PREF_KEY_PASS_COOKIE";
     
-    static final String RECAPTCHA_KEY = "6Ldp2bsSAAAAAAJ5uyx_lx34lJeEpTLVkP5k04qc";
-    
     private boolean usingPasscode = false;
-    
+
     private Map<String, BoardModel> boardsMap = null;
-    
-    private Recaptcha recaptcha = null;
-    
-    private Recaptcha reportRecaptcha = null;
-    private String reportCaptchaAnswer = null;
     
     private static final Pattern ERROR_POSTING = Pattern.compile("<span id=\"errmsg\"(?:[^>]*)>(.*?)(?:</span>|<br)");
     private static final Pattern SUCCESS_POSTING = Pattern.compile("<!-- thread:(\\d+),no:(\\d+) -->");
@@ -286,56 +267,19 @@ public class FourchanModule extends CloudflareChanModule {
     
     @Override
     public void addPreferencesOnScreen(PreferenceGroup preferenceGroup) {
-        Context context = preferenceGroup.getContext();
         addPasscodePreference(preferenceGroup);
-        
-        CheckBoxPreference newRecaptchaPref = new LazyPreferences.CheckBoxPreference(context);
-        newRecaptchaPref.setTitle(R.string.fourchan_prefs_new_recaptcha);
-        newRecaptchaPref.setSummary(R.string.fourchan_prefs_new_recaptcha_summary);
-        newRecaptchaPref.setKey(getSharedKey(PREF_KEY_NEW_RECAPTCHA));
-        newRecaptchaPref.setDefaultValue(NEW_RECAPTCHA_DEFAULT);
-        preferenceGroup.addPreference(newRecaptchaPref);
-        
-        final CheckBoxPreference fallbackRecaptchaPref = new LazyPreferences.CheckBoxPreference(context);
-        fallbackRecaptchaPref.setTitle(R.string.fourchan_prefs_new_recaptcha_fallback);
-        fallbackRecaptchaPref.setSummary(R.string.fourchan_prefs_new_recaptcha_fallback_summary);
-        fallbackRecaptchaPref.setKey(getSharedKey(PREF_KEY_NEW_RECAPTCHA_FALLBACK));
-        fallbackRecaptchaPref.setDefaultValue(false);
-        preferenceGroup.addPreference(fallbackRecaptchaPref);
-        fallbackRecaptchaPref.setDependency(getSharedKey(PREF_KEY_NEW_RECAPTCHA));
-        
         addPasswordPreference(preferenceGroup);
         addHttpsPreference(preferenceGroup, true);
         addProxyPreferences(preferenceGroup);
-        
-        final CheckBoxPreference proxyPreference = (CheckBoxPreference) preferenceGroup.findPreference(getSharedKey(PREF_KEY_USE_PROXY));
-        fallbackRecaptchaPref.setEnabled(!proxyPreference.isChecked());
-        proxyPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {            
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                fallbackRecaptchaPref.setEnabled(!proxyPreference.isChecked());
-                if (proxyPreference.isChecked() && !fallbackRecaptchaPref.isChecked()) fallbackRecaptchaPref.setChecked(true);
-                return false;
-            }
-        });
     }
     
     private boolean useHttps() {
         return useHttps(true);
     }
-    
-    private boolean useNewRecaptcha() {
-        return preferences.getBoolean(getSharedKey(PREF_KEY_NEW_RECAPTCHA), NEW_RECAPTCHA_DEFAULT);
-    }
-    
-    private boolean newRecaptchaFallback() {
-        return preferences.getBoolean(getSharedKey(PREF_KEY_USE_PROXY), false) ||
-                preferences.getBoolean(getSharedKey(PREF_KEY_NEW_RECAPTCHA_FALLBACK), false);
-    }
-    
-    @Override
-    protected boolean cloudflareRecaptchaFallback() {
-        return newRecaptchaFallback();
+
+    /** Package-visible for Chan4Captcha to trigger Cloudflare challenge handling */
+    void handleCloudflareCheck(HttpWrongStatusCodeException e, String url) throws Exception {
+        checkCloudflareError(e, url);
     }
     
     @Override
@@ -444,26 +388,15 @@ public class FourchanModule extends CloudflareChanModule {
     @Override
     public CaptchaModel getNewCaptcha(String boardName, String threadNumber, ProgressListener listener, CancellableTask task) throws Exception {
         if (usingPasscode) return null;
-        if (useNewRecaptcha()) {
-            recaptcha = null;
-            return null;
-        } else {
-            recaptcha = Recaptcha.obtain(RECAPTCHA_KEY, task, httpClient, useHttps() ? "https" : "http");
-            CaptchaModel result = new CaptchaModel();
-            result.type = CaptchaModel.TYPE_NORMAL;
-            result.bitmap = recaptcha.bitmap;
-            return result;
-        }
+        if (Chan4CaptchaSolved.hasSolved()) return null;
+        throw new Chan4Captcha(boardName, threadNumber);
     }
     
     @Override
     public String sendPost(SendPostModel model, ProgressListener listener, CancellableTask task) throws Exception {
-        String recaptcha2 = Recaptcha2solved.pop(RECAPTCHA_KEY);
-        if (!usingPasscode) {
-            if (useNewRecaptcha()) {
-                if (recaptcha2 == null) throw Recaptcha2.obtain(
-                        (useHttps() ? "https://" : "http://") + "4chan.org/", RECAPTCHA_KEY, null, CHAN_NAME, newRecaptchaFallback());
-            } else if (recaptcha == null) throw new Exception("Invalid captcha");
+        String[] captchaPair = usingPasscode ? null : Chan4CaptchaSolved.pop();
+        if (!usingPasscode && captchaPair == null) {
+            throw new Chan4Captcha(model.boardName, model.threadNumber);
         }
         String url = "https://sys.4chan.org/" + model.boardName + "/post";
         ExtendedMultipartBuilder postEntityBuilder = ExtendedMultipartBuilder.create().setDelegates(listener, task).
@@ -474,28 +407,19 @@ public class FourchanModule extends CloudflareChanModule {
                 addString("mode", "regist").
                 addString("pwd", model.password);
         if (model.threadNumber != null) postEntityBuilder.addString("resto", model.threadNumber);
-        if (!usingPasscode) {
-            if (useNewRecaptcha()) {
-                postEntityBuilder.addString("g-recaptcha-response", recaptcha2);
-            } else {
-                postEntityBuilder.addString("recaptcha_challenge_field", recaptcha.challenge).
-                        addString("recaptcha_response_field", model.captchaAnswer);
-            }
+        if (!usingPasscode && captchaPair != null) {
+            postEntityBuilder.addString("t-challenge", captchaPair[0]);
+            postEntityBuilder.addString("t-response", captchaPair[1]);
         }
         if (model.attachments != null && model.attachments.length != 0) postEntityBuilder.addFile("upfile", model.attachments[0]);
         if (model.custommark) postEntityBuilder.addString("spoiler", "on");
-        
+
         HttpRequestModel request = HttpRequestModel.builder().setPOST(postEntityBuilder.build()).build();
         String response;
         try {
             response = HttpStreamer.getInstance().getStringFromUrl(url, request, httpClient, listener, task, true);
         } catch (HttpWrongStatusCodeException e) {
-            try {
-                checkCloudflareError(e, "https://4chan.org");
-            } catch (Exception cf) {
-                if (recaptcha2 != null) Recaptcha2solved.push(RECAPTCHA_KEY, recaptcha2);
-                throw cf;
-            }
+            checkCloudflareError(e, "https://4chan.org");
             throw e;
         }
         Matcher errorMatcher = ERROR_POSTING.matcher(response);
@@ -534,41 +458,24 @@ public class FourchanModule extends CloudflareChanModule {
     
     @Override
     public String reportPost(final DeletePostModel model, ProgressListener listener, final CancellableTask task) throws Exception {
-        if (reportCaptchaAnswer == null) {
-            throw new SimpleCaptchaException() {
-                private static final long serialVersionUID = 1L;
-                @Override
-                public String getServiceName() {
-                    return "Recaptcha";
-                }
-                @Override
-                protected Bitmap getNewCaptcha() throws Exception {
-                    reportRecaptcha = Recaptcha.obtain(RECAPTCHA_KEY, task, httpClient, "https");
-                    return reportRecaptcha.bitmap;
-                }
-                @Override
-                protected void storeResponse(String response) {
-                    reportCaptchaAnswer = response;
-                }
-            };
-        } else {
-            String url = "https://sys.4chan.org/" + model.boardName + "/imgboard.php?mode=report&no=" + model.postNumber;
-            ExtendedMultipartBuilder postEntityBuilder = ExtendedMultipartBuilder.create().setDelegates(listener, task).
-                    addString("cat", "vio").
-                    addString("recaptcha_challenge_field", reportRecaptcha.challenge).
-                    addString("recaptcha_response_field", reportCaptchaAnswer).
-                    addString("board", model.boardName).
-                    addString("no", model.postNumber);
-            reportCaptchaAnswer = null;
-            reportRecaptcha = null;
-            HttpRequestModel request = HttpRequestModel.builder().setPOST(postEntityBuilder.build()).build();
-            String response = HttpStreamer.getInstance().getStringFromUrl(url, request, httpClient, listener, task, false);
-            if (response.contains("https://www.4chan.org/banned")) throw new Exception("You can't report posts because you are banned");
-            if (response.contains("You seem to have mistyped the CAPTCHA")) throw new Exception("You seem to have mistyped the CAPTCHA");
-            if (response.contains("That post doesn't exist anymore")) throw new Exception("That post doesn't exist anymore");
-            if (response.contains("You forgot to solve the CAPTCHA")) throw new Exception("You forgot to solve the CAPTCHA");
-            return null;
+        String[] captchaPair = Chan4CaptchaSolved.pop();
+        if (captchaPair == null) {
+            throw new Chan4Captcha(model.boardName, null);
         }
+        String url = "https://sys.4chan.org/" + model.boardName + "/imgboard.php?mode=report&no=" + model.postNumber;
+        ExtendedMultipartBuilder postEntityBuilder = ExtendedMultipartBuilder.create().setDelegates(listener, task).
+                addString("cat", "vio").
+                addString("t-challenge", captchaPair[0]).
+                addString("t-response", captchaPair[1]).
+                addString("board", model.boardName).
+                addString("no", model.postNumber);
+        HttpRequestModel request = HttpRequestModel.builder().setPOST(postEntityBuilder.build()).build();
+        String response = HttpStreamer.getInstance().getStringFromUrl(url, request, httpClient, listener, task, false);
+        if (response.contains("https://www.4chan.org/banned")) throw new Exception("You can't report posts because you are banned");
+        if (response.contains("You seem to have mistyped the CAPTCHA")) throw new Exception("You seem to have mistyped the CAPTCHA");
+        if (response.contains("That post doesn't exist anymore")) throw new Exception("That post doesn't exist anymore");
+        if (response.contains("You forgot to solve the CAPTCHA")) throw new Exception("You forgot to solve the CAPTCHA");
+        return null;
     }
     
     @Override

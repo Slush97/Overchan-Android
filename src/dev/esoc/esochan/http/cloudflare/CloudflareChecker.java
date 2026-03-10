@@ -32,19 +32,21 @@ import dev.esoc.esochan.ui.CompatibilityImpl;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.net.Uri;
-import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.CookieManager;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.FrameLayout;
 
 @SuppressWarnings("deprecation")
 public class CloudflareChecker {
     private static final String TAG = "CloudflareChecker";
 
-    public static final long TIMEOUT = 35 * 1000;
+    public static final long TIMEOUT = 120 * 1000;
 
     private CloudflareChecker() {}
     private static CloudflareChecker instance;
@@ -73,6 +75,7 @@ public class CloudflareChecker {
     private volatile HttpCookie currentCookie;
     private volatile WebView webView;
     private volatile Context webViewContext;
+    private volatile AlertDialog cfDialog;
     private Object lock = new Object();
 
     private HttpCookie checkAntiDDOS(final CloudflareException exception, final ExtendedHttpClient httpClient,
@@ -84,9 +87,11 @@ public class CloudflareChecker {
         processing2 = true;
         currentCookie = null;
 
-        CompatibilityImpl.clearCookies(CookieManager.getInstance());
+        // Only remove the cf_clearance cookie, not all cookies — Cloudflare needs its own
+        // intermediate cookies during the challenge flow
+        CookieManager.getInstance().setCookie(".4chan.org", "cf_clearance=; Max-Age=0");
+        CookieManager.getInstance().flush();
 
-        final ViewGroup layout = (ViewGroup) activity.getWindow().getDecorView().getRootView();
         final WebViewClient client = new WebViewClient() {
             @Override
             public void onPageFinished(WebView webView, String url) {
@@ -94,13 +99,19 @@ public class CloudflareChecker {
                 Logger.d(TAG, "Got Page: "+url);
                 String value = null;
                 try {
-                    String[] cookies = CookieManager.getInstance().getCookie(url).split("[;]");
-                    for (String cookie : cookies) {
-                        if ((cookie != null) && (!cookie.trim().equals("")) && (cookie.startsWith(" " + exception.getRequiredCookieName() + "="))) {
-                            value = cookie.substring(exception.getRequiredCookieName().length() + 2);
+                    String cookieStr = CookieManager.getInstance().getCookie(url);
+                    if (cookieStr != null) {
+                        String[] cookies = cookieStr.split("[;]");
+                        for (String cookie : cookies) {
+                            if (cookie != null) {
+                                cookie = cookie.trim();
+                                if (cookie.startsWith(exception.getRequiredCookieName() + "=")) {
+                                    value = cookie.substring(exception.getRequiredCookieName().length() + 1);
+                                }
+                            }
                         }
                     }
-                } catch (NullPointerException e) {
+                } catch (Exception e) {
                     Logger.e(TAG, e);
                 }
                 if (value != null) {
@@ -121,13 +132,38 @@ public class CloudflareChecker {
             @Override
             public void run() {
                 webView = new WebView(activity);
-                webView.setVisibility(View.GONE);
-                layout.addView(webView);
                 webView.setWebViewClient(client);
-                webView.getSettings().setUserAgentString(HttpConstants.USER_AGENT_STRING);
+                // Use WebView's default Chrome-based UA — overriding with Firefox UA
+                // causes Cloudflare to detect UA/engine mismatch and reject the challenge
                 webView.getSettings().setJavaScriptEnabled(true);
+                webView.getSettings().setDomStorageEnabled(true);
                 webViewContext = webView.getContext();
                 if (httpClient.hasProxy()) WebViewProxy.setProxy(webViewContext, httpClient.getProxyHost(), httpClient.getProxyPort());
+
+                // Show WebView in a visible dialog so user can interact with Cloudflare challenge
+                FrameLayout container = new FrameLayout(activity);
+                container.addView(webView, new FrameLayout.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+
+                cfDialog = new AlertDialog.Builder(activity)
+                        .setTitle("Cloudflare Verification")
+                        .setView(container)
+                        .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                processing2 = false;
+                            }
+                        })
+                        .setOnCancelListener(new DialogInterface.OnCancelListener() {
+                            @Override
+                            public void onCancel(DialogInterface dialog) {
+                                processing2 = false;
+                            }
+                        })
+                        .create();
+                cfDialog.setCanceledOnTouchOutside(false);
+                cfDialog.show();
+
                 webView.loadUrl(exception.getCheckUrl());
             }
         });
@@ -144,11 +180,16 @@ public class CloudflareChecker {
             @Override
             public void run() {
                 try {
-                    layout.removeView(webView);
-                    webView.stopLoading();
-                    webView.clearCache(true);
-                    webView.destroy();
-                    webView = null;
+                    if (cfDialog != null) {
+                        try { cfDialog.dismiss(); } catch (Exception ignored) {}
+                        cfDialog = null;
+                    }
+                    if (webView != null) {
+                        webView.stopLoading();
+                        webView.clearCache(true);
+                        webView.destroy();
+                        webView = null;
+                    }
                 } finally {
                     if (httpClient.hasProxy()) WebViewProxy.setProxy(webViewContext, null, 0);
                     processing = false;

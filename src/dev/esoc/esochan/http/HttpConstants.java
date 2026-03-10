@@ -18,9 +18,34 @@
 
 package dev.esoc.esochan.http;
 
+import android.webkit.WebSettings;
+
 public class HttpConstants {
-    
-    public static final String USER_AGENT_STRING = "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101 Firefox/45.0";
+
+    private static String userAgentString;
+
+    /**
+     * Returns a User-Agent string matching the device's WebView.
+     * This is critical — Cloudflare ties cf_clearance cookies to the UA that solved the challenge,
+     * so OkHttp and WebView must use the same UA.
+     */
+    public static String getUserAgentString() {
+        if (userAgentString == null) {
+            try {
+                userAgentString = WebSettings.getDefaultUserAgent(
+                        dev.esoc.esochan.common.MainApplication.getInstance());
+            } catch (Exception e) {
+                // Fallback if WebView is not available
+                userAgentString = "Mozilla/5.0 (Linux; Android 14) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Mobile Safari/537.36";
+            }
+        }
+        return userAgentString;
+    }
+
+    /** @deprecated Use {@link #getUserAgentString()} instead */
+    @Deprecated
+    public static final String USER_AGENT_STRING = "Mozilla/5.0 (Linux; Android 14) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Mobile Safari/537.36";
+
     public static final int DEFAULT_HTTP_TIMEOUT = 30 * 1000;
-    
+
 }

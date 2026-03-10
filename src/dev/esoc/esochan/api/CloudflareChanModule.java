@@ -85,14 +85,16 @@ public abstract class CloudflareChanModule extends AbstractChanModule {
     }
 
     protected void checkCloudflareError(HttpWrongStatusCodeException e, String url) throws CloudflareException {
+        String html = e.getHtmlString();
+        if (html != null && html.contains("Just a moment...")) {
+            throw CloudflareException.antiDDOS(url, getChanName());
+        }
         if (e.getStatusCode() == 403) {
-            String html = e.getHtmlString();
             if (html != null && html.contains("CAPTCHA")) {
                 throw CloudflareException.withRecaptcha(url, getChanName(), html, cloudflareRecaptchaFallback());
             }
         } else if (e.getStatusCode() == 503) {
-            String html = e.getHtmlString();
-            if (html != null && html.contains("Just a moment...")) {
+            if (html != null && html.contains("cloudflare")) {
                 throw CloudflareException.antiDDOS(url, getChanName());
             }
         }

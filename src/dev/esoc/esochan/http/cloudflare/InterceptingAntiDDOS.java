@@ -114,7 +114,7 @@ import android.webkit.WebViewClient;
                 webView.setVisibility(View.GONE);
                 layout.addView(webView);
                 webView.setWebViewClient(client);
-                webView.getSettings().setUserAgentString(HttpConstants.USER_AGENT_STRING);
+                webView.getSettings().setUserAgentString(HttpConstants.getUserAgentString());
                 webView.getSettings().setJavaScriptEnabled(true);
                 webView.loadUrl(exception.getCheckUrl());
             }

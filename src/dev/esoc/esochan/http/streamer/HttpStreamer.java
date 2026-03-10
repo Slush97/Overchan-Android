@@ -83,7 +83,7 @@ public class HttpStreamer {
             OkHttpClient client = httpClient.newCallClient(requestModel.timeoutValue, !requestModel.noRedirect);
 
             Request.Builder requestBuilder = new Request.Builder().url(url);
-            requestBuilder.header("User-Agent", HttpConstants.USER_AGENT_STRING);
+            requestBuilder.header("User-Agent", HttpConstants.getUserAgentString());
 
             switch (requestModel.method) {
                 case HttpRequestModel.METHOD_GET:
