@@ -12,3 +12,5 @@
 -keep class androidx.media3.** { *; }
 -dontwarn androidx.media3.**
 -dontwarn com.google.re2j.**
+-dontwarn kotlinx.coroutines.**
+-keep class kotlinx.coroutines.** { *; }

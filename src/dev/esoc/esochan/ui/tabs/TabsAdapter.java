@@ -19,6 +19,7 @@
 package dev.esoc.esochan.ui.tabs;
 
 import dev.esoc.esochan.R;
+import dev.esoc.esochan.databinding.SidebarTabitemBinding;
 import dev.esoc.esochan.api.ChanModule;
 import dev.esoc.esochan.common.MainApplication;
 import dev.esoc.esochan.ui.HistoryFragment;
@@ -43,7 +44,8 @@ public class TabsAdapter extends ArrayAdapter<TabModel> {
     private final TabsState tabsState;
     private final TabsIdStack tabsIdStack;
     private final TabSelectListener selectListener;
-    
+
+    private TabsViewModel viewModel;
     private int selectedItem;
     private int draggingItem = -1;
     
@@ -69,7 +71,11 @@ public class TabsAdapter extends ArrayAdapter<TabModel> {
         this.tabsIdStack = tabsState.tabsIdStack;
         this.selectListener = selectListener;
     }
-    
+
+    public void setViewModel(TabsViewModel viewModel) {
+        this.viewModel = viewModel;
+    }
+
     /**
      * Выбрать текущую вкладку (и переключиться на неё). Объект состояния вкладок будет сериализован
      * @param position позиция вкладки в списке
@@ -185,11 +191,18 @@ public class TabsAdapter extends ArrayAdapter<TabModel> {
     
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
-        View view = convertView == null ? inflater.inflate(R.layout.sidebar_tabitem, parent, false) : convertView;
-        View dragHandler = view.findViewById(R.id.tab_drag_handle);
-        ImageView favIcon = (ImageView)view.findViewById(R.id.tab_favicon);
-        TextView title = (TextView)view.findViewById(R.id.tab_text_view);
-        ImageView closeBtn = (ImageView)view.findViewById(R.id.tab_close_button);
+        SidebarTabitemBinding binding;
+        if (convertView == null) {
+            binding = SidebarTabitemBinding.inflate(inflater, parent, false);
+            binding.getRoot().setTag(binding);
+        } else {
+            binding = (SidebarTabitemBinding) convertView.getTag();
+        }
+        View view = binding.getRoot();
+        View dragHandler = binding.tabDragHandle;
+        ImageView favIcon = binding.tabFavicon;
+        TextView title = binding.tabTextView;
+        ImageView closeBtn = binding.tabCloseButton;
         
         dragHandler.getLayoutParams().width = position == draggingItem ? ViewGroup.LayoutParams.WRAP_CONTENT : 0;
         dragHandler.setLayoutParams(dragHandler.getLayoutParams());
@@ -272,6 +285,7 @@ public class TabsAdapter extends ArrayAdapter<TabModel> {
     public void notifyDataSetChanged(boolean serialize) {
         super.notifyDataSetChanged();
         if (serialize) MainApplication.getInstance().serializer.serializeTabsState(tabsState);
+        if (viewModel != null) viewModel.notifyTabsChanged(false);
     }
     
     @Override

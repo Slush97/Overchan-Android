@@ -45,7 +45,9 @@ import dev.esoc.esochan.ui.tabs.TabsTrackerService;
 import dev.esoc.esochan.ui.tabs.UrlHandler;
 import dev.esoc.esochan.ui.theme.GenericThemeEntry;
 import dev.esoc.esochan.ui.theme.ThemeUtils;
+import dev.esoc.esochan.ui.tabs.TabsViewModel;
 import dev.esoc.esochan.ui.tabs.TabsAdapter.TabSelectListener;
+import androidx.lifecycle.ViewModelProvider;
 import android.annotation.SuppressLint;
 import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
@@ -89,6 +91,7 @@ public class MainActivity extends FragmentActivity {
     private IntentFilter intentFilter;
     
     public TabsAdapter tabsAdapter = null;
+    private TabsViewModel tabsViewModel;
     public StaticSettingsContainer settings;
     private GenericThemeEntry theme;
     private int autohideRulesHash;
@@ -368,6 +371,8 @@ public class MainActivity extends FragmentActivity {
         DragSortListView list = (DragSortListView)findViewById(R.id.sidebar_tabs_list);
         TabsState state = MainApplication.getInstance().tabsState;
         tabsAdapter = initTabsListView(list, state);
+        tabsViewModel = new ViewModelProvider(this).get(TabsViewModel.class);
+        tabsAdapter.setViewModel(tabsViewModel);
         handleUriIntent(getIntent());
         notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         if (Build.VERSION.SDK_INT >= 33) {
@@ -413,6 +418,7 @@ public class MainActivity extends FragmentActivity {
                     }
                 } else if (action.equals(TabsTrackerService.BROADCAST_ACTION_NOTIFY)) {
                     tabsAdapter.notifyDataSetChanged(false);
+                    tabsViewModel.refreshFromTrackerService();
                     TabsTrackerService.clearUnread();
                 }
             }

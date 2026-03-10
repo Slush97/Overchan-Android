@@ -17,6 +17,11 @@ dependencies {
     implementation libs.kryo
     implementation libs.jsoup
     implementation libs.media3.exoplayer
+    implementation libs.kotlinx.coroutines.core
+    implementation libs.kotlinx.coroutines.android
+    implementation libs.androidx.fragment.ktx
+    implementation libs.androidx.lifecycle.viewmodel
+    implementation libs.androidx.lifecycle.runtime
 }
 
 android {
