@@ -19,8 +19,6 @@
 package dev.esoc.esochan.ui.posting
 
 import android.app.Activity
-import android.app.ProgressDialog
-import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -299,7 +297,7 @@ class PostFormFragment : BottomSheetDialogFragment() {
         requireView().findViewById<View>(R.id.post_form_gallery_button).setOnClickListener { attachGallery() }
 
         // Captcha tap to refresh
-        captchaView.setOnClickListener { updateCaptcha() }
+        captchaView.setOnClickListener { loadCaptchaOrDefer() }
 
         // Enter in captcha field sends
         captchaField.setOnKeyListener { _, keyCode, event ->
@@ -351,13 +349,65 @@ class PostFormFragment : BottomSheetDialogFragment() {
     }
 
     // --- Captcha ---
+    //
+    // Strategy: For channels with interactive captcha (like 4chan), the captcha
+    // is NOT fetched when the form opens. Instead, it's handled at send time
+    // by PostingService (which triggers the InteractiveException flow).
+    // This lets the user compose their post without being blocked by cooldowns.
+    //
+    // For channels with bitmap captchas, we load normally so the user can see
+    // and type the captcha answer before sending.
+
+    private var usesInteractiveCaptcha = false
 
     private fun setCaptcha() {
         val lastHash = MainApplication.getInstance().draftsCache.lastCaptchaHash
         if (lastHash != null && lastHash == hash) {
             switchToCaptcha(MainApplication.getInstance().draftsCache.lastCaptcha, clearField = false)
         } else {
-            updateCaptcha()
+            // Try to load captcha in background; if it's interactive, skip it
+            loadCaptchaOrDefer()
+        }
+    }
+
+    private fun loadCaptchaOrDefer() {
+        switchToLoadingCaptcha()
+        currentTask?.cancel()
+        MainApplication.getInstance().draftsCache.clearLastCaptcha()
+        Async.runAsync {
+            try {
+                val task = CancellableTask.BaseCancellableTask()
+                currentTask = task
+                val captcha = chan.getNewCaptcha(sendPostModel.boardName, sendPostModel.threadNumber, null, task)
+                if (task.isCancelled) return@runAsync
+                Async.runOnUiThread {
+                    if (!isAdded) return@runOnUiThread
+                    switchToCaptcha(captcha)
+                    MainApplication.getInstance().draftsCache.setLastCaptcha(hash, captcha)
+                }
+            } catch (e: Exception) {
+                if (currentTask?.isCancelled == true) return@runAsync
+                if (e is InteractiveException) {
+                    // This channel uses interactive captcha (e.g. 4chan).
+                    // Don't show the captcha dialog now - defer to send time.
+                    usesInteractiveCaptcha = true
+                    Async.runOnUiThread {
+                        if (!isAdded) return@runOnUiThread
+                        captchaLayout.visibility = View.GONE
+                        captchaField.visibility = View.GONE
+                        captchaLoading.visibility = View.GONE
+                        sendButton.isEnabled = true
+                    }
+                } else {
+                    Logger.e(TAG, e)
+                    val msg = e.message ?: ""
+                    if (currentTask?.isCancelled == true) return@runAsync
+                    Async.runOnUiThread {
+                        if (!isAdded) return@runOnUiThread
+                        switchToErrorCaptcha(msg)
+                    }
+                }
+            }
         }
     }
 
@@ -393,41 +443,6 @@ class PostFormFragment : BottomSheetDialogFragment() {
         sendButton.isEnabled = false
         if (message != null) {
             Toast.makeText(requireContext(), message, Toast.LENGTH_LONG).show()
-        }
-    }
-
-    private fun updateCaptcha() {
-        switchToLoadingCaptcha()
-        currentTask?.cancel()
-        MainApplication.getInstance().draftsCache.clearLastCaptcha()
-        Async.runAsync {
-            try {
-                val task = CancellableTask.BaseCancellableTask()
-                currentTask = task
-                val captcha = chan.getNewCaptcha(sendPostModel.boardName, sendPostModel.threadNumber, null, task)
-                if (task.isCancelled) return@runAsync
-                Async.runOnUiThread {
-                    if (!isAdded) return@runOnUiThread
-                    switchToCaptcha(captcha)
-                    MainApplication.getInstance().draftsCache.setLastCaptcha(hash, captcha)
-                }
-            } catch (e: Exception) {
-                Logger.e(TAG, e)
-                if (currentTask?.isCancelled == true) return@runAsync
-                if (e is InteractiveException) {
-                    e.handle(requireActivity(), currentTask, object : InteractiveException.Callback {
-                        override fun onSuccess() { updateCaptcha() }
-                        override fun onError(message: String?) { switchToErrorCaptcha(message) }
-                    })
-                } else {
-                    val msg = e.message ?: ""
-                    if (currentTask?.isCancelled == true) return@runAsync
-                    Async.runOnUiThread {
-                        if (!isAdded) return@runOnUiThread
-                        switchToErrorCaptcha(msg)
-                    }
-                }
-            }
         }
     }
 
