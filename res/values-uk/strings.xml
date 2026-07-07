@@ -147,10 +147,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <string name="menu_open_drawer">Вкладки</string>
     <string name="menu_close_drawer">Назад</string>
     <string name="menu_preferences">Опції</string>
-    <string name="menu_sub_preferences_suspend">Призупинити</string>
-    <string name="menu_sub_preferences_autoupdate">Автооновлення</string>
-    <string name="menu_sub_preferences_maskpictures">SFW режим</string>
-    <string name="menu_sub_preferences_all">Всі опції</string>
     <string name="menu_add_post">Відповісти</string>
     <string name="menu_add_thread">Створити тред</string>
     <string name="menu_update">Оновити</string>
@@ -369,7 +365,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <string name="notification_download_exists_or_in_queue">Деякі файли вже звантажені або на черзі</string>
     <string name="notification_not_found">Не знайдено</string>
     <string name="notifacation_updating_now">Список оновлюється, спробуйте пізніше</string>
-    <string name="notification_suspend">Автооновлення відключено, поки ви не відкриєте програму</string>
     
     <string name="error_unknown">Невідома помилка</string>
     <string name="error_deserialization">Помилка десеріалізації</string>
@@ -491,8 +486,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <string name="pref_do_not_close_tabs_summary">Дія кнопки Назад</string>
     <string name="pref_scroll_volume_buttons_title">Прокрутка кнопками гучності</string>
     <string name="pref_scroll_volume_buttons_summary">Використовувати кнопки гучності для прокрутки сторінки</string>
-    <string name="pref_preferences_submenu_title">Меню опцій</string>
-    <string name="pref_preferences_submenu_summary">Показувати деякі опції в меню програми</string>
     <string name="pref_pin_markup_title">Закріпити кнопки розмітки</string>
     <string name="pref_pin_markup_summary">Закріпити кнопки розмітки у формі відправки</string>
     <string name="pref_show_date_title">Дата й час</string>

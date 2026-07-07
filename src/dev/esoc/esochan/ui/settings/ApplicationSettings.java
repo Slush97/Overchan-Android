@@ -361,11 +361,7 @@ public class ApplicationSettings {
     public boolean maskPictures() {
         return preferences.getBoolean(resources.getString(R.string.pref_key_mask_pictures), false);
     }
-    
-    public void setMaskPictures(boolean value) {
-        preferences.edit().putBoolean(resources.getString(R.string.pref_key_mask_pictures), value).commit();
-    }
-    
+
     public boolean isUnlockedChan(String chanName) {
         if (chanName == null) return false;
         if (!isSFWRelease()) return true;
@@ -389,9 +385,6 @@ public class ApplicationSettings {
         return preferences.getBoolean(resources.getString(R.string.pref_key_scroll_volume_buttons), false);
     }
     
-    public boolean preferencesSubmenu() {
-        return preferences.getBoolean(resources.getString(R.string.pref_key_preferences_submenu), true);
-    }
     
     public boolean isPinnedMarkup() {
         return preferences.getBoolean(resources.getString(R.string.pref_key_pin_markup), false);
