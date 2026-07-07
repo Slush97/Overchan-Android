@@ -26,8 +26,8 @@ import dev.esoc.esochan.common.Async;
 import dev.esoc.esochan.common.Logger;
 import dev.esoc.esochan.common.MainApplication;
 import dev.esoc.esochan.http.client.ExtendedTrustManager;
-import dev.esoc.esochan.lib.appcompat_v7_actionbartoogle.wrappers.ActionBarDrawerToogleCompat;
-import dev.esoc.esochan.lib.appcompat_v7_actionbartoogle.wrappers.ActionBarDrawerToogleV7;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AppCompatActivity;
 import dev.esoc.esochan.lib.dslv.DragSortController;
 import dev.esoc.esochan.lib.dslv.DragSortListView;
 import dev.esoc.esochan.lib.dslv.DragSortListView.DropListener;
@@ -80,7 +80,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 
-public class MainActivity extends FragmentActivity {
+public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
     
     @SuppressLint("InlinedApi")
@@ -105,7 +105,7 @@ public class MainActivity extends FragmentActivity {
     private boolean isDestroyed = false;
     
     private DrawerLayout drawerLayout;
-    private ActionBarDrawerToogleCompat drawerToggle;
+    private ActionBarDrawerToggle drawerToggle;
     
     private HiddenTabsSection hiddenTabsSection = null;
     
@@ -113,7 +113,7 @@ public class MainActivity extends FragmentActivity {
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer);
         if (drawerLayout == null) return;
 
-        drawerToggle = new ActionBarDrawerToogleV7(this, drawerLayout, R.string.drawer_open, R.string.drawer_close) {
+        drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.drawer_open, R.string.drawer_close) {
             @Override
             public void onDrawerClosed(View drawerView) {
                 super.onDrawerClosed(drawerView);

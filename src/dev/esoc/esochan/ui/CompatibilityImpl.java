@@ -23,7 +23,8 @@ import java.io.File;
 import dev.esoc.esochan.R;
 import android.Manifest;
 import android.annotation.TargetApi;
-import android.app.ActionBar;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
 import android.app.Activity;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
@@ -61,12 +62,14 @@ public class CompatibilityImpl {
         preference.setIcon(icon);
     }
     
-    public static void activeActionBar(Activity activity) {
-        activity.getActionBar().setDisplayHomeAsUpEnabled(true);
-        setHomeButtonEnabledTrue(activity.getActionBar());
+    private static ActionBar getSupportActionBar(Activity activity) {
+        return activity instanceof AppCompatActivity ? ((AppCompatActivity) activity).getSupportActionBar() : null;
     }
-    
-    private static void setHomeButtonEnabledTrue(ActionBar actionBar) {
+
+    public static void activeActionBar(Activity activity) {
+        ActionBar actionBar = getSupportActionBar(activity);
+        if (actionBar == null) return;
+        actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeButtonEnabled(true);
     }
     
@@ -79,19 +82,19 @@ public class CompatibilityImpl {
     }
     
     public static void setActionBarNoIcon(Activity activity) {
-        ActionBar actionBar = activity.getActionBar();
+        ActionBar actionBar = getSupportActionBar(activity);
         if (actionBar != null) actionBar.setDisplayShowHomeEnabled(false);
     }
-    
+
     public static boolean hideActionBar(Activity activity) {
-        ActionBar actionBar = activity.getActionBar();
+        ActionBar actionBar = getSupportActionBar(activity);
         if (actionBar == null || !actionBar.isShowing()) return false;
         actionBar.hide();
         return true;
     }
-    
+
     public static boolean showActionBar(Activity activity) {
-        ActionBar actionBar = activity.getActionBar();
+        ActionBar actionBar = getSupportActionBar(activity);
         if (actionBar == null || actionBar.isShowing()) return false;
         actionBar.show();
         return true;
