@@ -23,6 +23,7 @@ import java.util.List;
 
 import dev.esoc.esochan.R;
 import dev.esoc.esochan.api.ChanModule;
+import dev.esoc.esochan.common.Async;
 import dev.esoc.esochan.common.MainApplication;
 import dev.esoc.esochan.ui.Database.FavoritesEntry;
 import dev.esoc.esochan.ui.settings.ApplicationSettings;
@@ -134,7 +135,23 @@ public class FavoritesFragment extends Fragment implements AdapterView.OnItemCli
     }
     
     public void update() {
-        initLists();
+        Async.runAsync(new Runnable() {
+            @Override
+            public void run() {
+                final List<Database.FavoritesEntry> favorites = MainApplication.getInstance().database.getFavorites();
+                Async.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (!isAdded()) return;
+                        showFavorites(favorites);
+                    }
+                });
+            }
+        });
+    }
+
+    private void showFavorites(List<Database.FavoritesEntry> favorites) {
+        initLists(favorites);
         pagerAdapter = new ViewPagerFavoritesAdapter(listViews);
         viewPager.setAdapter(pagerAdapter);
         int current = -1;
@@ -161,9 +178,8 @@ public class FavoritesFragment extends Fragment implements AdapterView.OnItemCli
         });
     }
     
-    private void initLists() {
+    private void initLists(List<Database.FavoritesEntry> favorites) {
         listViews = new ArrayList<Pair<ListView,String>>();
-        List<Database.FavoritesEntry> favorites = MainApplication.getInstance().database.getFavorites();
         if (favorites.isEmpty()) {
             listViews.add(Pair.of(getListView(favorites), resources.getString(R.string.favorites_empty)));
             return;

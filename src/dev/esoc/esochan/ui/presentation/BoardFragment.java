@@ -1617,7 +1617,7 @@ public class BoardFragment extends Fragment implements AdapterView.OnItemClickLi
         }
         
         private void weakRegisterForContextMenu(View v) {
-            v.setOnCreateContextMenuListener(new WeakOnCreateContextMenuListener(fragment()));
+            v.setOnCreateContextMenuListener(contextMenuListener);
         }
         
         private static class OnUnreadFrameListener implements View.OnClickListener, View.OnLongClickListener {
@@ -1654,16 +1654,29 @@ public class BoardFragment extends Fragment implements AdapterView.OnItemClickLi
         
         private OnUnreadFrameListener onUnreadFrameListener;
         private OnAttachmentClickListener onAttachmentClickListener;
-        
+        private final WeakOnCreateContextMenuListener contextMenuListener;
+
+        private final int thumbnailSizePx;
+        private final int badgeSizePx;
+
         public PostsListAdapter(BoardFragment fragment) {
             super(fragment.activity, 0, fragment.presentationModel.presentationList);
             fragmentRef = new WeakReference<BoardFragment>(fragment);
             onUnreadFrameListener = new OnUnreadFrameListener(fragmentRef);
             onAttachmentClickListener = new OnAttachmentClickListener(fragmentRef);
+            contextMenuListener = new WeakOnCreateContextMenuListener(fragment);
             if (fragment.presentationModel != null) // может обнулиться в BoardFragment.onDestroy() (т.к. метод работает асинхронно)
                 this.currentCount = fragment.presentationModel.presentationList.size();
             this.inflater = LayoutInflater.from(fragment.activity);
             this.thumbnailsInRowCount = Math.max(1, fragment.postItemWidth / fragment.thumbnailWidth);
+            this.thumbnailSizePx = fragment.resources.getDimensionPixelSize(R.dimen.post_thumbnail_size);
+            this.badgeSizePx = fragment.resources.getDimensionPixelSize(R.dimen.post_badge_size);
+        }
+
+        static class ThumbnailViewTag {
+            public ImageView image;
+            public TextView size;
+            public TextView type;
         }
         
         static class PostViewTag {
@@ -2310,9 +2323,17 @@ public class BoardFragment extends Fragment implements AdapterView.OnItemClickLi
             weakRegisterForContextMenu(thumbnailView);
             thumbnailView.setOnClickListener(onAttachmentClickListener);
             thumbnailView.setTag(attachment);
-            ImageView thumbnailPic = (ImageView) thumbnailView.findViewById(R.id.post_thumbnail_image);
-            TextView size = (TextView) thumbnailView.findViewById(R.id.post_thumbnail_attachment_size);
-            TextView type = (TextView) thumbnailView.findViewById(R.id.post_thumbnail_attachment_type);
+            ThumbnailViewTag views = (ThumbnailViewTag) thumbnailView.getTag(R.id.post_thumbnail);
+            if (views == null) {
+                views = new ThumbnailViewTag();
+                views.image = (ImageView) thumbnailView.findViewById(R.id.post_thumbnail_image);
+                views.size = (TextView) thumbnailView.findViewById(R.id.post_thumbnail_attachment_size);
+                views.type = (TextView) thumbnailView.findViewById(R.id.post_thumbnail_attachment_type);
+                thumbnailView.setTag(R.id.post_thumbnail, views);
+            }
+            ImageView thumbnailPic = views.image;
+            TextView size = views.size;
+            TextView type = views.type;
             setImageViewSpoiler(thumbnailPic, attachment.isSpoiler || fragment.staticSettings.maskPictures);
             switch (attachment.type) {
                 case AttachmentModel.TYPE_IMAGE_GIF:
@@ -2358,7 +2379,7 @@ public class BoardFragment extends Fragment implements AdapterView.OnItemClickLi
                 fragment.bitmapCache.asyncGet(
                         hash,
                         attachment.thumbnail,
-                        fragment.resources.getDimensionPixelSize(R.dimen.post_thumbnail_size),
+                        thumbnailSizePx,
                         fragment.chan,
                         fragment.tabModel.type == TabModel.TYPE_LOCAL ? fragment.localFile : null,
                         imagesDownloadTask,
@@ -2397,7 +2418,7 @@ public class BoardFragment extends Fragment implements AdapterView.OnItemClickLi
             fragment().bitmapCache.asyncGet(
                     hash,
                     url,
-                    fragment.resources.getDimensionPixelSize(R.dimen.post_badge_size),
+                    badgeSizePx,
                     fragment.chan,
                     fragment.tabModel.type == TabModel.TYPE_LOCAL ? fragment().localFile : null,
                     imagesDownloadTask,
@@ -2684,70 +2705,75 @@ public class BoardFragment extends Fragment implements AdapterView.OnItemClickLi
                         model.searchRequest = field.getText().toString();
                         UrlHandler.open(model, activity);
                     } else {
-                        int highlightColor = ThemeUtils.getThemeColor(activity.getTheme(), R.attr.searchHighlightBackground, Color.RED);
-                        String request = field.getText().toString().toLowerCase(Locale.US);
-                        
-                        if (cachedSearchRequest == null || !request.equals(cachedSearchRequest)) {
-                            cachedSearchRequest = request;
-                            cachedSearchResults = new ArrayList<Integer>();
-                            cachedSearchHighlightedSpanables = new SparseArray<Spanned>();
-                            List<PresentationItemModel> safePresentationList = presentationModel.getSafePresentationList();
-                            if (safePresentationList != null) {
-                                for (int i=0; i<safePresentationList.size(); ++i) {
-                                    PresentationItemModel model = safePresentationList.get(i);
-                                    if (model.hidden && !staticSettings.showHiddenItems) continue;
-                                    String comment = model.spannedComment.toString().toLowerCase(Locale.US).replace('\n', ' ');
-                                    List<Integer> altFoundPositions = null;
-                                    if (model.floating) {
-                                        int floatingpos = FlowTextHelper.getFloatingPosition(model.spannedComment);
-                                        if (floatingpos != -1 && floatingpos < model.spannedComment.length() &&
-                                                model.spannedComment.charAt(floatingpos) == '\n') {
-                                            String altcomment = comment.substring(0, floatingpos) + comment.substring(
-                                                    floatingpos + 1, Math.min(model.spannedComment.length(), floatingpos + request.length()));
-                                            int start = 0;
-                                            int curpos;
-                                            while (start < altcomment.length() && (curpos = altcomment.indexOf(request, start)) != -1) {
-                                                if (altFoundPositions == null) altFoundPositions = new ArrayList<Integer>();
-                                                altFoundPositions.add(curpos);
-                                                start = curpos + request.length();
-                                            }
-                                        }
-                                    }
-                                    
-                                    if (comment.contains(request) || altFoundPositions != null) {
-                                        cachedSearchResults.add(Integer.valueOf(i));
-                                        SpannableStringBuilder spannedHighlited =
-                                                new SpannableStringBuilder(safePresentationList.get(i).spannedComment);
-                                        int start = 0;
-                                        int curpos;
-                                        while (start < comment.length() && (curpos = comment.indexOf(request, start)) != -1) {
-                                            start = curpos + request.length();
-                                            if (altFoundPositions != null && Collections.binarySearch(altFoundPositions, curpos) >= 0) continue;
-                                            spannedHighlited.setSpan(new BackgroundColorSpan(highlightColor),
-                                                    curpos, curpos + request.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                                        }
-                                        if (altFoundPositions != null) {
-                                            for (Integer pos : altFoundPositions) {
-                                                spannedHighlited.setSpan(new BackgroundColorSpan(highlightColor),
-                                                        pos, pos + request.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                                            }
-                                        }
-                                        cachedSearchHighlightedSpanables.put(i, spannedHighlited);
-                                    }
-                                }
-                            }
-                        }
-                        
-                        if (cachedSearchResults.size() == 0) {
-                            Toast.makeText(activity, R.string.notification_not_found, Toast.LENGTH_LONG).show();
+                        final int highlightColor = ThemeUtils.getThemeColor(activity.getTheme(), R.attr.searchHighlightBackground, Color.RED);
+                        final String request = field.getText().toString().toLowerCase(Locale.US);
+
+                        if (cachedSearchRequest != null && request.equals(cachedSearchRequest)) {
+                            showSearchResults(searchOnClickListener);
                         } else {
-                            boolean firstTime = !searchHighlightActive;
-                            searchHighlightActive = true;
-                            adapter.notifyDataSetChanged();
-                            binding.boardSearchNext.setVisibility(View.VISIBLE);
-                            binding.boardSearchPrevious.setVisibility(View.VISIBLE);
-                            binding.boardSearchResult.setVisibility(View.VISIBLE);
-                            searchOnClickListener.onClick(firstTime ? null : binding.boardSearchNext);
+                            final List<PresentationItemModel> safePresentationList = presentationModel.getSafePresentationList();
+                            final boolean showHiddenItems = staticSettings.showHiddenItems;
+                            Async.runAsync(new Runnable() {
+                                @Override
+                                public void run() {
+                                    final List<Integer> results = new ArrayList<Integer>();
+                                    final SparseArray<Spanned> highlighted = new SparseArray<Spanned>();
+                                    if (safePresentationList != null) {
+                                        for (int i=0; i<safePresentationList.size(); ++i) {
+                                            PresentationItemModel model = safePresentationList.get(i);
+                                            if (model.hidden && !showHiddenItems) continue;
+                                            String comment = model.spannedComment.toString().toLowerCase(Locale.US).replace('\n', ' ');
+                                            List<Integer> altFoundPositions = null;
+                                            if (model.floating) {
+                                                int floatingpos = FlowTextHelper.getFloatingPosition(model.spannedComment);
+                                                if (floatingpos != -1 && floatingpos < model.spannedComment.length() &&
+                                                        model.spannedComment.charAt(floatingpos) == '\n') {
+                                                    String altcomment = comment.substring(0, floatingpos) + comment.substring(
+                                                            floatingpos + 1, Math.min(model.spannedComment.length(), floatingpos + request.length()));
+                                                    int start = 0;
+                                                    int curpos;
+                                                    while (start < altcomment.length() && (curpos = altcomment.indexOf(request, start)) != -1) {
+                                                        if (altFoundPositions == null) altFoundPositions = new ArrayList<Integer>();
+                                                        altFoundPositions.add(curpos);
+                                                        start = curpos + request.length();
+                                                    }
+                                                }
+                                            }
+
+                                            if (comment.contains(request) || altFoundPositions != null) {
+                                                results.add(Integer.valueOf(i));
+                                                SpannableStringBuilder spannedHighlited =
+                                                        new SpannableStringBuilder(safePresentationList.get(i).spannedComment);
+                                                int start = 0;
+                                                int curpos;
+                                                while (start < comment.length() && (curpos = comment.indexOf(request, start)) != -1) {
+                                                    start = curpos + request.length();
+                                                    if (altFoundPositions != null && Collections.binarySearch(altFoundPositions, curpos) >= 0) continue;
+                                                    spannedHighlited.setSpan(new BackgroundColorSpan(highlightColor),
+                                                            curpos, curpos + request.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                                                }
+                                                if (altFoundPositions != null) {
+                                                    for (Integer pos : altFoundPositions) {
+                                                        spannedHighlited.setSpan(new BackgroundColorSpan(highlightColor),
+                                                                pos, pos + request.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                                                    }
+                                                }
+                                                highlighted.put(i, spannedHighlited);
+                                            }
+                                        }
+                                    }
+                                    Async.runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            if (presentationModel == null || !searchBarInitialized) return;
+                                            cachedSearchRequest = request;
+                                            cachedSearchResults = results;
+                                            cachedSearchHighlightedSpanables = highlighted;
+                                            showSearchResults(searchOnClickListener);
+                                        }
+                                    });
+                                }
+                            });
                         }
                     }
                     try {
@@ -2767,7 +2793,21 @@ public class BoardFragment extends Fragment implements AdapterView.OnItemClickLi
             searchBarView.getLayoutParams().height = field.getMeasuredHeight();
         searchBarInitialized = true;
     }
-    
+
+    private void showSearchResults(View.OnClickListener searchOnClickListener) {
+        if (cachedSearchResults == null || cachedSearchResults.size() == 0) {
+            Toast.makeText(activity, R.string.notification_not_found, Toast.LENGTH_LONG).show();
+        } else {
+            boolean firstTime = !searchHighlightActive;
+            searchHighlightActive = true;
+            adapter.notifyDataSetChanged();
+            binding.boardSearchNext.setVisibility(View.VISIBLE);
+            binding.boardSearchPrevious.setVisibility(View.VISIBLE);
+            binding.boardSearchResult.setVisibility(View.VISIBLE);
+            searchOnClickListener.onClick(firstTime ? null : binding.boardSearchNext);
+        }
+    }
+
     private static class OnSearchTextChangedListener implements TextWatcher {
         private final WeakReference<BoardFragment> fragmentRef;
         

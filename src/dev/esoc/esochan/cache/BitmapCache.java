@@ -58,6 +58,20 @@ public class BitmapCache {
     private final Set<String> currentDownloads;
     
     private static final Bitmap EMPTY_BMP = Bitmap.createBitmap(1, 1, Bitmap.Config.ALPHA_8);
+
+    private static BitmapFactory.Options thumbnailDecodeOptions() {
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inPreferredConfig = Bitmap.Config.RGB_565;
+        return options;
+    }
+
+    private static int calculateInSampleSize(int width, int height, int maxSize) {
+        if (maxSize <= 0) return 1;
+        int inSampleSize = 1;
+        int longSide = Math.max(width, height);
+        while (longSide / (inSampleSize * 2) >= maxSize) inSampleSize *= 2;
+        return inSampleSize;
+    }
     
     /**
      * Конструктор
@@ -124,7 +138,7 @@ public class BitmapCache {
                 return null;
             }
             fileStream = new FileInputStream(file);
-            bmp = BitmapFactory.decodeStream(fileStream);
+            bmp = BitmapFactory.decodeStream(fileStream, null, thumbnailDecodeOptions());
         } catch (Exception e) {
             Logger.e(TAG, e);
         } catch (OutOfMemoryError oom) {
@@ -154,7 +168,7 @@ public class BitmapCache {
                 InputStream is = null;
                 try {
                     is = container.openStream(filenameInContainer);
-                    bmp = BitmapFactory.decodeStream(is);
+                    bmp = BitmapFactory.decodeStream(is, null, thumbnailDecodeOptions());
                     if (bmp != null) lru.put(hash, bmp);
                 } catch (Exception e) {
                     Logger.e(TAG, e);
@@ -211,13 +225,20 @@ public class BitmapCache {
                 }
                 BufOutputStream data = new BufOutputStream();
                 chan.downloadFile(url, data, null, task);
-                bmp = BitmapFactory.decodeStream(data.toInputStream());
+                BitmapFactory.Options options = thumbnailDecodeOptions();
+                if (maxSize > 0) {
+                    options.inJustDecodeBounds = true;
+                    BitmapFactory.decodeStream(data.toInputStream(), null, options);
+                    options.inSampleSize = calculateInSampleSize(options.outWidth, options.outHeight, maxSize);
+                    options.inJustDecodeBounds = false;
+                }
+                bmp = BitmapFactory.decodeStream(data.toInputStream(), null, options);
             } catch (Exception e) {
                 Logger.e(TAG, e);
                 if (url.startsWith("data:image")) {
                     try {
                         byte[] data = Base64.decode(url.substring(url.indexOf("base64,") + 7), Base64.DEFAULT);
-                        bmp = BitmapFactory.decodeByteArray(data, 0, data.length);
+                        bmp = BitmapFactory.decodeByteArray(data, 0, data.length, thumbnailDecodeOptions());
                     } catch (Exception e1) {
                         Logger.e(TAG, e1);
                     }

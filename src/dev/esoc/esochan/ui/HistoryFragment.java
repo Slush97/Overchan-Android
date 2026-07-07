@@ -20,10 +20,12 @@ package dev.esoc.esochan.ui;
 
 import java.util.Calendar;
 import java.util.LinkedList;
+import java.util.List;
 
 import dev.esoc.esochan.R;
 import dev.esoc.esochan.api.ChanModule;
 import dev.esoc.esochan.api.models.UrlPageModel;
+import dev.esoc.esochan.common.Async;
 import dev.esoc.esochan.common.MainApplication;
 import dev.esoc.esochan.ui.tabs.TabModel;
 import dev.esoc.esochan.ui.tabs.UrlHandler;
@@ -122,8 +124,20 @@ public class HistoryFragment extends Fragment implements AdapterView.OnItemClick
     }
     
     private void init() {
-        adapter = new HistoryAdapter(activity);
-        listView.setAdapter(adapter);
+        Async.runAsync(new Runnable() {
+            @Override
+            public void run() {
+                final List<Database.HistoryEntry> history = MainApplication.getInstance().database.getHistory();
+                Async.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (!isAdded()) return;
+                        adapter = new HistoryAdapter(activity, history);
+                        listView.setAdapter(adapter);
+                    }
+                });
+            }
+        });
     }
     
     @Override
@@ -178,12 +192,12 @@ public class HistoryFragment extends Fragment implements AdapterView.OnItemClick
         private LayoutInflater inflater;
         private int drawablePadding;
         
-        public HistoryAdapter(MainActivity activity) {
+        public HistoryAdapter(MainActivity activity, List<Database.HistoryEntry> history) {
             super(activity, 0);
             Resources resources = activity.getResources();
             inflater = LayoutInflater.from(activity);
             drawablePadding = (int) (resources.getDisplayMetrics().density * 5 + 0.5f);
-            
+
             long midnight = getMidnight();
             int current = 0;
             int previous = -1;
@@ -191,7 +205,7 @@ public class HistoryFragment extends Fragment implements AdapterView.OnItemClick
                 add(resources.getString(R.string.history_last_closed));
                 add(lastClosed.getLast());
             }
-            for (Database.HistoryEntry entity : MainApplication.getInstance().database.getHistory()) {
+            for (Database.HistoryEntry entity : history) {
                 while (entity.date < midnight) {
                     if (current == 0) {
                         current = 1;

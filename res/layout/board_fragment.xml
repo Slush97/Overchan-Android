@@ -21,15 +21,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" 
-    android:background="?attr/activityRootBackground"
-    tools:ignore="Overdraw" >
+    android:orientation="vertical"
+    android:background="?attr/postBackground" >
     
     <LinearLayout
         android:id="@+id/board_search_bar"
         android:layout_width="match_parent"
         android:layout_height="@dimen/panel_height"
         android:orientation="horizontal"
+        android:background="?attr/activityRootBackground"
         android:visibility="gone" >
         <EditText
             android:id="@+id/board_search_field"
@@ -87,7 +87,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 android:id="@android:id/list"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="?attr/postBackground"
                 android:fastScrollEnabled="true"
                 android:divider="?attr/activityRootBackground"
                 android:dividerHeight="4dp"
@@ -128,6 +127,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         android:layout_height="@dimen/panel_height"
         android:orientation="horizontal"
         android:weightSum="8"
+        android:background="?attr/activityRootBackground"
         android:visibility="gone" >
         <ImageView
             style="@style/SelectableItem"
