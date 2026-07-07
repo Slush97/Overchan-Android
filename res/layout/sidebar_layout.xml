@@ -33,35 +33,35 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <ImageView
             style="@style/SelectableItem"
             android:id="@+id/sidebar_btn_newtab"
-            android:layout_height="match_parent" 
+            android:layout_height="match_parent"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:src="?attr/sidebarBtnNewTab"
             android:focusable="true"
             android:nextFocusDown="@+id/sidebar_tabs_list"
-            android:nextFocusRight="@+id/sidebar_btn_history"
+            android:nextFocusRight="@+id/sidebar_btn_home"
             android:contentDescription="@string/tabs_newtab" />
         <ImageView
             style="@style/SelectableItem"
-            android:id="@+id/sidebar_btn_history"
-            android:layout_height="match_parent" 
+            android:id="@+id/sidebar_btn_home"
+            android:layout_height="match_parent"
             android:layout_width="0dp"
             android:layout_weight="1"
-            android:src="?attr/sidebarBtnHistory"
+            android:src="?attr/sidebarBtnHome"
             android:focusable="true"
             android:nextFocusLeft="@id/sidebar_btn_newtab"
             android:nextFocusRight="@+id/sidebar_btn_favorites"
             android:nextFocusDown="@id/sidebar_tabs_list"
-            android:contentDescription="@string/tabs_history" />
+            android:contentDescription="@string/sidebar_home" />
         <ImageView
             style="@style/SelectableItem"
             android:id="@+id/sidebar_btn_favorites"
-            android:layout_height="match_parent" 
+            android:layout_height="match_parent"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:src="?attr/sidebarBtnFavorites"
             android:focusable="true"
-            android:nextFocusLeft="@id/sidebar_btn_history"
+            android:nextFocusLeft="@id/sidebar_btn_home"
             android:nextFocusDown="@id/sidebar_tabs_list"
             android:contentDescription="@string/tabs_favorites" />
     </LinearLayout>

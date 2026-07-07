@@ -26,7 +26,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <FrameLayout
         android:id="@+id/main_fragment_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:background="?attr/activityRootBackground" />
     
     <include
         android:id="@+id/sidebar"

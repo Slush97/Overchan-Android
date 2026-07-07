@@ -49,12 +49,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     </style>
     
     <style name="Theme_Light_Base" parent="@style/Theme_Light_Switch">
+        <item name="android:windowBackground">?attr/activityRootBackground</item>
         <item name="iconDrawer">@drawable/ic_drawer_light</item>
         <item name="dialogBackgroundShadow">@drawable/dialog_full_holo_light</item>
         <item name="iconItemPrevious">@drawable/ic_action_previous_item_light</item>
         <item name="iconItemNext">@drawable/ic_action_next_item_light</item>
         <item name="sidebarBtnNewTab">@drawable/sidebar_newtab_light</item>
-        <item name="sidebarBtnHistory">@drawable/sidebar_history_light</item>
+        <item name="sidebarBtnHome">@drawable/sidebar_home_light</item>
         <item name="sidebarBtnFavorites">@drawable/sidebar_favorites_light</item>
         <item name="iconBtnClose">@drawable/ic_action_remove_light</item>
         <item name="actionRefresh">@drawable/ic_action_refresh_light</item>
@@ -65,12 +66,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     </style>
     
     <style name="Theme_Dark_Base" parent="@style/Theme_Dark_Switch">
+        <item name="android:windowBackground">?attr/activityRootBackground</item>
         <item name="iconDrawer">@drawable/ic_drawer_dark</item>
         <item name="dialogBackgroundShadow">@drawable/dialog_full_holo_dark</item>
         <item name="iconItemPrevious">@drawable/ic_action_previous_item_dark</item>
         <item name="iconItemNext">@drawable/ic_action_next_item_dark</item>
         <item name="sidebarBtnNewTab">@drawable/sidebar_newtab_dark</item>
-        <item name="sidebarBtnHistory">@drawable/sidebar_history_dark</item>
+        <item name="sidebarBtnHome">@drawable/sidebar_home_dark</item>
         <item name="sidebarBtnFavorites">@drawable/sidebar_favorites_dark</item>
         <item name="iconBtnClose">@drawable/ic_action_remove_dark</item>
         <item name="actionRefresh">@drawable/ic_action_refresh_dark</item>
@@ -215,32 +217,33 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <item name="subscriptionBackground">#444444</item>
     </style>
     
-    <style name="Theme_Gurochan" parent="@style/Theme_Light_Base">
-        <item name="materialPrimary">#EDDAD2</item>
-        <item name="materialPrimaryDark">#766D69</item>
-        <item name="android:textColorPrimary">#000000</item>
-        <item name="activityRootBackground">#EDDAD2</item>
-        <item name="sidebarBackground">#CCEDDAD2</item>
-        <item name="sidebarSelectedItem">@drawable/sidebar_selected_gurochan</item>
-        <item name="listSeparatorBackground">#D9AF9E</item>
-        <item name="postUnreadOverlay">#7FFF623F</item>
-        <item name="postBackground">#D9AF9E</item>
-        <item name="postForeground">#000000</item>
-        <item name="postIndexForeground">#789922</item>
+    <style name="Theme_Paper" parent="@style/Theme_Light_Base">
+        <item name="materialPrimary">#FFFFFF</item>
+        <item name="materialPrimaryDark">#D0D3D8</item>
+        <item name="android:textColorPrimary">#1A1A1A</item>
+        <item name="activityRootBackground">#FFFFFF</item>
+        <item name="sidebarBackground">#CCFFFFFF</item>
+        <item name="sidebarSelectedItem">#331A73E8</item>
+        <item name="listSeparatorBackground">#ECEEF1</item>
+        <item name="postUnreadOverlay">#7FBBDEFB</item>
+        <item name="postBackground">#F5F6F8</item>
+        <item name="postForeground">#1A1A1A</item>
+        <item name="postIndexForeground">#5C8A00</item>
         <item name="postIndexOverBumpLimit">#C41E3A</item>
-        <item name="postNumberForeground">#000000</item>
+        <item name="postNumberForeground">#5F6368</item>
         <item name="postNameForeground">#117743</item>
         <item name="postOpForeground">#008000</item>
         <item name="postSageForeground">#993333</item>
         <item name="postTripForeground">#228854</item>
         <item name="postTitleForeground">#0F0C5D</item>
-        <item name="postQuoteForeground">#789922</item>
-        <item name="spoilerForeground">#000000</item>
-        <item name="spoilerBackground">#E6CBC0</item>
-        <item name="urlLinkForeground">#34345C</item>
-        <item name="itemInfoForeground">#666666</item>
-        <item name="searchHighlightBackground">#EF0FFF</item>
-        <item name="subscriptionBackground">#DDDDDD</item>
+        <item name="postQuoteForeground">#5C8A00</item>
+        <item name="spoilerForeground">#1A1A1A</item>
+        <item name="spoilerBackground">#D6D9DE</item>
+        <item name="urlLinkForeground">#1A73E8</item>
+        <item name="refererForeground">#D32F2F</item>
+        <item name="itemInfoForeground">#5F6368</item>
+        <item name="searchHighlightBackground">#FFF176</item>
+        <item name="subscriptionBackground">#E4E7EB</item>
     </style>
     
     <style name="Theme_Tomorrow" parent="@style/Theme_Dark_Base">
@@ -271,32 +274,33 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <item name="subscriptionBackground">#444444</item>
     </style>
     
-    <style name="Theme_Mikuba" parent="@style/Theme_Light_Base">
-        <item name="materialPrimary">#66EEFF</item>
-        <item name="materialPrimaryDark">#408090</item>
-        <item name="android:textColorPrimary">#000000</item>
-        <item name="activityRootBackground">#FAFAFA</item>
-        <item name="sidebarBackground">#CCFAFAFA</item>
-        <item name="sidebarSelectedItem">@drawable/sidebar_selected_mikuba</item>
-        <item name="listSeparatorBackground">#EAEFEF</item>
-        <item name="postUnreadOverlay">#7FFF623F</item>
-        <item name="postBackground">#EEEEEE</item>
-        <item name="postForeground">#000000</item>
-        <item name="postIndexForeground">#789922</item>
-        <item name="postIndexOverBumpLimit">#C41E3A</item>
-        <item name="postNumberForeground">#418A8E</item>
-        <item name="postNameForeground">#204547</item>
-        <item name="postOpForeground">#008000</item>
-        <item name="postSageForeground">#993333</item>
-        <item name="postTripForeground">#228854</item>
-        <item name="postTitleForeground">#000000</item>
-        <item name="postQuoteForeground">#89B83F</item>
-        <item name="spoilerForeground">#333333</item>
-        <item name="spoilerBackground">#DDDDDD</item>
-        <item name="urlLinkForeground">#418A8E</item>
-        <item name="itemInfoForeground">#999999</item>
-        <item name="searchHighlightBackground">#EF0FFF</item>
-        <item name="subscriptionBackground">#CCCCCC</item>
+    <style name="Theme_Midnight" parent="@style/Theme_Dark_Base">
+        <item name="materialPrimary">#000000</item>
+        <item name="materialPrimaryDark">#000000</item>
+        <item name="android:textColorPrimary">#E6E6E6</item>
+        <item name="activityRootBackground">#000000</item>
+        <item name="sidebarBackground">#CC000000</item>
+        <item name="sidebarSelectedItem">#3390CAF9</item>
+        <item name="listSeparatorBackground">#1B1B1B</item>
+        <item name="postUnreadOverlay">#7F1E1E1E</item>
+        <item name="postBackground">#0E0E0E</item>
+        <item name="postForeground">#E6E6E6</item>
+        <item name="postIndexForeground">#9DBB57</item>
+        <item name="postIndexOverBumpLimit">#EF5350</item>
+        <item name="postNumberForeground">#8AB4F8</item>
+        <item name="postNameForeground">#B0BEC5</item>
+        <item name="postOpForeground">#43A047</item>
+        <item name="postSageForeground">#B37070</item>
+        <item name="postTripForeground">#5F89AC</item>
+        <item name="postTitleForeground">#90CAF9</item>
+        <item name="postQuoteForeground">#9DBB57</item>
+        <item name="spoilerForeground">#90CAF9</item>
+        <item name="spoilerBackground">#1B1B1B</item>
+        <item name="urlLinkForeground">#8AB4F8</item>
+        <item name="refererForeground">#EF5350</item>
+        <item name="itemInfoForeground">#8A8A8A</item>
+        <item name="searchHighlightBackground">#5E4B00</item>
+        <item name="subscriptionBackground">#1F1F1F</item>
     </style>
     
 </resources>

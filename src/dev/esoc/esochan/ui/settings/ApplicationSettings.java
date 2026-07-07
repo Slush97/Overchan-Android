@@ -41,6 +41,15 @@ public class ApplicationSettings {
         this.resources = resources;
         this.isTablet = (resources.getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) >= Configuration.SCREENLAYOUT_SIZE_LARGE;
         this.isSFW = !R.class.getPackage().getName().endsWith(".esochan");
+        migrateObsoleteTheme();
+    }
+
+    private void migrateObsoleteTheme() {
+        String key = resources.getString(R.string.pref_key_theme);
+        String theme = preferences.getString(key, null);
+        if ("PREF_THEME_VALUE_GUROCHAN".equals(theme) || "PREF_THEME_VALUE_MIKUBA".equals(theme)) {
+            preferences.edit().putString(key, resources.getString(R.string.pref_theme_value_default)).apply();
+        }
     }
     
     public File getDefaultDownloadDir() {
@@ -163,10 +172,10 @@ public class ApplicationSettings {
         String theme = preferences.getString(resources.getString(R.string.pref_key_theme), defaultThemeValue);
         if (theme.equals(resources.getString(R.string.pref_theme_value_futaba))) return R.style.Theme_Futaba;
         if (theme.equals(resources.getString(R.string.pref_theme_value_photon))) return R.style.Theme_Photon;
+        if (theme.equals(resources.getString(R.string.pref_theme_value_paper))) return R.style.Theme_Paper;
         if (theme.equals(resources.getString(R.string.pref_theme_value_neutron))) return R.style.Theme_Neutron;
-        if (theme.equals(resources.getString(R.string.pref_theme_value_gurochan))) return R.style.Theme_Gurochan;
         if (theme.equals(resources.getString(R.string.pref_theme_value_tomorrow))) return R.style.Theme_Tomorrow;
-        if (theme.equals(resources.getString(R.string.pref_theme_value_mikuba))) return R.style.Theme_Mikuba;
+        if (theme.equals(resources.getString(R.string.pref_theme_value_midnight))) return R.style.Theme_Midnight;
         return R.style.Theme_Futaba;
     }
     

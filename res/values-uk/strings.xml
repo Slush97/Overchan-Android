@@ -578,15 +578,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <item>MHTML</item>
     </string-array>
     <string name="pref_theme_title">Стиль оформлення</string>
-    <string-array name="pref_theme_choices">
-        <item>Futaba</item>
-        <item>Photon</item>
-        <item>Neutron</item>
-        <item>Gurochan</item>
-        <item>Tomorrow</item>
-        <item>Mikuba</item>
-        <item>Користувацька</item>
-    </string-array>
     <string name="pref_font_size_title">Розмір літер</string>
     <string-array name="pref_font_size_choices">
         <item>Маленький</item>

@@ -21,6 +21,7 @@ package dev.esoc.esochan.ui;
 import java.io.Serializable;
 
 import dev.esoc.esochan.R;
+import dev.esoc.esochan.api.ChanModule;
 import dev.esoc.esochan.api.models.UrlPageModel;
 import dev.esoc.esochan.common.Async;
 import dev.esoc.esochan.common.Logger;
@@ -171,9 +172,10 @@ public class MainActivity extends AppCompatActivity {
                 menu.add(Menu.NONE, R.id.menu_open_browser, 202, R.string.menu_open_browser).setIcon(R.drawable.ic_menu_browser);
             }
         }
-        menu.add(Menu.NONE, R.id.menu_settings, 203, R.string.menu_preferences).setIcon(android.R.drawable.ic_menu_preferences);
+        menu.add(Menu.NONE, R.id.menu_history, 200, R.string.tabs_history).setIcon(R.drawable.ic_menu_history);
+        menu.add(Menu.NONE, R.id.menu_settings, 203, R.string.menu_preferences).setIcon(R.drawable.ic_menu_settings);
         Menu subMenu = menu.addSubMenu(Menu.NONE, R.id.menu_sub_settings, 203, R.string.menu_preferences).
-                setIcon(android.R.drawable.ic_menu_preferences);
+                setIcon(R.drawable.ic_menu_settings);
         subMenu.add(Menu.NONE, R.id.menu_sub_settings_suspend, 1, R.string.menu_sub_preferences_suspend);
         subMenu.add(Menu.NONE, R.id.menu_sub_settings_autoupdate, 2, R.string.menu_sub_preferences_autoupdate).setCheckable(true);
         subMenu.add(Menu.NONE, R.id.menu_sub_settings_maskpictures, 3, R.string.menu_sub_preferences_maskpictures).setCheckable(true);
@@ -212,6 +214,15 @@ public class MainActivity extends AppCompatActivity {
         return super.onPrepareOptionsMenu(menu);
     }
     
+    @SuppressLint("RestrictedApi")
+    @Override
+    public boolean onMenuOpened(int featureId, Menu menu) {
+        if (menu instanceof androidx.appcompat.view.menu.MenuBuilder) {
+            ((androidx.appcompat.view.menu.MenuBuilder) menu).setOptionalIconsVisible(true);
+        }
+        return super.onMenuOpened(featureId, menu);
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (drawerToggle != null && drawerToggle.onOptionsItemSelected(item)) {
@@ -227,6 +238,14 @@ public class MainActivity extends AppCompatActivity {
             case R.id.menu_favorites:
                 if (tabsAdapter != null && tabsAdapter.getSelectedItem() >= 0 && tabsAdapter.getItem(tabsAdapter.getSelectedItem()).webUrl != null) {
                     handleFavorite(tabsAdapter.getItem(tabsAdapter.getSelectedItem()));
+                }
+                return true;
+            case R.id.menu_history:
+                if (tabsAdapter != null) {
+                    tabsAdapter.setDraggingItem(-1);
+                    boolean needSerialize = tabsAdapter.getSelectedItem() != TabModel.POSITION_HISTORY;
+                    tabsAdapter.setSelectedItem(TabModel.POSITION_HISTORY, needSerialize);
+                    closeDrawer();
                 }
                 return true;
             case R.id.menu_settings:
@@ -365,7 +384,7 @@ public class MainActivity extends AppCompatActivity {
         initDrawer();
         
         View[] sidebarButtons =
-            new View[] { findViewById(R.id.sidebar_btn_newtab), findViewById(R.id.sidebar_btn_history), findViewById(R.id.sidebar_btn_favorites) };
+            new View[] { findViewById(R.id.sidebar_btn_newtab), findViewById(R.id.sidebar_btn_home), findViewById(R.id.sidebar_btn_favorites) };
         hiddenTabsSection = new HiddenTabsSection(sidebarButtons);
         
         DragSortListView list = (DragSortListView)findViewById(R.id.sidebar_tabs_list);
@@ -577,9 +596,19 @@ public class MainActivity extends AppCompatActivity {
         }
     }
     
+    private void openHomePage() {
+        ChanModule chan = MainApplication.getInstance().getChanModule("4chan.org");
+        if (chan == null) return;
+        UrlPageModel model = new UrlPageModel();
+        model.chanName = chan.getChanName();
+        model.type = UrlPageModel.TYPE_INDEXPAGE;
+        UrlHandler.open(model, this);
+        closeDrawer();
+    }
+
     class HiddenTabsSection implements View.OnClickListener {
         private View btnNewTab;
-        private View btnHistory;
+        private View btnHome;
         private View btnFavorites;
         public HiddenTabsSection(View[] views) {
             for (View view : views) {
@@ -591,35 +620,27 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.sidebar_btn_favorites:
                         btnFavorites = view;
                         break;
-                    case R.id.sidebar_btn_history:
-                        btnHistory = view;
+                    case R.id.sidebar_btn_home:
+                        btnHome = view;
                         break;
                 }
             }
         }
-        
+
         public void updateViewSelection(int selectedPosition) {
             setSelectedBackground(btnNewTab, selectedPosition == TabModel.POSITION_NEWTAB);
-            setSelectedBackground(btnHistory, selectedPosition == TabModel.POSITION_HISTORY);
+            setSelectedBackground(btnHome, false);
             setSelectedBackground(btnFavorites, selectedPosition == TabModel.POSITION_FAVORITES);
         }
-        
+
         @Override
         public void onClick(View v) {
             tabsAdapter.setDraggingItem(-1);
-            int position = TabModel.POSITION_NEWTAB;
-            switch (v.getId()) {
-                case R.id.sidebar_btn_newtab:
-                    position = TabModel.POSITION_NEWTAB;
-                    break;
-                case R.id.sidebar_btn_favorites:
-                    position = TabModel.POSITION_FAVORITES;
-                    break;
-                case R.id.sidebar_btn_history:
-                    position = TabModel.POSITION_HISTORY;
-                    break;
+            if (v.getId() == R.id.sidebar_btn_home) {
+                openHomePage();
+                return;
             }
-            tabsAdapter.setDraggingItem(-1);
+            int position = v.getId() == R.id.sidebar_btn_favorites ? TabModel.POSITION_FAVORITES : TabModel.POSITION_NEWTAB;
             boolean needSerialize = tabsAdapter.getSelectedItem() != position;
             tabsAdapter.setSelectedItem(position, needSerialize);
             closeDrawer();

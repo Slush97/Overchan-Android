@@ -50,7 +50,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <attr name="iconDrawer" format="reference" />
         <attr name="dialogBackgroundShadow" format="reference" />
         <attr name="sidebarBtnNewTab" format="reference" />
-        <attr name="sidebarBtnHistory" format="reference" />
+        <attr name="sidebarBtnHome" format="reference" />
         <attr name="sidebarBtnFavorites" format="reference" />
         <attr name="iconBtnClose" format="reference" />
         <attr name="iconItemPrevious" format="reference" />

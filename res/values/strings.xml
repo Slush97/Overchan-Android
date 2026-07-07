@@ -86,6 +86,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <string name="tabs_newtab">New Tab</string>
     <string name="tabs_favorites">Favorites</string>
     <string name="tabs_history">History</string>
+    <string name="sidebar_home">4chan</string>
     
     <string name="tabs_tracker_title">Auto Update</string>
     <string name="tabs_tracker_title_unread">New Posts</string>
@@ -139,11 +140,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     
     <string name="menu_open_drawer">Open drawer</string>
     <string name="menu_close_drawer">Close drawer</string>
-    <string name="menu_preferences">Preferences</string>
+    <string name="menu_preferences">Settings</string>
     <string name="menu_sub_preferences_suspend">Suspend</string>
     <string name="menu_sub_preferences_autoupdate">Auto-Update</string>
     <string name="menu_sub_preferences_maskpictures">SFW mode</string>
-    <string name="menu_sub_preferences_all">All preferences</string>
+    <string name="menu_sub_preferences_all">All settings</string>
     <string name="menu_add_post">Post a Reply</string>
     <string name="menu_add_thread">New thread</string>
     <string name="menu_update">Update</string>
@@ -423,7 +424,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <string name="fourchan_prefs_new_recaptcha_fallback">Recaptcha 2.0 fallback</string>
     <string name="fourchan_prefs_new_recaptcha_fallback_summary">Use the Recaptcha 2.0 in compatibility mode</string>
 
-    <string name="preferences">Preferences</string>
+    <string name="preferences">Settings</string>
     <string name="pref_cat_chans">Imageboards</string>
     <string name="pref_chans_rearrange">Rearrange</string>
     <string name="pref_chans_enter_url">Enter URL</string>
@@ -488,8 +489,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <string name="pref_do_not_close_tabs_summary">Do not close tabs by pressing the Back button</string>
     <string name="pref_scroll_volume_buttons_title">Scroll with volume buttons</string>
     <string name="pref_scroll_volume_buttons_summary">Use volume buttons for page scrolling</string>
-    <string name="pref_preferences_submenu_title">Preferences menu</string>
-    <string name="pref_preferences_submenu_summary">Show some preferences in the application menu</string>
+    <string name="pref_preferences_submenu_title">Settings menu</string>
+    <string name="pref_preferences_submenu_summary">Show some settings in the application menu</string>
     <string name="pref_pin_markup_title">Pin markup buttons</string>
     <string name="pref_pin_markup_summary">Pin markup buttons in a posting form</string>
     <string name="pref_show_date_title">Display the time</string>
@@ -506,7 +507,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <string name="pref_replies_only_quantity_title">Show replies as list</string>
     <string name="pref_replies_only_quantity_summary">Alternative way to display references to posts</string>
     <string name="pref_gallery_screen_title">Gallery</string>
-    <string name="pref_gallery_screen_summary">Gallery advanced preferences</string>
+    <string name="pref_gallery_screen_summary">Gallery advanced settings</string>
     <string name="pref_gallery_fullscreen_title">Fullscreen mode</string>
     <string name="pref_gallery_swipe_to_close_title">Swipe to close</string>
     <string name="pref_gallery_swipe_to_close_summary">Swipe up or down to close gallery</string>
@@ -573,15 +574,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <item>MHTML</item>
     </string-array>
     <string name="pref_theme_title">Theme</string>
-    <string-array name="pref_theme_choices">
-        <item>Futaba</item>
-        <item>Photon</item>
-        <item>Neutron</item>
-        <item>Gurochan</item>
-        <item>Tomorrow</item>
-        <item>Mikuba</item>
-        <item>Custom</item>
-    </string-array>
     <string name="pref_font_size_title">Text size</string>
     <string-array name="pref_font_size_choices">
         <item>Small</item>
