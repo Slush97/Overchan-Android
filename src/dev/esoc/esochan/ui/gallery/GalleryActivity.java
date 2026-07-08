@@ -57,7 +57,7 @@ import dev.esoc.esochan.ui.settings.ApplicationSettings;
 import dev.esoc.esochan.ui.tabs.UrlHandler;
 import dev.esoc.esochan.ui.theme.ThemeUtils;
 import android.annotation.SuppressLint;
-import android.app.Activity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -110,7 +110,7 @@ import androidx.media3.common.PlaybackException;
 import androidx.media3.common.Player;
 import androidx.media3.exoplayer.ExoPlayer;
 
-public class GalleryActivity extends Activity implements View.OnClickListener {
+public class GalleryActivity extends AppCompatActivity implements View.OnClickListener {
     private static final String TAG = "GalleryActivity";
     
     public static final String EXTRA_SETTINGS = "settings";
