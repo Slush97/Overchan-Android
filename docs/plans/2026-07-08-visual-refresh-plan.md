@@ -1,0 +1,738 @@
+# esochan Visual Refresh Implementation Plan
+
+**Captured:** 2026-07-08
+
+**Goal:** Freshen the parts of the app that still feel visually stale without starting a rewrite. The first pass should make icons, settings, and the highest-traffic screens feel consistent with the modernized Android stack already in the repo.
+
+**Primary recommendation:** Start with icons. The icon system is the most visible, least invasive, and most mechanically contained part of the refresh. Settings should follow after the icon foundation is in place.
+
+---
+
+## Current Baseline
+
+Build and lint state from the audit:
+
+- `./gradlew assembleDebug`: passes.
+- `./gradlew assembleDebug --warning-mode all`: passes, but reports a Gradle 9 compatibility warning for `archivesBaseName` in `build.gradle`.
+- `./gradlew lintDebug`: fails on one active, unbaselined error:
+  - `src/dev/esoc/esochan/ui/gallery/GalleryActivity.java:722`
+  - `MissingSuperCall` in `onActivityResult(...)`
+- Lint also reports unused resources, mostly old favicon and removed-board strings.
+
+Visual and UI state:
+
+- Material Components is present, but much of the app still uses platform-era widgets and APIs.
+- Icons are split across light/dark PNGs, vector drawables, `android.R.drawable`, and direct menu code.
+- Settings use deprecated `PreferenceActivity` and `android.preference.*`.
+- The new-tab and drawer screens mix platform `Button`/`EditText` controls, empty `ImageView` dividers, fixed dimensions, and custom list widgets.
+- The app launcher is still declared as `@drawable/ic_launcher`, not a modern mipmap/adaptive icon setup.
+
+Important files:
+
+- `res/values/styles.xml`
+- `res/values/attrs.xml`
+- `res/xml/preferences.xml`
+- `AndroidManifest.xml`
+- `src/dev/esoc/esochan/ui/MainActivity.java`
+- `src/dev/esoc/esochan/ui/presentation/BoardFragment.java`
+- `src/dev/esoc/esochan/ui/gallery/GalleryActivity.java`
+- `src/dev/esoc/esochan/ui/settings/PreferencesActivity.java`
+- `src/dev/esoc/esochan/ui/settings/ThemePreference.java`
+- `res/layout/newtab_fragment.xml`
+- `res/layout/sidebar_layout.xml`
+- `res/layout/main_activity_drawer.xml`
+- `res/layout/board_fragment.xml`
+
+---
+
+## Design Constraints
+
+- Do not rewrite the app in Compose.
+- Keep the current XML/AppCompat/Material Components stack.
+- Keep custom imageboard themes functional, including custom theme JSON.
+- Preserve existing navigation and settings behavior unless a task explicitly scopes a behavior change.
+- Prefer tintable vector drawables over density-specific PNGs for UI chrome.
+- Do not remove chan favicons that are still referenced dynamically unless lint and code inspection agree they are unused.
+- Keep changes reviewable: one phase per PR or commit.
+
+---
+
+## Phase 0 - Baseline Hygiene
+
+**Difficulty:** Low
+
+**Goal:** Remove active non-visual build/lint noise before UI work, so visual changes can be verified cleanly.
+
+### Task 0.1: Fix active lint error
+
+**Files:**
+
+- `src/dev/esoc/esochan/ui/gallery/GalleryActivity.java`
+
+**Steps:**
+
+1. Add `super.onActivityResult(requestCode, resultCode, data);` to `onActivityResult(...)`.
+2. Keep the existing `REQUEST_HANDLE_INTERACTIVE_EXCEPTION` behavior unchanged.
+3. Run lint.
+
+**Verification:**
+
+- `./gradlew lintDebug`
+- Expected: no `MissingSuperCall` error.
+
+### Task 0.2: Fix Gradle archive name warning
+
+**Files:**
+
+- `build.gradle`
+
+**Steps:**
+
+1. Replace deprecated `archivesBaseName = 'esochan'`.
+2. Use the Gradle 8+ `base { archivesName = 'esochan' }` API or the AGP-supported equivalent.
+3. Run warning-mode build.
+
+**Verification:**
+
+- `./gradlew assembleDebug --warning-mode all`
+- Expected: no `archivesBaseName` or `BasePluginConvention` warnings from this repo.
+
+---
+
+## Phase 1 - Icon System Refresh
+
+**Difficulty:** Low to Medium
+
+**Goal:** Replace the fragmented legacy icon system with one coherent, tintable vector icon set.
+
+### Why this comes first
+
+The existing icon system is visibly inconsistent and easy to isolate:
+
+- Theme styles map separate light/dark resources:
+  - `iconItemPrevious`
+  - `iconItemNext`
+  - `iconBtnClose`
+  - `actionRefresh`
+  - `actionAddPost`
+  - `actionAddAttachment`
+  - `actionAddGallery`
+  - `actionSave`
+- Menus use mixed sources:
+  - project PNGs such as `ic_menu_add_bookmark`
+  - project vectors such as `ic_menu_settings`
+  - framework icons such as `android.R.drawable.ic_menu_search`
+- Sidebar icons are already vectors but still duplicated by light/dark asset files.
+- Density PNG action icons remain in `drawable-mdpi`, `drawable-hdpi`, and `drawable-xhdpi`.
+
+### Task 1.1: Inventory and name canonical icon roles
+
+**Files to inspect:**
+
+- `res/values/attrs.xml`
+- `res/values/styles.xml`
+- `res/layout/sidebar_layout.xml`
+- `res/layout/sidebar_tabitem.xml`
+- `res/layout/board_fragment.xml`
+- `res/layout/gallery_layout.xml`
+- `res/layout/gallery_layout_fullscreen.xml`
+- `res/layout/fragment_post_form.xml`
+- `res/layout/post_item_layout.xml`
+- `src/dev/esoc/esochan/ui/MainActivity.java`
+- `src/dev/esoc/esochan/ui/presentation/BoardFragment.java`
+- `src/dev/esoc/esochan/ui/gallery/GalleryActivity.java`
+- `src/dev/esoc/esochan/ui/posting/PostFormActivity.java`
+- `src/dev/esoc/esochan/ui/BoardsListFragment.java`
+- `src/dev/esoc/esochan/ui/HistoryFragment.java`
+- `src/dev/esoc/esochan/ui/FavoritesFragment.java`
+
+**Deliverable:**
+
+Create or document a canonical list of app icon roles:
+
+- navigation menu
+- back or previous
+- next
+- close
+- refresh
+- reply or edit
+- attach file
+- add image
+- save or download
+- favorite
+- browser
+- history
+- settings
+- catalog or list
+- search
+- share
+- gallery
+- open external
+- clear or delete
+- home
+- new tab
+
+### Task 1.2: Add tintable vector drawables
+
+**Files:**
+
+- Add under `res/drawable/`
+
+**Naming convention:**
+
+- Use role names, not theme names:
+  - `ic_action_refresh.xml`
+  - `ic_action_reply.xml`
+  - `ic_action_save.xml`
+  - `ic_action_close.xml`
+  - `ic_action_previous.xml`
+  - `ic_action_next.xml`
+  - `ic_menu_settings.xml`
+  - `ic_menu_history.xml`
+  - `ic_menu_browser.xml`
+  - `ic_menu_favorite.xml`
+  - `ic_menu_catalog.xml`
+
+**Rules:**
+
+- Use 24dp viewport icons for toolbar/menu actions.
+- Use 32dp only where the control target intentionally needs a larger visual, such as sidebar top actions.
+- Use `android:fillColor="@color/icon_tint_default"` only if color resources are added.
+- Prefer tinting at the view/menu item level or through theme helper code instead of hard-coded light/dark fills.
+
+### Task 1.3: Add icon tint theme attributes
+
+**Files:**
+
+- `res/values/attrs.xml`
+- `res/values/styles.xml`
+
+**Add attributes:**
+
+- `iconTint`
+- `iconTintSecondary`
+- `iconTintOnPrimary`
+
+**Initial mapping:**
+
+- Light themes: use existing readable foreground colors, usually `android:textColorPrimary` or `itemInfoForeground`.
+- Dark themes: same semantic attributes, not duplicate drawables.
+- Custom themes: fall back to `android:textColorPrimary`.
+
+**Acceptance criteria:**
+
+- Themes choose icon color, not icon files.
+- Light and dark themes reference the same vector drawables.
+
+### Task 1.4: Replace theme icon resource duplication
+
+**Files:**
+
+- `res/values/styles.xml`
+- `res/values/attrs.xml`
+- layouts that use `?attr/action...` icon resources
+
+**Steps:**
+
+1. Replace light/dark icon resource attributes with shared drawables where possible.
+2. Keep attribute names temporarily if that reduces blast radius.
+3. Add tint where `ImageView` supports it:
+   - `app:tint="?attr/iconTint"`
+4. If needed, switch plain `ImageView` to `AppCompatImageView`.
+
+**Acceptance criteria:**
+
+- `Theme_Light_Base` and `Theme_Dark_Base` no longer need separate icon asset names for the same glyph.
+- Icon color comes from theme tint, not duplicated path data or PNG files.
+
+### Task 1.5: Centralize programmatic menu icons
+
+**Files:**
+
+- `src/dev/esoc/esochan/ui/theme/ThemeUtils.java`
+- menu creation sites in Java/Kotlin
+
+**Steps:**
+
+1. Add a helper for tinting any drawable resource by theme attr.
+2. Replace direct calls to:
+   - `setIcon(R.drawable.ic_menu_...)`
+   - `setIcon(android.R.drawable...)`
+3. Keep `setShowAsAction(...)` behavior unchanged.
+
+**Suggested API shape:**
+
+```java
+public static Drawable getTintedIcon(Resources.Theme theme, Resources resources, int drawableId, int tintAttrId)
+```
+
+**Acceptance criteria:**
+
+- Main, board, gallery, posting, history, favorites, and boards-list menus use one tinting path.
+- No visible menu action uses `android.R.drawable`.
+
+### Task 1.6: Add adaptive launcher icon
+
+**Files:**
+
+- `AndroidManifest.xml`
+- `res/mipmap-anydpi-v26/ic_launcher.xml`
+- `res/mipmap-anydpi-v26/ic_launcher_round.xml`
+- `res/mipmap-*/ic_launcher_foreground.png` or vector foreground
+- `res/values/colors.xml` if needed
+
+**Steps:**
+
+1. Create adaptive icon background and foreground.
+2. Move launcher references to mipmap resources:
+   - `android:icon="@mipmap/ic_launcher"`
+   - optional `android:roundIcon="@mipmap/ic_launcher_round"`
+3. Keep notification small icons separate. Do not use the full launcher as a notification small icon long term.
+
+**Acceptance criteria:**
+
+- Launcher icon works on API 26+ adaptive launchers.
+- Existing install/build behavior remains intact.
+
+### Task 1.7: Remove superseded icon assets
+
+**Files:**
+
+- Old `ic_action_*_light.png`
+- Old `ic_action_*_dark.png`
+- Old `ic_menu_*.png`
+- Old sidebar light/dark duplicate vectors, where replaced
+
+**Rules:**
+
+- Remove only after all resource references are gone.
+- Use `rg` before deleting.
+- Keep chan favicons unless separately proven unused and intentionally removed.
+
+**Verification for Phase 1:**
+
+- `rg "android.R.drawable.ic_menu|android.R.drawable.ic_delete|android.R.drawable.arrow_" src res`
+- `rg "ic_action_.*_(light|dark)|sidebar_.*_(light|dark)" src res`
+- `./gradlew assembleDebug`
+- `./gradlew lintDebug`
+- Manual smoke test:
+  - main overflow menu
+  - board toolbar actions
+  - gallery toolbar actions
+  - post form attach/gallery actions
+  - sidebar new/home/favorites/close actions
+  - light and dark themes
+
+---
+
+## Phase 2 - Settings Screen Refresh
+
+**Difficulty:** Medium to High
+
+**Goal:** Replace the deprecated settings shell and improve settings information architecture without changing preference keys.
+
+### Why this should follow icons
+
+Settings depends on the same visual language as the rest of the app. If icons and theme tinting are not settled first, settings will either inherit stale assets or create another parallel style.
+
+### Task 2.1: Add AndroidX Preference
+
+**Files:**
+
+- `gradle/libs.versions.toml`
+- `build.gradle`
+
+**Steps:**
+
+1. Add `androidx.preference:preference-ktx` or `androidx.preference:preference`.
+2. Keep dependency versions in the version catalog.
+3. Build.
+
+**Verification:**
+
+- `./gradlew assembleDebug`
+
+### Task 2.2: Replace `PreferenceActivity` shell
+
+**Files:**
+
+- `src/dev/esoc/esochan/ui/settings/PreferencesActivity.java`
+- Add `src/dev/esoc/esochan/ui/settings/PreferencesFragment.kt` or `.java`
+- `AndroidManifest.xml`, only if theme metadata changes
+
+**Steps:**
+
+1. Convert `PreferencesActivity` to `AppCompatActivity`.
+2. Host an AndroidX `PreferenceFragmentCompat`.
+3. Preserve current theme selection:
+   - `MainApplication.getInstance().settings.getTheme().setToPreferencesActivity(...)`
+4. Move preference setup code into the fragment.
+5. Keep all existing preference keys unchanged.
+
+**Acceptance criteria:**
+
+- Existing preferences load and save without migration.
+- Custom theme selection still opens `CustomThemeListActivity`.
+- Chan-specific settings still appear.
+- Tablet-only settings are still hidden on phones.
+- SFW-only filtering still works.
+
+### Task 2.3: Migrate preference classes
+
+**Files:**
+
+- `res/xml/preferences.xml`
+- `src/dev/esoc/esochan/ui/settings/ThemePreference.java`
+- channel modules that call `addPreferencesOnScreen(...)`
+- `src/dev/esoc/esochan/api/ChanModule.java`
+- `src/dev/esoc/esochan/api/AbstractChanModule.java`
+- `src/dev/esoc/esochan/api/CloudflareChanModule.java`
+- `src/dev/esoc/esochan/api/util/LazyPreferences.java`
+- chan modules under `src/dev/esoc/esochan/chans/`
+
+**Steps:**
+
+1. Replace `android.preference.*` imports with `androidx.preference.*`.
+2. Migrate `ThemePreference` from platform `ListPreference` to AndroidX `ListPreference`.
+3. Validate dynamic `PreferenceScreen` creation for chan settings.
+4. Replace deprecated direct edit text access if needed.
+
+**Risk:**
+
+Chan modules build preference screens programmatically. This task may touch more files than the activity shell.
+
+**Acceptance criteria:**
+
+- All preference categories and nested screens still appear.
+- 4chan pass settings still work.
+- Proxy/HTTPS settings from shared chan module helpers still work.
+
+### Task 2.4: Improve settings structure
+
+**Files:**
+
+- `res/xml/preferences.xml`
+- settings string resources
+
+**Proposed top-level groups:**
+
+- Imageboards
+- Appearance
+- Gallery
+- Posting identity
+- Downloads
+- Privacy and safety
+- Updates and subscriptions
+- Advanced
+- About
+
+**Specific changes:**
+
+- Move Gallery to a top-level screen or category, not a nested item buried inside Appearance.
+- Move Name/Email/Hide personal under "Posting identity".
+- Move NSFW, mask pictures, autohide, external link confirmation, swipe hide under "Privacy and safety".
+- Keep advanced settings for genuinely technical behavior.
+- Keep all preference keys stable.
+
+**Acceptance criteria:**
+
+- The settings screen is scannable.
+- Common visual settings are near the top.
+- High-risk/privacy settings are grouped clearly.
+- No existing saved preference is lost.
+
+### Task 2.5: Replace `ProgressDialog` in settings flows
+
+**Files:**
+
+- `src/dev/esoc/esochan/ui/settings/PreferencesActivity.java`
+- `src/dev/esoc/esochan/ui/settings/CustomThemeListActivity.java`
+- `src/dev/esoc/esochan/ui/settings/AppUpdatesChecker.java`
+- `src/dev/esoc/esochan/chans/fourchan/FourchanModule.java`
+
+**Steps:**
+
+1. Replace blocking `ProgressDialog` use with one of:
+   - disabled preference row plus summary update
+   - `MaterialAlertDialogBuilder` with an indeterminate progress view
+   - a small in-screen progress indicator where practical
+2. Keep cancellation behavior where currently supported.
+
+**Acceptance criteria:**
+
+- Clearing cache, importing/exporting themes, update check, and pass login do not show platform-era progress dialogs.
+
+**Verification for Phase 2:**
+
+- `./gradlew assembleDebug`
+- `./gradlew lintDebug`
+- Manual smoke test:
+  - open settings
+  - change theme
+  - open custom themes
+  - clear cache
+  - edit name/email
+  - open chan settings
+  - check tablet-only settings on a phone-size device or emulator
+
+---
+
+## Phase 3 - New Tab and Drawer Polish
+
+**Difficulty:** Medium
+
+**Goal:** Freshen the first-run/new-tab and tab drawer surfaces after the icon system is consistent.
+
+### Task 3.1: Replace platform buttons on New Tab
+
+**Files:**
+
+- `res/layout/newtab_fragment.xml`
+- `src/dev/esoc/esochan/ui/NewTabFragment.java`
+
+**Steps:**
+
+1. Replace top `Button` pair with Material buttons or a Material segmented control style.
+2. Replace address `EditText` plus `Button` with a denser input row:
+   - text input
+   - icon button for go/open
+3. Replace empty `ImageView` divider with a real `View`.
+4. Use `match_parent`, not `fill_parent`.
+5. Use start/end attributes where practical.
+
+**Acceptance criteria:**
+
+- New-tab controls match the rest of the app.
+- Text does not truncate poorly at common phone widths.
+- The address entry workflow is unchanged.
+
+### Task 3.2: Update sidebar top actions
+
+**Files:**
+
+- `res/layout/sidebar_layout.xml`
+- `res/layout/sidebar_tabitem.xml`
+- `res/layout/main_activity_drawer.xml`
+- `res/values/dimens.xml`
+
+**Steps:**
+
+1. Use the new shared sidebar icons and tint attrs.
+2. Replace empty divider `ImageView` with a real divider `View`.
+3. Move drawer width from hardcoded `320dp` into a dimen.
+4. Consider responsive drawer width:
+   - phone: min screen width minus margin, capped around 320dp
+   - tablet: preserve existing side panel behavior
+5. Keep tab dragging and close behavior unchanged.
+
+**Acceptance criteria:**
+
+- Sidebar actions have consistent icon size and tint.
+- Drawer width remains usable on small and large devices.
+- Drag/close tab behavior remains unchanged.
+
+### Task 3.3: Normalize list row spacing
+
+**Files:**
+
+- `res/layout/sidebar_tabitem.xml`
+- `res/layout/newtab_quickaccess_item.xml`
+- `res/layout/favorites_listview.xml`
+- any list row touched by new-tab/sidebar refresh
+
+**Steps:**
+
+1. Use start/end padding alongside old left/right only if RTL is intentionally unsupported.
+2. Prefer fixed touch target heights of at least 48dp.
+3. Keep favicons readable and aligned.
+
+**Verification for Phase 3:**
+
+- `./gradlew assembleDebug`
+- Manual smoke test:
+  - open new tab
+  - enter URL
+  - open saved threads
+  - add/remove quick access
+  - open drawer
+  - drag tabs
+  - close tabs
+
+---
+
+## Phase 4 - Board and Gallery Polish
+
+**Difficulty:** Medium
+
+**Goal:** Make the most-used content surfaces feel less patched together while preserving behavior.
+
+### Task 4.1: Search and navigation bars
+
+**Files:**
+
+- `res/layout/board_fragment.xml`
+- `src/dev/esoc/esochan/ui/presentation/BoardFragment.java`
+
+**Steps:**
+
+1. Apply shared icons and tint to search close/previous/next.
+2. Normalize `panel_height` if current 40dp controls feel cramped.
+3. Replace legacy `ImageView` action controls with Material icon buttons if compatible.
+4. Keep existing search behavior unchanged.
+
+**Acceptance criteria:**
+
+- Search bar controls look consistent with toolbar/menu icons.
+- Touch targets remain large enough.
+
+### Task 4.2: Post item action polish
+
+**Files:**
+
+- `res/layout/post_item_layout.xml`
+- `src/dev/esoc/esochan/ui/presentation/BoardFragment.java`
+
+**Steps:**
+
+1. Apply shared reply icon and tint.
+2. Review bottom row spacing around replies and reply button.
+3. Avoid changing post parsing, span rendering, or thumbnail layout in this phase.
+
+**Acceptance criteria:**
+
+- Reply action is visually aligned with the rest of the app.
+- Post density remains appropriate for imageboard browsing.
+
+### Task 4.3: Gallery controls
+
+**Files:**
+
+- `res/layout/gallery_layout.xml`
+- `res/layout/gallery_layout_fullscreen.xml`
+- `src/dev/esoc/esochan/ui/gallery/GalleryActivity.java`
+
+**Steps:**
+
+1. Apply shared previous/next/save/refresh icons.
+2. Replace framework share/search menu icons.
+3. Confirm fullscreen controls remain visible on dark and light themes.
+
+**Acceptance criteria:**
+
+- Gallery action icons are coherent with board and main menu icons.
+- Fullscreen controls have sufficient contrast.
+
+**Verification for Phase 4:**
+
+- `./gradlew assembleDebug`
+- Manual smoke test:
+  - board page refresh
+  - search in board
+  - reply button
+  - open gallery
+  - save/share/reverse search/open browser actions
+  - fullscreen gallery controls
+
+---
+
+## Phase 5 - Resource Cleanup
+
+**Difficulty:** Low
+
+**Goal:** Remove assets and resources made obsolete by the visual refresh.
+
+### Task 5.1: Remove old UI icon resources
+
+**Files:**
+
+- `res/drawable-mdpi/`
+- `res/drawable-hdpi/`
+- `res/drawable-xhdpi/`
+- `res/drawable-anydpi-v21/`
+- `res/drawable/`
+
+**Steps:**
+
+1. Use `rg` to confirm no references remain.
+2. Delete superseded UI icon PNGs and duplicate vectors.
+3. Keep favicons and content thumbnails out of this task.
+
+**Verification:**
+
+- `./gradlew assembleDebug`
+- `./gradlew lintDebug`
+
+### Task 5.2: Review unused chan resources separately
+
+**Files:**
+
+- favicon resources reported by lint
+- chan-specific strings reported by lint
+- `MainApplication.MODULES`
+- chan modules under `src/dev/esoc/esochan/chans/`
+
+**Rules:**
+
+- Treat this as separate from UI chrome cleanup.
+- Do not delete resources used by dormant or dynamically loaded modules unless the module is intentionally removed.
+
+**Acceptance criteria:**
+
+- APK/resource size decreases where safe.
+- No active chan loses its favicon or settings strings.
+
+### Task 5.3: Clean lint baseline only after fixes
+
+**Files:**
+
+- `lint-baseline.xml`
+
+**Steps:**
+
+1. Run lint.
+2. If fixed issues are still in the baseline, regenerate or edit the baseline intentionally.
+3. Do not use baseline updates to hide new visual-refresh regressions.
+
+---
+
+## Suggested Commit Order
+
+1. Baseline hygiene:
+   - `GalleryActivity.onActivityResult` super call
+   - Gradle archive name warning
+2. Icon foundation:
+   - vector assets
+   - tint attrs
+   - theme mapping
+3. Programmatic menu icon migration.
+4. Launcher/adaptive icon.
+5. Remove old UI icon assets.
+6. Settings shell migration to AndroidX Preference.
+7. Settings IA and ProgressDialog cleanup.
+8. New-tab and sidebar polish.
+9. Board/gallery control polish.
+10. Resource cleanup and lint baseline cleanup.
+
+---
+
+## Done Criteria
+
+The visual refresh can be considered complete when:
+
+- No visible menu/action icon uses `android.R.drawable`.
+- No duplicated light/dark UI icon PNGs remain for app chrome.
+- The launcher uses mipmap/adaptive icon resources.
+- Settings no longer use `PreferenceActivity` or `android.preference.*`.
+- Common settings are grouped into scannable sections.
+- New-tab and sidebar controls use the same icon/tint/control language as board/gallery.
+- `./gradlew assembleDebug` passes.
+- `./gradlew lintDebug` passes or only pre-existing, intentionally baselined issues remain.
+- Manual smoke tests pass for:
+  - main navigation
+  - settings
+  - theme switching
+  - board refresh/search/reply
+  - gallery actions
+  - posting attachments
+  - drawer tab management
+
