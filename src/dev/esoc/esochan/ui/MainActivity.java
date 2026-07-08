@@ -57,6 +57,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import androidx.core.content.ContextCompat;
+import androidx.core.view.GravityCompat;
 import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import android.graphics.Point;
@@ -68,7 +69,6 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import android.util.TypedValue;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
-import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -84,8 +84,7 @@ import android.widget.Toast;
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
     
-    @SuppressLint("InlinedApi")
-    private static final int DRAWER_GRAVITY = Gravity.START;
+    private static final int DRAWER_GRAVITY = GravityCompat.START;
     
     private NotificationManager notificationManager;
     private BroadcastReceiver broadcastReceiver;
