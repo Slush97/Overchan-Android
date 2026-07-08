@@ -24,8 +24,9 @@ import java.util.List;
 import dev.esoc.esochan.api.ChanModule;
 import dev.esoc.esochan.common.Logger;
 import dev.esoc.esochan.common.MainApplication;
-import dev.esoc.esochan.lib.org_json.JSONArray;
-import dev.esoc.esochan.lib.org_json.JSONObject;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class QuickAccess {
     private static final String TAG = "QuickAccess";
@@ -79,9 +80,13 @@ public class QuickAccess {
             if (entry.chan == null) {
                 ++allChansElCount;
             } else {
-                current.put("chan", entry.chan.getChanName());
-                if (entry.boardName != null) current.put("board", entry.boardName);
-                if (entry.boardDescription != null) current.put("description", entry.boardDescription);
+                try {
+                    current.put("chan", entry.chan.getChanName());
+                    if (entry.boardName != null) current.put("board", entry.boardName);
+                    if (entry.boardDescription != null) current.put("description", entry.boardDescription);
+                } catch (JSONException e) {
+                    Logger.e(TAG, e);
+                }
             }
             jsonArray.put(current);
         }

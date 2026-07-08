@@ -25,7 +25,7 @@ import dev.esoc.esochan.common.Logger;
 import dev.esoc.esochan.http.client.ExtendedHttpClient;
 import dev.esoc.esochan.http.streamer.HttpRequestModel;
 import dev.esoc.esochan.http.streamer.HttpStreamer;
-import dev.esoc.esochan.lib.org_json.JSONObject;
+import org.json.JSONObject;
 import dev.esoc.esochan.ui.tabs.UrlHandler;
 import android.app.Activity;
 import android.app.AlertDialog;

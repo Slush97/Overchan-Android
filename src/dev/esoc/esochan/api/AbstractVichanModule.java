@@ -60,8 +60,8 @@ import dev.esoc.esochan.http.streamer.HttpRequestModel;
 import dev.esoc.esochan.http.streamer.HttpResponseModel;
 import dev.esoc.esochan.http.streamer.HttpStreamer;
 import dev.esoc.esochan.http.streamer.HttpWrongStatusCodeException;
-import dev.esoc.esochan.lib.org_json.JSONArray;
-import dev.esoc.esochan.lib.org_json.JSONObject;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 
@@ -164,7 +164,7 @@ public abstract class AbstractVichanModule extends AbstractWakabaModule {
     
     protected ThreadModel mapThreadModel(JSONObject opPost, String boardName) {
         ThreadModel curThread = new ThreadModel();
-        curThread.threadNumber = Long.toString(opPost.getLong("no"));
+        curThread.threadNumber = Long.toString(opPost.optLong("no"));
         curThread.postsCount = opPost.optInt("replies", -2) + 1;
         curThread.attachmentsCount = opPost.optInt("images", -2) + 1;
         if (curThread.attachmentsCount >= 0) curThread.attachmentsCount += opPost.optInt("omitted_images", 0);
@@ -175,7 +175,7 @@ public abstract class AbstractVichanModule extends AbstractWakabaModule {
     
     protected PostModel mapPostModel(JSONObject object, String boardName) {
         PostModel model = new PostModel();
-        model.number = Long.toString(object.getLong("no"));
+        model.number = Long.toString(object.optLong("no"));
         model.name = StringEscapeUtils.unescapeHtml4(RegexUtils.removeHtmlSpanTags(object.optString("name", "Anonymous")));
         model.subject = StringEscapeUtils.unescapeHtml4(object.optString("sub", ""));
         model.comment = object.optString("com", "");
@@ -195,7 +195,7 @@ public abstract class AbstractVichanModule extends AbstractWakabaModule {
         model.sage = id.equalsIgnoreCase("Heaven") || model.email.toLowerCase(Locale.US).contains("sage");
         if (!id.equals("")) model.name += (" ID:" + id);
         if (!id.equals("") && !id.equalsIgnoreCase("Heaven")) model.color = CryptoUtils.hashIdColor(id);
-        model.timestamp = object.getLong("time") * 1000;
+        model.timestamp = object.optLong("time") * 1000;
         model.parentThread = object.optString("resto", "0");
         if (model.parentThread.equals("0")) model.parentThread = model.number;
         
@@ -208,7 +208,7 @@ public abstract class AbstractVichanModule extends AbstractWakabaModule {
             JSONArray extraFiles = object.optJSONArray("extra_files");
             if (extraFiles != null && extraFiles.length() != 0) {
                 for (int i=0, len=extraFiles.length(); i<len; ++i) {
-                    AttachmentModel attachment = mapAttachment(extraFiles.getJSONObject(i), boardName, isSpoiler);
+                    AttachmentModel attachment = mapAttachment(extraFiles.optJSONObject(i), boardName, isSpoiler);
                     if (attachment != null) attachments.add(attachment);
                 }
             }
@@ -236,6 +236,7 @@ public abstract class AbstractVichanModule extends AbstractWakabaModule {
     }
     
     protected AttachmentModel mapAttachment(JSONObject object, String boardName, boolean isSpoiler) {
+        if (object == null) return null;
         String ext = object.optString("ext", "");
         if (!ext.equals("")) {
             AttachmentModel attachment = new AttachmentModel();

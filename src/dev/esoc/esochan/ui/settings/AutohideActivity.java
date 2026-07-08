@@ -27,8 +27,9 @@ import dev.esoc.esochan.R;
 import dev.esoc.esochan.databinding.DialogAutohideRuleBinding;
 import dev.esoc.esochan.api.ChanModule;
 import dev.esoc.esochan.common.MainApplication;
-import dev.esoc.esochan.lib.org_json.JSONArray;
-import dev.esoc.esochan.lib.org_json.JSONObject;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.ListActivity;
@@ -78,7 +79,11 @@ public class AutohideActivity extends ListActivity {
             if (settings.isUnlockedChan(chanName)) chans.add(chanName);
         }
         
-        rulesJson = new JSONArray(settings.getAutohideRulesJson());
+        try {
+            rulesJson = new JSONArray(settings.getAutohideRulesJson());
+        } catch (JSONException e) {
+            rulesJson = new JSONArray();
+        }
         setListAdapter(new AutohideAdapter(this));
         registerForContextMenu(getListView());
     }
@@ -165,10 +170,15 @@ public class AutohideActivity extends ListActivity {
                     return;
                 }
                 
-                if (changeId == -1) {
-                    rulesJson.put(rule.toJson());
-                } else {
-                    rulesJson.put(changeId, rule.toJson());
+                try {
+                    if (changeId == -1) {
+                        rulesJson.put(rule.toJson());
+                    } else {
+                        rulesJson.put(changeId, rule.toJson());
+                    }
+                } catch (JSONException e) {
+                    Toast.makeText(AutohideActivity.this, R.string.error_unknown, Toast.LENGTH_LONG).show();
+                    return;
                 }
                 rulesChanged();
             }
@@ -219,25 +229,28 @@ public class AutohideActivity extends ListActivity {
         
         public JSONObject toJson() {
             JSONObject rule = new JSONObject();
-            rule.put("regex", regex);
-            rule.put("chanName", chanName);
-            rule.put("boardName", boardName);
-            rule.put("threadNumber", threadNumber);
-            rule.put("inComment", inComment);
-            rule.put("inSubject", inSubject);
-            rule.put("inName", inName);
+            try {
+                rule.put("regex", regex);
+                rule.put("chanName", chanName);
+                rule.put("boardName", boardName);
+                rule.put("threadNumber", threadNumber);
+                rule.put("inComment", inComment);
+                rule.put("inSubject", inSubject);
+                rule.put("inName", inName);
+            } catch (JSONException ignored) {
+            }
             return rule;
         }
         
         public static AutohideRule fromJson(JSONObject json) {
             AutohideRule rule = new AutohideRule();
-            rule.regex = json.getString("regex");
-            rule.chanName = json.getString("chanName");
-            rule.boardName = json.getString("boardName");
-            rule.threadNumber = json.getString("threadNumber");
-            rule.inComment = json.getBoolean("inComment");
-            rule.inSubject = json.getBoolean("inSubject");
-            rule.inName = json.getBoolean("inName");
+            rule.regex = json.optString("regex");
+            rule.chanName = json.optString("chanName");
+            rule.boardName = json.optString("boardName");
+            rule.threadNumber = json.optString("threadNumber");
+            rule.inComment = json.optBoolean("inComment");
+            rule.inSubject = json.optBoolean("inSubject");
+            rule.inName = json.optBoolean("inName");
             return rule;
         }
         
@@ -273,7 +286,8 @@ public class AutohideActivity extends ListActivity {
             resources = activity.getResources();
             add(new Object());
             for (int i=0; i<activity.rulesJson.length(); ++i) {
-                add(AutohideRule.fromJson(activity.rulesJson.getJSONObject(i)));
+                JSONObject ruleJson = activity.rulesJson.optJSONObject(i);
+                if (ruleJson != null) add(AutohideRule.fromJson(ruleJson));
             }
         }
         

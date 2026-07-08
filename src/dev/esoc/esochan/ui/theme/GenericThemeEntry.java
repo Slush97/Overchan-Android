@@ -19,6 +19,7 @@
 package dev.esoc.esochan.ui.theme;
 
 import java.util.Locale;
+import java.util.Iterator;
 
 import android.content.Context;
 import android.content.res.Resources;
@@ -29,7 +30,8 @@ import android.os.Parcelable;
 import android.util.SparseIntArray;
 import dev.esoc.esochan.R;
 import dev.esoc.esochan.common.Logger;
-import dev.esoc.esochan.lib.org_json.JSONObject;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class GenericThemeEntry implements Parcelable {
     private static final int BASE_THEME_LIGHT = R.style.Theme_Futaba;
@@ -155,36 +157,36 @@ public class GenericThemeEntry implements Parcelable {
     public String toJsonString() {
         if (customAttrs == null) throw new IllegalStateException("this is not a custom theme");
         JSONObject theme = new JSONObject();
-        theme.put("baseTheme", themeId == BASE_THEME_DARK ? "dark" : "light");
+        putThemeValue(theme, "baseTheme", themeId == BASE_THEME_DARK ? "dark" : "light");
         for (int i=0, size=customAttrs.size(); i<size; ++i) {
             switch (customAttrs.keyAt(i)) {
-                case android.R.attr.textColorPrimary: theme.put("textColorPrimary", colorToString(customAttrs.valueAt(i))); break;
-                case R.attr.materialPrimary: theme.put("materialPrimary", colorToString(customAttrs.valueAt(i))); break;
-                case R.attr.materialPrimaryDark: theme.put("materialPrimaryDark", colorToString(customAttrs.valueAt(i))); break;
-                case R.attr.materialNavigationBar: theme.put("materialNavigationBar", colorToString(customAttrs.valueAt(i))); break;
-                case R.attr.activityRootBackground: theme.put("activityRootBackground", colorToString(customAttrs.valueAt(i))); break;
-                case R.attr.sidebarBackground: theme.put("sidebarBackground", colorToString(customAttrs.valueAt(i))); break;
-                case R.attr.sidebarSelectedItem: theme.put("sidebarSelectedItem", colorToString(customAttrs.valueAt(i))); break;
-                case R.attr.listSeparatorBackground: theme.put("listSeparatorBackground", colorToString(customAttrs.valueAt(i))); break;
-                case R.attr.postUnreadOverlay: theme.put("postUnreadOverlay", colorToString(customAttrs.valueAt(i))); break;
-                case R.attr.postBackground: theme.put("postBackground", colorToString(customAttrs.valueAt(i))); break;
-                case R.attr.postForeground: theme.put("postForeground", colorToString(customAttrs.valueAt(i))); break;
-                case R.attr.postIndexForeground: theme.put("postIndexForeground", colorToString(customAttrs.valueAt(i))); break;
-                case R.attr.postIndexOverBumpLimit: theme.put("postIndexOverBumpLimit", colorToString(customAttrs.valueAt(i))); break;
-                case R.attr.postNumberForeground: theme.put("postNumberForeground", colorToString(customAttrs.valueAt(i))); break;
-                case R.attr.postNameForeground: theme.put("postNameForeground", colorToString(customAttrs.valueAt(i))); break;
-                case R.attr.postOpForeground: theme.put("postOpForeground", colorToString(customAttrs.valueAt(i))); break;
-                case R.attr.postSageForeground: theme.put("postSageForeground", colorToString(customAttrs.valueAt(i))); break;
-                case R.attr.postTripForeground: theme.put("postTripForeground", colorToString(customAttrs.valueAt(i))); break;
-                case R.attr.postTitleForeground: theme.put("postTitleForeground", colorToString(customAttrs.valueAt(i))); break;
-                case R.attr.postQuoteForeground: theme.put("postQuoteForeground", colorToString(customAttrs.valueAt(i))); break;
-                case R.attr.spoilerForeground: theme.put("spoilerForeground", colorToString(customAttrs.valueAt(i))); break;
-                case R.attr.spoilerBackground: theme.put("spoilerBackground", colorToString(customAttrs.valueAt(i))); break;
-                case R.attr.urlLinkForeground: theme.put("urlLinkForeground", colorToString(customAttrs.valueAt(i))); break;
-                case R.attr.refererForeground: theme.put("refererForeground", colorToString(customAttrs.valueAt(i))); break;
-                case R.attr.itemInfoForeground: theme.put("itemInfoForeground", colorToString(customAttrs.valueAt(i))); break;
-                case R.attr.searchHighlightBackground: theme.put("searchHighlightBackground", colorToString(customAttrs.valueAt(i))); break;
-                case R.attr.subscriptionBackground: theme.put("subscriptionBackground", colorToString(customAttrs.valueAt(i))); break;
+                case android.R.attr.textColorPrimary: putThemeValue(theme, "textColorPrimary", colorToString(customAttrs.valueAt(i))); break;
+                case R.attr.materialPrimary: putThemeValue(theme, "materialPrimary", colorToString(customAttrs.valueAt(i))); break;
+                case R.attr.materialPrimaryDark: putThemeValue(theme, "materialPrimaryDark", colorToString(customAttrs.valueAt(i))); break;
+                case R.attr.materialNavigationBar: putThemeValue(theme, "materialNavigationBar", colorToString(customAttrs.valueAt(i))); break;
+                case R.attr.activityRootBackground: putThemeValue(theme, "activityRootBackground", colorToString(customAttrs.valueAt(i))); break;
+                case R.attr.sidebarBackground: putThemeValue(theme, "sidebarBackground", colorToString(customAttrs.valueAt(i))); break;
+                case R.attr.sidebarSelectedItem: putThemeValue(theme, "sidebarSelectedItem", colorToString(customAttrs.valueAt(i))); break;
+                case R.attr.listSeparatorBackground: putThemeValue(theme, "listSeparatorBackground", colorToString(customAttrs.valueAt(i))); break;
+                case R.attr.postUnreadOverlay: putThemeValue(theme, "postUnreadOverlay", colorToString(customAttrs.valueAt(i))); break;
+                case R.attr.postBackground: putThemeValue(theme, "postBackground", colorToString(customAttrs.valueAt(i))); break;
+                case R.attr.postForeground: putThemeValue(theme, "postForeground", colorToString(customAttrs.valueAt(i))); break;
+                case R.attr.postIndexForeground: putThemeValue(theme, "postIndexForeground", colorToString(customAttrs.valueAt(i))); break;
+                case R.attr.postIndexOverBumpLimit: putThemeValue(theme, "postIndexOverBumpLimit", colorToString(customAttrs.valueAt(i))); break;
+                case R.attr.postNumberForeground: putThemeValue(theme, "postNumberForeground", colorToString(customAttrs.valueAt(i))); break;
+                case R.attr.postNameForeground: putThemeValue(theme, "postNameForeground", colorToString(customAttrs.valueAt(i))); break;
+                case R.attr.postOpForeground: putThemeValue(theme, "postOpForeground", colorToString(customAttrs.valueAt(i))); break;
+                case R.attr.postSageForeground: putThemeValue(theme, "postSageForeground", colorToString(customAttrs.valueAt(i))); break;
+                case R.attr.postTripForeground: putThemeValue(theme, "postTripForeground", colorToString(customAttrs.valueAt(i))); break;
+                case R.attr.postTitleForeground: putThemeValue(theme, "postTitleForeground", colorToString(customAttrs.valueAt(i))); break;
+                case R.attr.postQuoteForeground: putThemeValue(theme, "postQuoteForeground", colorToString(customAttrs.valueAt(i))); break;
+                case R.attr.spoilerForeground: putThemeValue(theme, "spoilerForeground", colorToString(customAttrs.valueAt(i))); break;
+                case R.attr.spoilerBackground: putThemeValue(theme, "spoilerBackground", colorToString(customAttrs.valueAt(i))); break;
+                case R.attr.urlLinkForeground: putThemeValue(theme, "urlLinkForeground", colorToString(customAttrs.valueAt(i))); break;
+                case R.attr.refererForeground: putThemeValue(theme, "refererForeground", colorToString(customAttrs.valueAt(i))); break;
+                case R.attr.itemInfoForeground: putThemeValue(theme, "itemInfoForeground", colorToString(customAttrs.valueAt(i))); break;
+                case R.attr.searchHighlightBackground: putThemeValue(theme, "searchHighlightBackground", colorToString(customAttrs.valueAt(i))); break;
+                case R.attr.subscriptionBackground: putThemeValue(theme, "subscriptionBackground", colorToString(customAttrs.valueAt(i))); break;
                 default: Logger.e("TAG", "unknown attribute: " + customAttrs.keyAt(i));
             }
         }
@@ -192,46 +194,52 @@ public class GenericThemeEntry implements Parcelable {
     }
     
     private static int parseTheme(String customThemeJson, SparseIntArray attrs) {
-        JSONObject theme = new JSONObject(customThemeJson);
+        JSONObject theme;
+        try {
+            theme = new JSONObject(customThemeJson);
+        } catch (JSONException e) {
+            throw new IllegalArgumentException(e);
+        }
         String baseTheme = null;
-        for (String key : theme.keySet()) {
+        for (Iterator<String> iterator = theme.keys(); iterator.hasNext(); ) {
+            String key = iterator.next();
             switch (key.toLowerCase(Locale.US)) {
                 case "basetheme":
                     if (baseTheme != null) throwDefinedMoreThenOnce("baseTheme");
-                    String value = theme.getString(key);
+                    String value = theme.optString(key);
                     switch (value.toLowerCase(Locale.US)) {
                         case "light": baseTheme = "light"; break;
                         case "dark": baseTheme = "dark"; break;
                         default: throw new IllegalArgumentException("Illegal value for baseTheme: " + value);
                     }
                     break;
-                case "textcolorprimary": parseColor(key, theme.getString(key), android.R.attr.textColorPrimary, attrs); break;
-                case "materialprimary": parseColor(key, theme.getString(key), R.attr.materialPrimary, attrs); break;
-                case "materialprimarydark": parseColor(key, theme.getString(key), R.attr.materialPrimaryDark, attrs); break;
-                case "materialnavigationbar": parseColor(key, theme.getString(key), R.attr.materialNavigationBar, attrs); break;
-                case "activityrootbackground": parseColor(key, theme.getString(key), R.attr.activityRootBackground, attrs); break;
-                case "sidebarbackground": parseColor(key, theme.getString(key), R.attr.sidebarBackground, attrs); break;
-                case "sidebarselecteditem": parseColor(key, theme.getString(key), R.attr.sidebarSelectedItem, attrs); break;
-                case "listseparatorbackground": parseColor(key, theme.getString(key), R.attr.listSeparatorBackground, attrs); break;
-                case "postunreadoverlay": parseColor(key, theme.getString(key), R.attr.postUnreadOverlay, attrs); break;
-                case "postbackground": parseColor(key, theme.getString(key), R.attr.postBackground, attrs); break;
-                case "postforeground": parseColor(key, theme.getString(key), R.attr.postForeground, attrs); break;
-                case "postindexforeground": parseColor(key, theme.getString(key), R.attr.postIndexForeground, attrs); break;
-                case "postindexoverbumplimit": parseColor(key, theme.getString(key), R.attr.postIndexOverBumpLimit, attrs); break;
-                case "postnumberforeground": parseColor(key, theme.getString(key), R.attr.postNumberForeground, attrs); break;
-                case "postnameforeground": parseColor(key, theme.getString(key), R.attr.postNameForeground, attrs); break;
-                case "postopforeground": parseColor(key, theme.getString(key), R.attr.postOpForeground, attrs); break;
-                case "postsageforeground": parseColor(key, theme.getString(key), R.attr.postSageForeground, attrs); break;
-                case "posttripforeground": parseColor(key, theme.getString(key), R.attr.postTripForeground, attrs); break;
-                case "posttitleforeground": parseColor(key, theme.getString(key), R.attr.postTitleForeground, attrs); break;
-                case "postquoteforeground": parseColor(key, theme.getString(key), R.attr.postQuoteForeground, attrs); break;
-                case "spoilerforeground": parseColor(key, theme.getString(key), R.attr.spoilerForeground, attrs); break;
-                case "spoilerbackground": parseColor(key, theme.getString(key), R.attr.spoilerBackground, attrs); break;
-                case "urllinkforeground": parseColor(key, theme.getString(key), R.attr.urlLinkForeground, attrs); break;
-                case "refererforeground": parseColor(key, theme.getString(key), R.attr.refererForeground, attrs); break;
-                case "iteminfoforeground": parseColor(key, theme.getString(key), R.attr.itemInfoForeground, attrs); break;
-                case "searchhighlightbackground": parseColor(key, theme.getString(key), R.attr.searchHighlightBackground, attrs); break;
-                case "subscriptionbackground": parseColor(key, theme.getString(key), R.attr.subscriptionBackground, attrs); break;
+                case "textcolorprimary": parseColor(key, theme.optString(key), android.R.attr.textColorPrimary, attrs); break;
+                case "materialprimary": parseColor(key, theme.optString(key), R.attr.materialPrimary, attrs); break;
+                case "materialprimarydark": parseColor(key, theme.optString(key), R.attr.materialPrimaryDark, attrs); break;
+                case "materialnavigationbar": parseColor(key, theme.optString(key), R.attr.materialNavigationBar, attrs); break;
+                case "activityrootbackground": parseColor(key, theme.optString(key), R.attr.activityRootBackground, attrs); break;
+                case "sidebarbackground": parseColor(key, theme.optString(key), R.attr.sidebarBackground, attrs); break;
+                case "sidebarselecteditem": parseColor(key, theme.optString(key), R.attr.sidebarSelectedItem, attrs); break;
+                case "listseparatorbackground": parseColor(key, theme.optString(key), R.attr.listSeparatorBackground, attrs); break;
+                case "postunreadoverlay": parseColor(key, theme.optString(key), R.attr.postUnreadOverlay, attrs); break;
+                case "postbackground": parseColor(key, theme.optString(key), R.attr.postBackground, attrs); break;
+                case "postforeground": parseColor(key, theme.optString(key), R.attr.postForeground, attrs); break;
+                case "postindexforeground": parseColor(key, theme.optString(key), R.attr.postIndexForeground, attrs); break;
+                case "postindexoverbumplimit": parseColor(key, theme.optString(key), R.attr.postIndexOverBumpLimit, attrs); break;
+                case "postnumberforeground": parseColor(key, theme.optString(key), R.attr.postNumberForeground, attrs); break;
+                case "postnameforeground": parseColor(key, theme.optString(key), R.attr.postNameForeground, attrs); break;
+                case "postopforeground": parseColor(key, theme.optString(key), R.attr.postOpForeground, attrs); break;
+                case "postsageforeground": parseColor(key, theme.optString(key), R.attr.postSageForeground, attrs); break;
+                case "posttripforeground": parseColor(key, theme.optString(key), R.attr.postTripForeground, attrs); break;
+                case "posttitleforeground": parseColor(key, theme.optString(key), R.attr.postTitleForeground, attrs); break;
+                case "postquoteforeground": parseColor(key, theme.optString(key), R.attr.postQuoteForeground, attrs); break;
+                case "spoilerforeground": parseColor(key, theme.optString(key), R.attr.spoilerForeground, attrs); break;
+                case "spoilerbackground": parseColor(key, theme.optString(key), R.attr.spoilerBackground, attrs); break;
+                case "urllinkforeground": parseColor(key, theme.optString(key), R.attr.urlLinkForeground, attrs); break;
+                case "refererforeground": parseColor(key, theme.optString(key), R.attr.refererForeground, attrs); break;
+                case "iteminfoforeground": parseColor(key, theme.optString(key), R.attr.itemInfoForeground, attrs); break;
+                case "searchhighlightbackground": parseColor(key, theme.optString(key), R.attr.searchHighlightBackground, attrs); break;
+                case "subscriptionbackground": parseColor(key, theme.optString(key), R.attr.subscriptionBackground, attrs); break;
                 default: throw new IllegalArgumentException("Unknown key: " + key);
             }
         }
@@ -251,6 +259,13 @@ public class GenericThemeEntry implements Parcelable {
     private static String colorToString(int color) {
         if (Color.alpha(color) == 0xFF) return String.format("#%06X", color & 0xFFFFFF);
         return String.format("#%08X", color);
+    }
+    
+    private static void putThemeValue(JSONObject theme, String key, String value) {
+        try {
+            theme.put(key, value);
+        } catch (JSONException ignored) {
+        }
     }
     
     private static void throwDefinedMoreThenOnce(String key) {

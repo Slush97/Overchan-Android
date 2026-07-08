@@ -18,11 +18,10 @@
 
 package dev.esoc.esochan.http.streamer;
 
-import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
+
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,10 +34,10 @@ import dev.esoc.esochan.common.Logger;
 import dev.esoc.esochan.http.HttpConstants;
 import dev.esoc.esochan.http.HttpHeader;
 import dev.esoc.esochan.http.client.ExtendedHttpClient;
-import dev.esoc.esochan.lib.org_json.JSONArray;
-import dev.esoc.esochan.lib.org_json.JSONException;
-import dev.esoc.esochan.lib.org_json.JSONObject;
-import dev.esoc.esochan.lib.org_json.JSONTokener;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.JSONTokener;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -236,13 +235,14 @@ public class HttpStreamer {
             CancellableTask task, boolean anyCode, boolean isArray)
             throws IOException, HttpRequestException, HttpWrongStatusCodeException, JSONException {
         HttpResponseModel responseModel = null;
-        BufferedReader in = null;
         try {
             responseModel = getFromUrl(url, requestModel, httpClient, listener, task);
             if (responseModel.statusCode == 200) {
                 if (responseModel.stream == null) throw new HttpRequestException(new NullPointerException());
-                in = new BufferedReader(new InputStreamReader(responseModel.stream));
-                return isArray ? new JSONArray(new JSONTokener(in)) : new JSONObject(new JSONTokener(in));
+                ByteArrayOutputStream output = new ByteArrayOutputStream(1024);
+                IOUtils.copyStream(responseModel.stream, output);
+                String json = output.toString();
+                return isArray ? new JSONArray(new JSONTokener(json)) : new JSONObject(new JSONTokener(json));
             } else {
                 if (responseModel.notModified()) return null;
                 if (anyCode) {
@@ -263,7 +263,6 @@ public class HttpStreamer {
             if (responseModel != null) removeFromModifiedMap(url);
             throw e;
         } finally {
-            IOUtils.closeQuietly(in);
             if (responseModel != null) responseModel.release();
         }
     }

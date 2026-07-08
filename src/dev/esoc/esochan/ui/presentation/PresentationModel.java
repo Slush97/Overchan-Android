@@ -38,7 +38,7 @@ import dev.esoc.esochan.api.util.ChanModels;
 import dev.esoc.esochan.cache.SerializablePage;
 import dev.esoc.esochan.common.Logger;
 import dev.esoc.esochan.common.MainApplication;
-import dev.esoc.esochan.lib.org_json.JSONArray;
+import org.json.JSONArray;
 import dev.esoc.esochan.ui.Database;
 import dev.esoc.esochan.ui.Database.IsHiddenDelegate;
 import dev.esoc.esochan.ui.presentation.ClickableURLSpan.URLSpanClickListener;

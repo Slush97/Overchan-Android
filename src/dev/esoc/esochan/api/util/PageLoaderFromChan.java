@@ -28,7 +28,7 @@ import dev.esoc.esochan.cache.SerializablePage;
 import dev.esoc.esochan.common.Logger;
 import dev.esoc.esochan.common.MainApplication;
 import dev.esoc.esochan.http.interactive.InteractiveException;
-import dev.esoc.esochan.lib.org_json.JSONException;
+import org.json.JSONException;
 
 /**
  * Загрузчик АИБ-страниц, загружает или обновляет объект {@link SerializablePage} с чана напрямую.

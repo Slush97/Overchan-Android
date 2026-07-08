@@ -34,8 +34,8 @@ import dev.esoc.esochan.http.cloudflare.CloudflareException;
 import dev.esoc.esochan.http.streamer.HttpRequestModel;
 import dev.esoc.esochan.http.streamer.HttpStreamer;
 import dev.esoc.esochan.http.streamer.HttpWrongStatusCodeException;
-import dev.esoc.esochan.lib.org_json.JSONArray;
-import dev.esoc.esochan.lib.org_json.JSONObject;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 public abstract class CloudflareChanModule extends AbstractChanModule {
 

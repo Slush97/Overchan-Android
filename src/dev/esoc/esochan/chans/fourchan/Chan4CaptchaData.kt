@@ -22,7 +22,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Base64
 import dev.esoc.esochan.common.Logger
-import dev.esoc.esochan.lib.org_json.JSONObject
+import org.json.JSONObject
 
 private const val TAG = "Chan4CaptchaData"
 private val DATA_URI_PATTERN = Regex("""base64,([A-Za-z0-9+/=\s]+)""")

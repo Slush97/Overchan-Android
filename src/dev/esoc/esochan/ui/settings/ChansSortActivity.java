@@ -39,7 +39,7 @@ import dev.esoc.esochan.api.ChanModule;
 import dev.esoc.esochan.common.MainApplication;
 import dev.esoc.esochan.lib.dslv.DragSortController;
 import dev.esoc.esochan.lib.dslv.DragSortListView;
-import dev.esoc.esochan.lib.org_json.JSONArray;
+import org.json.JSONArray;
 
 public class ChansSortActivity extends Activity {
     private List<ChanModule> list = new ArrayList<>();

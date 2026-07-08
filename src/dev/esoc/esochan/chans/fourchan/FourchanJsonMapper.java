@@ -29,7 +29,7 @@ import dev.esoc.esochan.api.models.BoardModel;
 import dev.esoc.esochan.api.models.PostModel;
 import dev.esoc.esochan.api.util.CryptoUtils;
 import dev.esoc.esochan.api.util.RegexUtils;
-import dev.esoc.esochan.lib.org_json.JSONObject;
+import org.json.JSONObject;
 
 public class FourchanJsonMapper {
     private static final boolean LINKIFY = true;
@@ -38,7 +38,7 @@ public class FourchanJsonMapper {
     private static final Pattern S_TAG = Pattern.compile("<(/?)s>");
     
     static BoardModel mapBoardModel(JSONObject object) {
-        BoardModel model = getDefaultBoardModel(object.getString("board"));
+        BoardModel model = getDefaultBoardModel(object.optString("board"));
         model.boardDescription = object.optString("title", model.boardName);
         model.nsfw = object.optInt("ws_board") == 0;
         model.bumpLimit = object.optInt("bump_limit", 300);
@@ -83,7 +83,7 @@ public class FourchanJsonMapper {
     
     static PostModel mapPostModel(JSONObject object, String boardName) {
         PostModel model = new PostModel();
-        model.number = Long.toString(object.getLong("no"));
+        model.number = Long.toString(object.optLong("no"));
         model.name = StringEscapeUtils.unescapeHtml4(RegexUtils.removeHtmlSpanTags(object.optString("name", "Anonymous")));
         model.subject = StringEscapeUtils.unescapeHtml4(object.optString("sub", ""));
         String comment = object.optString("com", "");
@@ -105,7 +105,7 @@ public class FourchanJsonMapper {
         model.sage = id.equalsIgnoreCase("Heaven");
         if (!id.equals("")) model.name += (" ID:" + id);
         if (!id.equals("") && !id.equalsIgnoreCase("Heaven")) model.color = CryptoUtils.hashIdColor(id);
-        model.timestamp = object.getLong("time") * 1000;
+        model.timestamp = object.optLong("time") * 1000;
         model.parentThread = object.optString("resto", "0");
         if (model.parentThread.equals("0")) model.parentThread = model.number;
         String ext = object.optString("ext", "");

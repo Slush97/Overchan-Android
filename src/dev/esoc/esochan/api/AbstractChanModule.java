@@ -38,8 +38,8 @@ import dev.esoc.esochan.http.client.ExtendedHttpClient;
 import dev.esoc.esochan.http.streamer.HttpRequestModel;
 import dev.esoc.esochan.http.streamer.HttpResponseModel;
 import dev.esoc.esochan.http.streamer.HttpStreamer;
-import dev.esoc.esochan.lib.org_json.JSONArray;
-import dev.esoc.esochan.lib.org_json.JSONObject;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import android.content.Context;
 import android.content.SharedPreferences;
