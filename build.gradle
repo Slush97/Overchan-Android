@@ -70,10 +70,13 @@ android {
     kotlinOptions {
         jvmTarget = '17'
     }
-    archivesBaseName = 'esochan'
     externalNativeBuild {
         ndkBuild {
             path 'jni/Android.mk'
         }
     }
+}
+
+base {
+    archivesName = 'esochan'
 }

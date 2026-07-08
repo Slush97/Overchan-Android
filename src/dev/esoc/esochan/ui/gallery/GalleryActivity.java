@@ -720,6 +720,7 @@ public class GalleryActivity extends AppCompatActivity implements View.OnClickLi
     
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_HANDLE_INTERACTIVE_EXCEPTION && resultCode == RESULT_OK) updateItem();
     }
     
