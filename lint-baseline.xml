@@ -1,0 +1,3503 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<issues format="6" by="lint 8.7.3" type="baseline" client="gradle" dependencies="false" name="AGP (8.7.3)" variant="all" version="8.7.3">
+
+    <issue
+        id="ScopedStorage"
+        message="WRITE_EXTERNAL_STORAGE no longer provides write access when targeting Android 10+"
+        errorLine1="    &lt;uses-permission android:name=&quot;android.permission.WRITE_EXTERNAL_STORAGE&quot; android:maxSdkVersion=&quot;32&quot; />"
+        errorLine2="                                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="AndroidManifest.xml"
+            line="27"
+            column="36"/>
+    </issue>
+
+    <issue
+        id="ApplySharedPref"
+        message="Consider using `apply()` instead; `commit` writes its data to persistent storage immediately, whereas `apply` will handle it in the background"
+        errorLine1="            preferences.edit().putString(getSharedKey(PREF_KEY_PASSWORD), CryptoUtils.genPassword()).commit();"
+        errorLine2="                                                                                                     ~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/api/AbstractChanModule.java"
+            line="252"
+            column="102"/>
+    </issue>
+
+    <issue
+        id="ApplySharedPref"
+        message="Consider using `apply()` instead; `commit` writes its data to persistent storage immediately, whereas `apply` will handle it in the background"
+        errorLine1="        preferences.edit().putInt(getSharedKey(&quot;curthread&quot;), i).commit();"
+        errorLine2="                                                                ~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/chans/anonfm/AnonFmModule.java"
+            line="169"
+            column="65"/>
+    </issue>
+
+    <issue
+        id="ApplySharedPref"
+        message="Consider using `apply()` instead; `commit` writes its data to persistent storage immediately, whereas `apply` will handle it in the background"
+        errorLine1="                commit();"
+        errorLine2="                ~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/settings/ApplicationSettings.java"
+            line="161"
+            column="17"/>
+    </issue>
+
+    <issue
+        id="ApplySharedPref"
+        message="Consider using `apply()` instead; `commit` writes its data to persistent storage immediately, whereas `apply` will handle it in the background"
+        errorLine1="        preferences.edit().putInt(resources.getString(R.string.pref_key_download_thread_mode), mode).commit();"
+        errorLine2="                                                                                                     ~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/settings/ApplicationSettings.java"
+            line="255"
+            column="102"/>
+    </issue>
+
+    <issue
+        id="ApplySharedPref"
+        message="Consider using `apply()` instead; `commit` writes its data to persistent storage immediately, whereas `apply` will handle it in the background"
+        errorLine1="        preferences.edit().putString(resources.getString(R.string.pref_key_autohide_json), json).commit();"
+        errorLine2="                                                                                                 ~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/settings/ApplicationSettings.java"
+            line="263"
+            column="98"/>
+    </issue>
+
+    <issue
+        id="ApplySharedPref"
+        message="Consider using `apply()` instead; `commit` writes its data to persistent storage immediately, whereas `apply` will handle it in the background"
+        errorLine1="        preferences.edit().putString(resources.getString(R.string.pref_key_quickaccess_json), json).commit();"
+        errorLine2="                                                                                                    ~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/settings/ApplicationSettings.java"
+            line="271"
+            column="101"/>
+    </issue>
+
+    <issue
+        id="ApplySharedPref"
+        message="Consider using `apply()` instead; `commit` writes its data to persistent storage immediately, whereas `apply` will handle it in the background"
+        errorLine1="        preferences.edit().putString(resources.getString(R.string.pref_key_chans_order_json), json).commit();"
+        errorLine2="                                                                                                    ~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/settings/ApplicationSettings.java"
+            line="279"
+            column="101"/>
+    </issue>
+
+    <issue
+        id="ApplySharedPref"
+        message="Consider using `apply()` instead; `commit` writes its data to persistent storage immediately, whereas `apply` will handle it in the background"
+        errorLine1="        preferences.edit().putInt(resources.getString(R.string.pref_key_last_favorites_page), page).commit();"
+        errorLine2="                                                                                                    ~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/settings/ApplicationSettings.java"
+            line="287"
+            column="101"/>
+    </issue>
+
+    <issue
+        id="ApplySharedPref"
+        message="Consider using `apply()` instead; `commit` writes its data to persistent storage immediately, whereas `apply` will handle it in the background"
+        errorLine1="        preferences.edit().putBoolean(resources.getString(R.string.pref_key_unlocked_chan_format, chanName), value).commit();"
+        errorLine2="                                                                                                                    ~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/settings/ApplicationSettings.java"
+            line="373"
+            column="117"/>
+    </issue>
+
+    <issue
+        id="ApplySharedPref"
+        message="Consider using `apply()` instead; `commit` writes its data to persistent storage immediately, whereas `apply` will handle it in the background"
+        errorLine1="        preferences.edit().putBoolean(resources.getString(R.string.pref_key_enable_autoupdate), value).commit();"
+        errorLine2="                                                                                                       ~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/settings/ApplicationSettings.java"
+            line="398"
+            column="104"/>
+    </issue>
+
+    <issue
+        id="ApplySharedPref"
+        message="Consider using `apply()` instead; `commit` writes its data to persistent storage immediately, whereas `apply` will handle it in the background"
+        errorLine1="        preferences.edit().putBoolean(resources.getString(R.string.pref_key_last_clear_subscriptions), value).commit();"
+        errorLine2="                                                                                                              ~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/settings/ApplicationSettings.java"
+            line="447"
+            column="111"/>
+    </issue>
+
+    <issue
+        id="ApplySharedPref"
+        message="Consider using `apply()` instead; `commit` writes its data to persistent storage immediately, whereas `apply` will handle it in the background"
+        errorLine1="                        putString(getSharedKey(PREF_KEY_CLOUDFLARE_COOKIE_DOMAIN), cookie.getDomain()).commit();"
+        errorLine2="                                                                                                       ~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/api/CloudflareChanModule.java"
+            line="82"
+            column="104"/>
+    </issue>
+
+    <issue
+        id="ApplySharedPref"
+        message="Consider using `apply()` instead; `commit` writes its data to persistent storage immediately, whereas `apply` will handle it in the background"
+        errorLine1="                            commit();"
+        errorLine2="                            ~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/downloading/DownloadingService.java"
+            line="734"
+            column="29"/>
+    </issue>
+
+    <issue
+        id="ApplySharedPref"
+        message="Consider using `apply()` instead; `commit` writes its data to persistent storage immediately, whereas `apply` will handle it in the background"
+        errorLine1="            prefs.edit().putInt(&quot;double_tap_toast_count&quot;, 0).commit();"
+        errorLine2="                                                             ~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/lib/gallery/JSWebView.java"
+            line="128"
+            column="62"/>
+    </issue>
+
+    <issue
+        id="ApplySharedPref"
+        message="Consider using `apply()` instead; `commit` writes its data to persistent storage immediately, whereas `apply` will handle it in the background"
+        errorLine1="                if (prefs.contains(key)) prefs.edit().remove(key).commit();"
+        errorLine2="                                                                  ~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/api/util/LazyPreferences.java"
+            line="48"
+            column="67"/>
+    </issue>
+
+    <issue
+        id="ApplySharedPref"
+        message="Consider using `apply()` instead; `commit` writes its data to persistent storage immediately, whereas `apply` will handle it in the background"
+        errorLine1="                if (prefs.contains(key)) prefs.edit().remove(key).commit();"
+        errorLine2="                                                                  ~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/api/util/LazyPreferences.java"
+            line="73"
+            column="67"/>
+    </issue>
+
+    <issue
+        id="ApplySharedPref"
+        message="Consider using `apply()` instead; `commit` writes its data to persistent storage immediately, whereas `apply` will handle it in the background"
+        errorLine1="                if (prefs.contains(key)) prefs.edit().remove(key).commit();"
+        errorLine2="                                                                  ~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/api/util/LazyPreferences.java"
+            line="98"
+            column="67"/>
+    </issue>
+
+    <issue
+        id="ApplySharedPref"
+        message="Consider using `apply()` instead; `commit` writes its data to persistent storage immediately, whereas `apply` will handle it in the background"
+        errorLine1="                    putString(getSharedKey(PREF_KEY_USERCODE_COOKIE_VALUE), cookie.getValue()).commit();"
+        errorLine2="                                                                                               ~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/chans/makaba/MakabaModule.java"
+            line="152"
+            column="96"/>
+    </issue>
+
+    <issue
+        id="DefaultLocale"
+        message="Implicitly using the default locale is a common source of bugs: Use `toLowerCase(Locale)` instead. For strings meant to be internal use `Locale.ROOT`, otherwise `Locale.getDefault()`."
+        errorLine1="            String ext = fileName.substring(dotIndex + 1).toLowerCase();"
+        errorLine2="                                                          ~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/downloading/DownloadStorage.java"
+            line="205"
+            column="59"/>
+    </issue>
+
+    <issue
+        id="DefaultLocale"
+        message="Implicitly using the default locale is a common source of bugs: Use `String.format(Locale, ...)` instead"
+        errorLine1="            canvas.drawText(&quot;Scale: &quot; + String.format(&quot;%.2f&quot;, scale), 5, 15, debugPaint);"
+        errorLine2="                                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/lib/gallery/FixedSubsamplingScaleImageView.java"
+            line="742"
+            column="41"/>
+    </issue>
+
+    <issue
+        id="DefaultLocale"
+        message="Implicitly using the default locale is a common source of bugs: Use `String.format(Locale, ...)` instead"
+        errorLine1="            canvas.drawText(&quot;Translate: &quot; + String.format(&quot;%.2f&quot;, vTranslate.x) + &quot;:&quot; + String.format(&quot;%.2f&quot;, vTranslate.y), 5, 35, debugPaint);"
+        errorLine2="                                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/lib/gallery/FixedSubsamplingScaleImageView.java"
+            line="743"
+            column="45"/>
+    </issue>
+
+    <issue
+        id="DefaultLocale"
+        message="Implicitly using the default locale is a common source of bugs: Use `String.format(Locale, ...)` instead"
+        errorLine1="            canvas.drawText(&quot;Translate: &quot; + String.format(&quot;%.2f&quot;, vTranslate.x) + &quot;:&quot; + String.format(&quot;%.2f&quot;, vTranslate.y), 5, 35, debugPaint);"
+        errorLine2="                                                                                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/lib/gallery/FixedSubsamplingScaleImageView.java"
+            line="743"
+            column="89"/>
+    </issue>
+
+    <issue
+        id="DefaultLocale"
+        message="Implicitly using the default locale is a common source of bugs: Use `String.format(Locale, ...)` instead"
+        errorLine1="            canvas.drawText(&quot;Source center: &quot; + String.format(&quot;%.2f&quot;, center.x) + &quot;:&quot; + String.format(&quot;%.2f&quot;, center.y), 5, 55, debugPaint);"
+        errorLine2="                                                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/lib/gallery/FixedSubsamplingScaleImageView.java"
+            line="745"
+            column="49"/>
+    </issue>
+
+    <issue
+        id="DefaultLocale"
+        message="Implicitly using the default locale is a common source of bugs: Use `String.format(Locale, ...)` instead"
+        errorLine1="            canvas.drawText(&quot;Source center: &quot; + String.format(&quot;%.2f&quot;, center.x) + &quot;:&quot; + String.format(&quot;%.2f&quot;, center.y), 5, 55, debugPaint);"
+        errorLine2="                                                                                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/lib/gallery/FixedSubsamplingScaleImageView.java"
+            line="745"
+            column="89"/>
+    </issue>
+
+    <issue
+        id="DiscouragedPrivateApi"
+        message="Reflective access to mEditor, which is not part of the public SDK and therefore likely to change in future Android releases"
+        errorLine1="            Field field = TextView.class.getDeclaredField(&quot;mEditor&quot;);"
+        errorLine2="                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/lib/ClickableLinksTextView.java"
+            line="144"
+            column="27"/>
+    </issue>
+
+    <issue
+        id="DiscouragedPrivateApi"
+        message="Reflective access to mIsDropdown, which is not part of the public SDK and therefore likely to change in future Android releases"
+        errorLine1="            Field mIsDropDown = PopupWindow.class.getDeclaredField(&quot;mIsDropdown&quot;);"
+        errorLine2="                                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/lib/ClickableToast.java"
+            line="137"
+            column="33"/>
+    </issue>
+
+    <issue
+        id="DiscouragedPrivateApi"
+        message="Reflective access to mAnimationStyle, which is not part of the public SDK and therefore likely to change in future Android releases"
+        errorLine1="            Field mAnimationStyle = PopupWindow.class.getDeclaredField(&quot;mAnimationStyle&quot;);"
+        errorLine2="                                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/lib/ClickableToast.java"
+            line="141"
+            column="37"/>
+    </issue>
+
+    <issue
+        id="DiscouragedPrivateApi"
+        message="Reflective access to mAboveAnchor, which is not part of the public SDK and therefore likely to change in future Android releases"
+        errorLine1="            Field mAboveAnchor = PopupWindow.class.getDeclaredField(&quot;mAboveAnchor&quot;);"
+        errorLine2="                                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/lib/ClickableToast.java"
+            line="145"
+            column="34"/>
+    </issue>
+
+    <issue
+        id="DiscouragedPrivateApi"
+        message="Reflective access to computeAnimationResource, which is not part of the public SDK and therefore likely to change in future Android releases"
+        errorLine1="            Method computeAnimationResource = PopupWindow.class.getDeclaredMethod(&quot;computeAnimationResource&quot;);"
+        errorLine2="                                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/lib/ClickableToast.java"
+            line="149"
+            column="47"/>
+    </issue>
+
+    <issue
+        id="ExifInterface"
+        message="Avoid using `android.media.ExifInterface`; use `androidx.exifinterface.media.ExifInterface` instead"
+        errorLine1="import android.media.ExifInterface;"
+        errorLine2="       ~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/lib/gallery/FixedSubsamplingScaleImageView.java"
+            line="44"
+            column="8"/>
+    </issue>
+
+    <issue
+        id="OldTargetApi"
+        message="Not targeting the latest versions of Android; compatibility modes apply. Consider testing and updating this version. Consult the `android.os.Build.VERSION_CODES` javadoc for details."
+        errorLine1="        targetSdk 35"
+        errorLine2="        ~~~~~~~~~~~~">
+        <location
+            file="build.gradle"
+            line="64"
+            column="9"/>
+    </issue>
+
+    <issue
+        id="PrivateApi"
+        message="Accessing internal APIs via reflection is not supported and may not work on all devices or in the future"
+        errorLine1="            networkClass = Class.forName(&quot;android.webkit.Network&quot;);"
+        errorLine2="                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/lib/WebViewProxy.java"
+            line="48"
+            column="28"/>
+    </issue>
+
+    <issue
+        id="PrivateApi"
+        message="Accessing internal APIs via reflection is not supported and may not work on all devices or in the future"
+        errorLine1="            Class&lt;?> requestQueueClass = Class.forName(&quot;android.net.http.RequestQueue&quot;);"
+        errorLine2="                                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/lib/WebViewProxy.java"
+            line="80"
+            column="42"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="            case R.id.menu_add_post:"
+        errorLine2="                 ~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/presentation/BoardFragment.java"
+            line="573"
+            column="18"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="            case R.id.menu_update:"
+        errorLine2="                 ~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/presentation/BoardFragment.java"
+            line="576"
+            column="18"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="            case R.id.menu_catalog:"
+        errorLine2="                 ~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/presentation/BoardFragment.java"
+            line="584"
+            column="18"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="            case R.id.menu_search:"
+        errorLine2="                 ~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/presentation/BoardFragment.java"
+            line="591"
+            column="18"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="            case R.id.menu_save_page:"
+        errorLine2="                 ~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/presentation/BoardFragment.java"
+            line="596"
+            column="18"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="            case R.id.menu_download_all_images:"
+        errorLine2="                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/presentation/BoardFragment.java"
+            line="599"
+            column="18"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="            case R.id.menu_board_gallery:"
+        errorLine2="                 ~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/presentation/BoardFragment.java"
+            line="602"
+            column="18"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="            case R.id.menu_quickaccess_add:"
+        errorLine2="                 ~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/presentation/BoardFragment.java"
+            line="605"
+            column="18"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="            case R.id.context_menu_thumb_load_thumb:"
+        errorLine2="                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/presentation/BoardFragment.java"
+            line="744"
+            column="18"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="            case R.id.context_menu_thumb_download:"
+        errorLine2="                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/presentation/BoardFragment.java"
+            line="758"
+            column="18"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="            case R.id.context_menu_thumb_copy_url:"
+        errorLine2="                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/presentation/BoardFragment.java"
+            line="761"
+            column="18"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="            case R.id.context_menu_thumb_attachment_info:"
+        errorLine2="                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/presentation/BoardFragment.java"
+            line="766"
+            column="18"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="            case R.id.context_menu_thumb_reverse_search:"
+        errorLine2="                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/presentation/BoardFragment.java"
+            line="770"
+            column="18"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="            case R.id.context_menu_open_in_new_tab:"
+        errorLine2="                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/presentation/BoardFragment.java"
+            line="782"
+            column="18"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="            case R.id.context_menu_thread_preview:"
+        errorLine2="                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/presentation/BoardFragment.java"
+            line="802"
+            column="18"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="            case R.id.context_menu_reply_no_reading:"
+        errorLine2="                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/presentation/BoardFragment.java"
+            line="805"
+            column="18"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="            case R.id.context_menu_hide:"
+        errorLine2="                 ~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/presentation/BoardFragment.java"
+            line="813"
+            column="18"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="            case R.id.context_menu_reply:"
+        errorLine2="                 ~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/presentation/BoardFragment.java"
+            line="822"
+            column="18"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="            case R.id.context_menu_reply_with_quote:"
+        errorLine2="                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/presentation/BoardFragment.java"
+            line="825"
+            column="18"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="            case R.id.context_menu_select_text:"
+        errorLine2="                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/presentation/BoardFragment.java"
+            line="828"
+            column="18"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="            case R.id.context_menu_share:"
+        errorLine2="                 ~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/presentation/BoardFragment.java"
+            line="843"
+            column="18"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="            case R.id.context_menu_delete:"
+        errorLine2="                 ~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/presentation/BoardFragment.java"
+            line="857"
+            column="18"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="            case R.id.context_menu_report:"
+        errorLine2="                 ~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/presentation/BoardFragment.java"
+            line="866"
+            column="18"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="            case R.id.context_menu_subscribe:"
+        errorLine2="                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/presentation/BoardFragment.java"
+            line="874"
+            column="18"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="                case R.id.board_navigation_previous:"
+        errorLine2="                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/presentation/BoardFragment.java"
+            line="2573"
+            column="22"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="                case R.id.board_navigation_next:"
+        errorLine2="                     ~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/presentation/BoardFragment.java"
+            line="2577"
+            column="22"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="                case R.id.board_navigation_page:"
+        errorLine2="                     ~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/presentation/BoardFragment.java"
+            line="2581"
+            column="22"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="            case R.id.menu_update:"
+        errorLine2="                 ~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/BoardsListFragment.java"
+            line="173"
+            column="18"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="            case R.id.menu_quickaccess_add:"
+        errorLine2="                 ~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/BoardsListFragment.java"
+            line="176"
+            column="18"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="            case R.id.context_menu_remove_favorites:"
+        errorLine2="                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/FavoritesFragment.java"
+            line="126"
+            column="18"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="            case R.id.context_menu_open_browser:"
+        errorLine2="                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/FavoritesFragment.java"
+            line="130"
+            column="18"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="            case R.id.gallery_navigation_previous:"
+        errorLine2="                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/gallery/GalleryActivity.java"
+            line="359"
+            column="18"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="            case R.id.gallery_navigation_next:"
+        errorLine2="                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/gallery/GalleryActivity.java"
+            line="365"
+            column="18"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="            case R.id.menu_update:"
+        errorLine2="                 ~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/gallery/GalleryActivity.java"
+            line="417"
+            column="18"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="            case R.id.menu_save_attachment:"
+        errorLine2="                 ~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/gallery/GalleryActivity.java"
+            line="420"
+            column="18"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="            case R.id.menu_open_external:"
+        errorLine2="                 ~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/gallery/GalleryActivity.java"
+            line="423"
+            column="18"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="            case R.id.menu_share:"
+        errorLine2="                 ~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/gallery/GalleryActivity.java"
+            line="426"
+            column="18"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="            case R.id.menu_share_link:"
+        errorLine2="                 ~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/gallery/GalleryActivity.java"
+            line="429"
+            column="18"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="            case R.id.menu_reverse_search:"
+        errorLine2="                 ~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/gallery/GalleryActivity.java"
+            line="432"
+            column="18"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="            case R.id.menu_open_browser:"
+        errorLine2="                 ~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/gallery/GalleryActivity.java"
+            line="435"
+            column="18"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="                case R.attr.materialPrimary: theme.put(&quot;materialPrimary&quot;, colorToString(customAttrs.valueAt(i))); break;"
+        errorLine2="                     ~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/theme/GenericThemeEntry.java"
+            line="162"
+            column="22"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="                case R.attr.materialPrimaryDark: theme.put(&quot;materialPrimaryDark&quot;, colorToString(customAttrs.valueAt(i))); break;"
+        errorLine2="                     ~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/theme/GenericThemeEntry.java"
+            line="163"
+            column="22"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="                case R.attr.materialNavigationBar: theme.put(&quot;materialNavigationBar&quot;, colorToString(customAttrs.valueAt(i))); break;"
+        errorLine2="                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/theme/GenericThemeEntry.java"
+            line="164"
+            column="22"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="                case R.attr.activityRootBackground: theme.put(&quot;activityRootBackground&quot;, colorToString(customAttrs.valueAt(i))); break;"
+        errorLine2="                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/theme/GenericThemeEntry.java"
+            line="165"
+            column="22"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="                case R.attr.sidebarBackground: theme.put(&quot;sidebarBackground&quot;, colorToString(customAttrs.valueAt(i))); break;"
+        errorLine2="                     ~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/theme/GenericThemeEntry.java"
+            line="166"
+            column="22"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="                case R.attr.sidebarSelectedItem: theme.put(&quot;sidebarSelectedItem&quot;, colorToString(customAttrs.valueAt(i))); break;"
+        errorLine2="                     ~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/theme/GenericThemeEntry.java"
+            line="167"
+            column="22"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="                case R.attr.listSeparatorBackground: theme.put(&quot;listSeparatorBackground&quot;, colorToString(customAttrs.valueAt(i))); break;"
+        errorLine2="                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/theme/GenericThemeEntry.java"
+            line="168"
+            column="22"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="                case R.attr.postUnreadOverlay: theme.put(&quot;postUnreadOverlay&quot;, colorToString(customAttrs.valueAt(i))); break;"
+        errorLine2="                     ~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/theme/GenericThemeEntry.java"
+            line="169"
+            column="22"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="                case R.attr.postBackground: theme.put(&quot;postBackground&quot;, colorToString(customAttrs.valueAt(i))); break;"
+        errorLine2="                     ~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/theme/GenericThemeEntry.java"
+            line="170"
+            column="22"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="                case R.attr.postForeground: theme.put(&quot;postForeground&quot;, colorToString(customAttrs.valueAt(i))); break;"
+        errorLine2="                     ~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/theme/GenericThemeEntry.java"
+            line="171"
+            column="22"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="                case R.attr.postIndexForeground: theme.put(&quot;postIndexForeground&quot;, colorToString(customAttrs.valueAt(i))); break;"
+        errorLine2="                     ~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/theme/GenericThemeEntry.java"
+            line="172"
+            column="22"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="                case R.attr.postIndexOverBumpLimit: theme.put(&quot;postIndexOverBumpLimit&quot;, colorToString(customAttrs.valueAt(i))); break;"
+        errorLine2="                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/theme/GenericThemeEntry.java"
+            line="173"
+            column="22"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="                case R.attr.postNumberForeground: theme.put(&quot;postNumberForeground&quot;, colorToString(customAttrs.valueAt(i))); break;"
+        errorLine2="                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/theme/GenericThemeEntry.java"
+            line="174"
+            column="22"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="                case R.attr.postNameForeground: theme.put(&quot;postNameForeground&quot;, colorToString(customAttrs.valueAt(i))); break;"
+        errorLine2="                     ~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/theme/GenericThemeEntry.java"
+            line="175"
+            column="22"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="                case R.attr.postOpForeground: theme.put(&quot;postOpForeground&quot;, colorToString(customAttrs.valueAt(i))); break;"
+        errorLine2="                     ~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/theme/GenericThemeEntry.java"
+            line="176"
+            column="22"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="                case R.attr.postSageForeground: theme.put(&quot;postSageForeground&quot;, colorToString(customAttrs.valueAt(i))); break;"
+        errorLine2="                     ~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/theme/GenericThemeEntry.java"
+            line="177"
+            column="22"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="                case R.attr.postTripForeground: theme.put(&quot;postTripForeground&quot;, colorToString(customAttrs.valueAt(i))); break;"
+        errorLine2="                     ~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/theme/GenericThemeEntry.java"
+            line="178"
+            column="22"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="                case R.attr.postTitleForeground: theme.put(&quot;postTitleForeground&quot;, colorToString(customAttrs.valueAt(i))); break;"
+        errorLine2="                     ~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/theme/GenericThemeEntry.java"
+            line="179"
+            column="22"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="                case R.attr.postQuoteForeground: theme.put(&quot;postQuoteForeground&quot;, colorToString(customAttrs.valueAt(i))); break;"
+        errorLine2="                     ~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/theme/GenericThemeEntry.java"
+            line="180"
+            column="22"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="                case R.attr.spoilerForeground: theme.put(&quot;spoilerForeground&quot;, colorToString(customAttrs.valueAt(i))); break;"
+        errorLine2="                     ~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/theme/GenericThemeEntry.java"
+            line="181"
+            column="22"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="                case R.attr.spoilerBackground: theme.put(&quot;spoilerBackground&quot;, colorToString(customAttrs.valueAt(i))); break;"
+        errorLine2="                     ~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/theme/GenericThemeEntry.java"
+            line="182"
+            column="22"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="                case R.attr.urlLinkForeground: theme.put(&quot;urlLinkForeground&quot;, colorToString(customAttrs.valueAt(i))); break;"
+        errorLine2="                     ~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/theme/GenericThemeEntry.java"
+            line="183"
+            column="22"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="                case R.attr.refererForeground: theme.put(&quot;refererForeground&quot;, colorToString(customAttrs.valueAt(i))); break;"
+        errorLine2="                     ~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/theme/GenericThemeEntry.java"
+            line="184"
+            column="22"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="                case R.attr.itemInfoForeground: theme.put(&quot;itemInfoForeground&quot;, colorToString(customAttrs.valueAt(i))); break;"
+        errorLine2="                     ~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/theme/GenericThemeEntry.java"
+            line="185"
+            column="22"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="                case R.attr.searchHighlightBackground: theme.put(&quot;searchHighlightBackground&quot;, colorToString(customAttrs.valueAt(i))); break;"
+        errorLine2="                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/theme/GenericThemeEntry.java"
+            line="186"
+            column="22"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="                case R.attr.subscriptionBackground: theme.put(&quot;subscriptionBackground&quot;, colorToString(customAttrs.valueAt(i))); break;"
+        errorLine2="                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/theme/GenericThemeEntry.java"
+            line="187"
+            column="22"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="                case R.id.context_menu_remove_history:"
+        errorLine2="                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/HistoryFragment.java"
+            line="169"
+            column="22"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="                case R.id.context_menu_open_browser:"
+        errorLine2="                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/HistoryFragment.java"
+            line="173"
+            column="22"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="                case R.id.context_menu_favorites_from_fragment:"
+        errorLine2="                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/HistoryFragment.java"
+            line="176"
+            column="22"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="            case R.id.menu_open_browser:"
+        errorLine2="                 ~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/MainActivity.java"
+            line="209"
+            column="18"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="            case R.id.menu_favorites:"
+        errorLine2="                 ~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/MainActivity.java"
+            line="214"
+            column="18"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="            case R.id.menu_history:"
+        errorLine2="                 ~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/MainActivity.java"
+            line="219"
+            column="18"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="            case R.id.menu_settings:"
+        errorLine2="                 ~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/MainActivity.java"
+            line="227"
+            column="18"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="            case R.id.menu_open_close_drawer:"
+        errorLine2="                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/MainActivity.java"
+            line="231"
+            column="18"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="            case R.id.context_menu_move:"
+        errorLine2="                 ~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/MainActivity.java"
+            line="277"
+            column="18"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="            case R.id.context_menu_copy_url:"
+        errorLine2="                 ~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/MainActivity.java"
+            line="280"
+            column="18"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="            case R.id.context_menu_share_link:"
+        errorLine2="                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/MainActivity.java"
+            line="287"
+            column="18"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="            case R.id.context_menu_favorites:"
+        errorLine2="                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/MainActivity.java"
+            line="297"
+            column="18"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="            case R.id.context_menu_autoupdate_background:"
+        errorLine2="                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/MainActivity.java"
+            line="300"
+            column="18"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="            case R.id.context_menu_autoupdate_now:"
+        errorLine2="                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/MainActivity.java"
+            line="304"
+            column="18"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="                    case R.id.sidebar_btn_newtab:"
+        errorLine2="                         ~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/MainActivity.java"
+            line="577"
+            column="26"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="                    case R.id.sidebar_btn_favorites:"
+        errorLine2="                         ~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/MainActivity.java"
+            line="580"
+            column="26"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="                    case R.id.sidebar_btn_home:"
+        errorLine2="                         ~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/MainActivity.java"
+            line="583"
+            column="26"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="            case R.id.newtab_open_address_bar:"
+        errorLine2="                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/NewTabFragment.java"
+            line="164"
+            column="18"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="            case R.id.newtab_open_local:"
+        errorLine2="                 ~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/NewTabFragment.java"
+            line="176"
+            column="18"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="            case R.id.newtab_address_go:"
+        errorLine2="                 ~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/NewTabFragment.java"
+            line="180"
+            column="18"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="            case R.id.context_menu_quickaccess_move:"
+        errorLine2="                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/NewTabFragment.java"
+            line="224"
+            column="18"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="            case R.id.context_menu_quickaccess_remove:"
+        errorLine2="                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/NewTabFragment.java"
+            line="227"
+            column="18"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="                            case R.id.context_menu_favorites_from_fragment:"
+        errorLine2="                                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/NewTabFragment.java"
+            line="410"
+            column="34"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="                            case R.id.context_menu_quickaccess_add:"
+        errorLine2="                                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/NewTabFragment.java"
+            line="425"
+            column="34"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="                            case R.id.context_menu_quickaccess_custom_board:"
+        errorLine2="                                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/NewTabFragment.java"
+            line="433"
+            column="34"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="            case R.id.postform_sage_checkbox:"
+        errorLine2="                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/posting/PostFormActivity.java"
+            line="117"
+            column="18"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="            case R.id.postform_captcha_view:"
+        errorLine2="                 ~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/posting/PostFormActivity.java"
+            line="120"
+            column="18"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="            case R.id.postform_send_button:"
+        errorLine2="                 ~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/posting/PostFormActivity.java"
+            line="123"
+            column="18"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="            case R.id.postform_mark_bold:"
+        errorLine2="                 ~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/posting/PostFormActivity.java"
+            line="126"
+            column="18"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="                        case R.id.postform_mark_bold:"
+        errorLine2="                             ~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/posting/PostFormActivity.java"
+            line="134"
+            column="30"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="                        case R.id.postform_mark_italic:"
+        errorLine2="                             ~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/posting/PostFormActivity.java"
+            line="137"
+            column="30"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="                        case R.id.postform_mark_underline:"
+        errorLine2="                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/posting/PostFormActivity.java"
+            line="140"
+            column="30"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="                        case R.id.postform_mark_strike:"
+        errorLine2="                             ~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/posting/PostFormActivity.java"
+            line="143"
+            column="30"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="                        case R.id.postform_mark_spoiler:"
+        errorLine2="                             ~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/posting/PostFormActivity.java"
+            line="146"
+            column="30"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="                        case R.id.postform_mark_quote:"
+        errorLine2="                             ~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/posting/PostFormActivity.java"
+            line="149"
+            column="30"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="            case R.id.menu_attach_file:"
+        errorLine2="                 ~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/posting/PostFormActivity.java"
+            line="255"
+            column="18"/>
+    </issue>
+
+    <issue
+        id="NonConstantResourceId"
+        message="Resource IDs will be non-final by default in Android Gradle Plugin version 8.0, avoid using them in switch case statements"
+        errorLine1="            case R.id.menu_attach_gallery:"
+        errorLine2="                 ~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/posting/PostFormActivity.java"
+            line="270"
+            column="18"/>
+    </issue>
+
+    <issue
+        id="SelectedPhotoAccess"
+        message="Your app is currently not handling Selected Photos Access introduced in Android 14+"
+        errorLine1="    &lt;uses-permission android:name=&quot;android.permission.READ_MEDIA_IMAGES&quot; />"
+        errorLine2="                                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="AndroidManifest.xml"
+            line="29"
+            column="36"/>
+    </issue>
+
+    <issue
+        id="SelectedPhotoAccess"
+        message="Your app is currently not handling Selected Photos Access introduced in Android 14+"
+        errorLine1="    &lt;uses-permission android:name=&quot;android.permission.READ_MEDIA_VIDEO&quot; />"
+        errorLine2="                                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="AndroidManifest.xml"
+            line="30"
+            column="36"/>
+    </issue>
+
+    <issue
+        id="AndroidGradlePluginVersion"
+        message="A newer version of com.android.application than 8.7.3 is available: 9.2.1"
+        errorLine1="agp = &quot;8.7.3&quot;"
+        errorLine2="      ~~~~~~~">
+        <location
+            file="gradle/libs.versions.toml"
+            line="2"
+            column="7"/>
+    </issue>
+
+    <issue
+        id="AndroidGradlePluginVersion"
+        message="A newer version of com.android.application than 8.7.3 is available: 9.2.1"
+        errorLine1="agp = &quot;8.7.3&quot;"
+        errorLine2="      ~~~~~~~">
+        <location
+            file="gradle/libs.versions.toml"
+            line="2"
+            column="7"/>
+    </issue>
+
+    <issue
+        id="AndroidGradlePluginVersion"
+        message="A newer version of com.android.application than 8.7.3 is available: 9.2.1"
+        errorLine1="agp = &quot;8.7.3&quot;"
+        errorLine2="      ~~~~~~~">
+        <location
+            file="gradle/libs.versions.toml"
+            line="2"
+            column="7"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of org.jetbrains.kotlin.android than 2.1.10 is available: 2.3.21"
+        errorLine1="kotlin = &quot;2.1.10&quot;"
+        errorLine2="         ~~~~~~~~">
+        <location
+            file="gradle/libs.versions.toml"
+            line="3"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of org.jetbrains.kotlin.android than 2.1.10 is available: 2.3.21"
+        errorLine1="kotlin = &quot;2.1.10&quot;"
+        errorLine2="         ~~~~~~~~">
+        <location
+            file="gradle/libs.versions.toml"
+            line="3"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of org.jetbrains.kotlin.android than 2.1.10 is available: 2.3.21"
+        errorLine1="kotlin = &quot;2.1.10&quot;"
+        errorLine2="         ~~~~~~~~">
+        <location
+            file="gradle/libs.versions.toml"
+            line="3"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.core:core than 1.16.0 is available: 1.19.0"
+        errorLine1="androidx-core = &quot;1.16.0&quot;"
+        errorLine2="                ~~~~~~~~">
+        <location
+            file="gradle/libs.versions.toml"
+            line="4"
+            column="17"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.core:core than 1.16.0 is available: 1.19.0"
+        errorLine1="androidx-core = &quot;1.16.0&quot;"
+        errorLine2="                ~~~~~~~~">
+        <location
+            file="gradle/libs.versions.toml"
+            line="4"
+            column="17"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.core:core than 1.16.0 is available: 1.19.0"
+        errorLine1="androidx-core = &quot;1.16.0&quot;"
+        errorLine2="                ~~~~~~~~">
+        <location
+            file="gradle/libs.versions.toml"
+            line="4"
+            column="17"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.annotation:annotation than 1.9.1 is available: 1.10.0"
+        errorLine1="androidx-annotation = &quot;1.9.1&quot;"
+        errorLine2="                      ~~~~~~~">
+        <location
+            file="gradle/libs.versions.toml"
+            line="9"
+            column="23"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.annotation:annotation than 1.9.1 is available: 1.10.0"
+        errorLine1="androidx-annotation = &quot;1.9.1&quot;"
+        errorLine2="                      ~~~~~~~">
+        <location
+            file="gradle/libs.versions.toml"
+            line="9"
+            column="23"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.annotation:annotation than 1.9.1 is available: 1.10.0"
+        errorLine1="androidx-annotation = &quot;1.9.1&quot;"
+        errorLine2="                      ~~~~~~~">
+        <location
+            file="gradle/libs.versions.toml"
+            line="9"
+            column="23"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of com.squareup.okhttp3:okhttp than 4.12.0 is available: 5.3.2"
+        errorLine1="okhttp = &quot;4.12.0&quot;"
+        errorLine2="         ~~~~~~~~">
+        <location
+            file="gradle/libs.versions.toml"
+            line="12"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of com.squareup.okhttp3:okhttp than 4.12.0 is available: 5.3.2"
+        errorLine1="okhttp = &quot;4.12.0&quot;"
+        errorLine2="         ~~~~~~~~">
+        <location
+            file="gradle/libs.versions.toml"
+            line="12"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of com.squareup.okhttp3:okhttp than 4.12.0 is available: 5.3.2"
+        errorLine1="okhttp = &quot;4.12.0&quot;"
+        errorLine2="         ~~~~~~~~">
+        <location
+            file="gradle/libs.versions.toml"
+            line="12"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.media3:media3-exoplayer than 1.9.2 is available: 1.10.1"
+        errorLine1="media3 = &quot;1.9.2&quot;"
+        errorLine2="         ~~~~~~~">
+        <location
+            file="gradle/libs.versions.toml"
+            line="15"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.media3:media3-exoplayer than 1.9.2 is available: 1.10.1"
+        errorLine1="media3 = &quot;1.9.2&quot;"
+        errorLine2="         ~~~~~~~">
+        <location
+            file="gradle/libs.versions.toml"
+            line="15"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.media3:media3-exoplayer than 1.9.2 is available: 1.10.1"
+        errorLine1="media3 = &quot;1.9.2&quot;"
+        errorLine2="         ~~~~~~~">
+        <location
+            file="gradle/libs.versions.toml"
+            line="15"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of org.jetbrains.kotlinx:kotlinx-coroutines-android than 1.10.1 is available: 1.10.2"
+        errorLine1="kotlinx-coroutines = &quot;1.10.1&quot;"
+        errorLine2="                     ~~~~~~~~">
+        <location
+            file="gradle/libs.versions.toml"
+            line="16"
+            column="22"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of org.jetbrains.kotlinx:kotlinx-coroutines-android than 1.10.1 is available: 1.10.2"
+        errorLine1="kotlinx-coroutines = &quot;1.10.1&quot;"
+        errorLine2="                     ~~~~~~~~">
+        <location
+            file="gradle/libs.versions.toml"
+            line="16"
+            column="22"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of org.jetbrains.kotlinx:kotlinx-coroutines-android than 1.10.1 is available: 1.10.2"
+        errorLine1="kotlinx-coroutines = &quot;1.10.1&quot;"
+        errorLine2="                     ~~~~~~~~">
+        <location
+            file="gradle/libs.versions.toml"
+            line="16"
+            column="22"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of org.jetbrains.kotlinx:kotlinx-coroutines-core than 1.10.1 is available: 1.10.2"
+        errorLine1="kotlinx-coroutines = &quot;1.10.1&quot;"
+        errorLine2="                     ~~~~~~~~">
+        <location
+            file="gradle/libs.versions.toml"
+            line="16"
+            column="22"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of org.jetbrains.kotlinx:kotlinx-coroutines-core than 1.10.1 is available: 1.10.2"
+        errorLine1="kotlinx-coroutines = &quot;1.10.1&quot;"
+        errorLine2="                     ~~~~~~~~">
+        <location
+            file="gradle/libs.versions.toml"
+            line="16"
+            column="22"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of org.jetbrains.kotlinx:kotlinx-coroutines-core than 1.10.1 is available: 1.10.2"
+        errorLine1="kotlinx-coroutines = &quot;1.10.1&quot;"
+        errorLine2="                     ~~~~~~~~">
+        <location
+            file="gradle/libs.versions.toml"
+            line="16"
+            column="22"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.lifecycle:lifecycle-livedata-ktx than 2.8.7 is available: 2.11.0"
+        errorLine1="androidx-lifecycle = &quot;2.8.7&quot;"
+        errorLine2="                     ~~~~~~~">
+        <location
+            file="gradle/libs.versions.toml"
+            line="17"
+            column="22"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.lifecycle:lifecycle-livedata-ktx than 2.8.7 is available: 2.11.0"
+        errorLine1="androidx-lifecycle = &quot;2.8.7&quot;"
+        errorLine2="                     ~~~~~~~">
+        <location
+            file="gradle/libs.versions.toml"
+            line="17"
+            column="22"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.lifecycle:lifecycle-livedata-ktx than 2.8.7 is available: 2.11.0"
+        errorLine1="androidx-lifecycle = &quot;2.8.7&quot;"
+        errorLine2="                     ~~~~~~~">
+        <location
+            file="gradle/libs.versions.toml"
+            line="17"
+            column="22"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.lifecycle:lifecycle-runtime-ktx than 2.8.7 is available: 2.11.0"
+        errorLine1="androidx-lifecycle = &quot;2.8.7&quot;"
+        errorLine2="                     ~~~~~~~">
+        <location
+            file="gradle/libs.versions.toml"
+            line="17"
+            column="22"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.lifecycle:lifecycle-runtime-ktx than 2.8.7 is available: 2.11.0"
+        errorLine1="androidx-lifecycle = &quot;2.8.7&quot;"
+        errorLine2="                     ~~~~~~~">
+        <location
+            file="gradle/libs.versions.toml"
+            line="17"
+            column="22"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.lifecycle:lifecycle-runtime-ktx than 2.8.7 is available: 2.11.0"
+        errorLine1="androidx-lifecycle = &quot;2.8.7&quot;"
+        errorLine2="                     ~~~~~~~">
+        <location
+            file="gradle/libs.versions.toml"
+            line="17"
+            column="22"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.lifecycle:lifecycle-viewmodel-ktx than 2.8.7 is available: 2.11.0"
+        errorLine1="androidx-lifecycle = &quot;2.8.7&quot;"
+        errorLine2="                     ~~~~~~~">
+        <location
+            file="gradle/libs.versions.toml"
+            line="17"
+            column="22"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.lifecycle:lifecycle-viewmodel-ktx than 2.8.7 is available: 2.11.0"
+        errorLine1="androidx-lifecycle = &quot;2.8.7&quot;"
+        errorLine2="                     ~~~~~~~">
+        <location
+            file="gradle/libs.versions.toml"
+            line="17"
+            column="22"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.lifecycle:lifecycle-viewmodel-ktx than 2.8.7 is available: 2.11.0"
+        errorLine1="androidx-lifecycle = &quot;2.8.7&quot;"
+        errorLine2="                     ~~~~~~~">
+        <location
+            file="gradle/libs.versions.toml"
+            line="17"
+            column="22"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.security:security-crypto than 1.0.0 is available: 1.1.0"
+        errorLine1="androidx-security-crypto = &quot;1.0.0&quot;"
+        errorLine2="                           ~~~~~~~">
+        <location
+            file="gradle/libs.versions.toml"
+            line="18"
+            column="28"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.security:security-crypto than 1.0.0 is available: 1.1.0"
+        errorLine1="androidx-security-crypto = &quot;1.0.0&quot;"
+        errorLine2="                           ~~~~~~~">
+        <location
+            file="gradle/libs.versions.toml"
+            line="18"
+            column="28"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of androidx.security:security-crypto than 1.0.0 is available: 1.1.0"
+        errorLine1="androidx-security-crypto = &quot;1.0.0&quot;"
+        errorLine2="                           ~~~~~~~">
+        <location
+            file="gradle/libs.versions.toml"
+            line="18"
+            column="28"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of com.google.android.material:material than 1.12.0 is available: 1.14.0"
+        errorLine1="material = &quot;1.12.0&quot;"
+        errorLine2="           ~~~~~~~~">
+        <location
+            file="gradle/libs.versions.toml"
+            line="19"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of com.google.android.material:material than 1.12.0 is available: 1.14.0"
+        errorLine1="material = &quot;1.12.0&quot;"
+        errorLine2="           ~~~~~~~~">
+        <location
+            file="gradle/libs.versions.toml"
+            line="19"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="GradleDependency"
+        message="A newer version of com.google.android.material:material than 1.12.0 is available: 1.14.0"
+        errorLine1="material = &quot;1.12.0&quot;"
+        errorLine2="           ~~~~~~~~">
+        <location
+            file="gradle/libs.versions.toml"
+            line="19"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="DiscouragedApi"
+        message="Use of this function is discouraged because resource reflection makes it harder to perform build optimizations and compile-time verification of code. It is much more efficient to retrieve resources by identifier (e.g. `R.foo.bar`) than by name (e.g. `getIdentifier(&quot;bar&quot;, &quot;foo&quot;, null)`)."
+        errorLine1="            params.windowAnimations = internalResources.getIdentifier(&quot;Animation.Toast&quot;, &quot;style&quot;, &quot;android&quot;);"
+        errorLine2="                                                        ~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/lib/ClickableToast.java"
+            line="110"
+            column="57"/>
+    </issue>
+
+    <issue
+        id="DiscouragedApi"
+        message="Use of this function is discouraged because resource reflection makes it harder to perform build optimizations and compile-time verification of code. It is much more efficient to retrieve resources by identifier (e.g. `R.foo.bar`) than by name (e.g. `getIdentifier(&quot;bar&quot;, &quot;foo&quot;, null)`)."
+        errorLine1="            params.y = getResources().getDimensionPixelSize(internalResources.getIdentifier(&quot;toast_y_offset&quot;, &quot;dimen&quot;, &quot;android&quot;));"
+        errorLine2="                                                                              ~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/lib/ClickableToast.java"
+            line="111"
+            column="79"/>
+    </issue>
+
+    <issue
+        id="DiscouragedApi"
+        message="Use of this function is discouraged because resource reflection makes it harder to perform build optimizations and compile-time verification of code. It is much more efficient to retrieve resources by identifier (e.g. `R.foo.bar`) than by name (e.g. `getIdentifier(&quot;bar&quot;, &quot;foo&quot;, null)`)."
+        errorLine1="            View v = inflater.inflate(internalResources.getIdentifier(&quot;transient_notification&quot;, &quot;layout&quot;, &quot;android&quot;), null);"
+        errorLine2="                                                        ~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/lib/ClickableToast.java"
+            line="177"
+            column="57"/>
+    </issue>
+
+    <issue
+        id="DiscouragedApi"
+        message="Use of this function is discouraged because resource reflection makes it harder to perform build optimizations and compile-time verification of code. It is much more efficient to retrieve resources by identifier (e.g. `R.foo.bar`) than by name (e.g. `getIdentifier(&quot;bar&quot;, &quot;foo&quot;, null)`)."
+        errorLine1="            TextView tv = (TextView) v.findViewById(internalResources.getIdentifier(&quot;message&quot;, &quot;id&quot;, &quot;android&quot;));"
+        errorLine2="                                                                      ~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/lib/ClickableToast.java"
+            line="178"
+            column="71"/>
+    </issue>
+
+    <issue
+        id="DiscouragedApi"
+        message="Use of this function is discouraged because resource reflection makes it harder to perform build optimizations and compile-time verification of code. It is much more efficient to retrieve resources by identifier (e.g. `R.foo.bar`) than by name (e.g. `getIdentifier(&quot;bar&quot;, &quot;foo&quot;, null)`)."
+        errorLine1="                int attrId = resources.getIdentifier(value.substring(1), null, null); //Integer.parseInt(value.substring(1));"
+        errorLine2="                                       ~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/theme/CustomThemeHelper.java"
+            line="118"
+            column="40"/>
+    </issue>
+
+    <issue
+        id="DiscouragedApi"
+        message="Use of this function is discouraged because resource reflection makes it harder to perform build optimizations and compile-time verification of code. It is much more efficient to retrieve resources by identifier (e.g. `R.foo.bar`) than by name (e.g. `getIdentifier(&quot;bar&quot;, &quot;foo&quot;, null)`)."
+        errorLine1="            int id = resources.getIdentifier(&quot;action_bar_title&quot;, &quot;id&quot;, &quot;android&quot;);"
+        errorLine2="                               ~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/theme/CustomThemeHelper.java"
+            line="232"
+            column="32"/>
+    </issue>
+
+    <issue
+        id="DiscouragedApi"
+        message="Use of this function is discouraged because resource reflection makes it harder to perform build optimizations and compile-time verification of code. It is much more efficient to retrieve resources by identifier (e.g. `R.foo.bar`) than by name (e.g. `getIdentifier(&quot;bar&quot;, &quot;foo&quot;, null)`)."
+        errorLine1="                int id = resources.getIdentifier(&quot;action_bar&quot;, &quot;id&quot;, &quot;android&quot;);"
+        errorLine2="                                   ~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/theme/CustomThemeHelper.java"
+            line="241"
+            column="36"/>
+    </issue>
+
+    <issue
+        id="DiscouragedApi"
+        message="Use of this function is discouraged because resource reflection makes it harder to perform build optimizations and compile-time verification of code. It is much more efficient to retrieve resources by identifier (e.g. `R.foo.bar`) than by name (e.g. `getIdentifier(&quot;bar&quot;, &quot;foo&quot;, null)`)."
+        errorLine1="                    int colorRes = res.getIdentifier(name, &quot;color&quot;, &quot;android&quot;);"
+        errorLine2="                                       ~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/presentation/HtmlParser.java"
+            line="497"
+            column="40"/>
+    </issue>
+
+    <issue
+        id="DiscouragedApi"
+        message="Use of this function is discouraged because resource reflection makes it harder to perform build optimizations and compile-time verification of code. It is much more efficient to retrieve resources by identifier (e.g. `R.foo.bar`) than by name (e.g. `getIdentifier(&quot;bar&quot;, &quot;foo&quot;, null)`)."
+        errorLine1="            int resId = getResources().getIdentifier(&quot;action_bar_container&quot;, &quot;id&quot;, &quot;android&quot;);"
+        errorLine2="                                       ~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/MainActivity.java"
+            line="719"
+            column="40"/>
+    </issue>
+
+    <issue
+        id="UseCompatLoadingForDrawables"
+        message="Use `ResourcesCompat.getDrawable()`"
+        errorLine1="        setPageMarginDrawable(getContext().getResources().getDrawable(resId));"
+        errorLine2="                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/lib/gallery/verticalviewpager/VerticalViewPager.java"
+            line="755"
+            column="31"/>
+    </issue>
+
+    <issue
+        id="MissingQuantity"
+        message="For locale &quot;ru&quot; (Russian) the following quantity should also be defined: `few` (e.g. &quot;из 2 книг за 2 дня&quot;)"
+        errorLine1="    &lt;plurals name=&quot;postitem_posts_quantity&quot;>"
+        errorLine2="    ^">
+        <location
+            file="res/values-ru/strings.xml"
+            line="59"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="MissingQuantity"
+        message="For locale &quot;ru&quot; (Russian) the following quantity should also be defined: `few` (e.g. &quot;из 2 книг за 2 дня&quot;)"
+        errorLine1="    &lt;plurals name=&quot;postitem_files_quantity&quot;>"
+        errorLine2="    ^">
+        <location
+            file="res/values-ru/strings.xml"
+            line="64"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="MissingQuantity"
+        message="For locale &quot;ru&quot; (Russian) the following quantity should also be defined: `few` (e.g. &quot;из 2 книг за 2 дня&quot;)"
+        errorLine1="    &lt;plurals name=&quot;postitem_replies_quantity&quot;>"
+        errorLine2="    ^">
+        <location
+            file="res/values-ru/strings.xml"
+            line="69"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="MissingQuantity"
+        message="For locale &quot;ru&quot; (Russian) the following quantity should also be defined: `few` (e.g. &quot;из 2 книг за 2 дня&quot;)"
+        errorLine1="    &lt;plurals name=&quot;postslist_new_posts_quantity&quot;>"
+        errorLine2="    ^">
+        <location
+            file="res/values-ru/strings.xml"
+            line="77"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="MissingQuantity"
+        message="For locale &quot;ru&quot; (Russian) the following quantity should also be defined: `few` (e.g. &quot;из 2 книг за 2 дня&quot;)"
+        errorLine1="    &lt;plurals name=&quot;tabs_tracker_timer&quot;>"
+        errorLine2="    ^">
+        <location
+            file="res/values-ru/strings.xml"
+            line="94"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="MissingQuantity"
+        message="For locale &quot;ru&quot; (Russian) the following quantity should also be defined: `few` (e.g. &quot;из 2 книг за 2 дня&quot;)"
+        errorLine1="    &lt;plurals name=&quot;pref_clear_subscriptions_summary&quot;>"
+        errorLine2="    ^">
+        <location
+            file="res/values-ru/strings.xml"
+            line="539"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;channel_downloads&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;uk&quot; (Ukrainian)"
+        errorLine1="    &lt;string name=&quot;channel_downloads&quot;>Downloads&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="res/values/strings.xml"
+            line="22"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;channel_posting&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;uk&quot; (Ukrainian)"
+        errorLine1="    &lt;string name=&quot;channel_posting&quot;>Posting&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="res/values/strings.xml"
+            line="23"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;channel_tabs_tracker&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;uk&quot; (Ukrainian)"
+        errorLine1="    &lt;string name=&quot;channel_tabs_tracker&quot;>Background updates&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="res/values/strings.xml"
+            line="24"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;sidebar_home&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;uk&quot; (Ukrainian)"
+        errorLine1="    &lt;string name=&quot;sidebar_home&quot;>4chan&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="res/values/strings.xml"
+            line="89"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;menu_download_all_images&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;uk&quot; (Ukrainian)"
+        errorLine1="    &lt;string name=&quot;menu_download_all_images&quot;>Download all images&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="res/values/strings.xml"
+            line="166"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;download_all_confirm_format&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;uk&quot; (Ukrainian)"
+        errorLine1="    &lt;string name=&quot;download_all_confirm_format&quot;>Download %d images to Downloads folder?&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="res/values/strings.xml"
+            line="167"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;download_all_queued_format&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;uk&quot; (Ukrainian)"
+        errorLine1="    &lt;string name=&quot;download_all_queued_format&quot;>Queued %d images for download&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="res/values/strings.xml"
+            line="168"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;download_all_no_images&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;uk&quot; (Ukrainian)"
+        errorLine1="    &lt;string name=&quot;download_all_no_images&quot;>No downloadable images in this thread&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="res/values/strings.xml"
+            line="169"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="MissingTranslation"
+        message="&quot;postform_options&quot; is not translated in &quot;de&quot; (German), &quot;ru&quot; (Russian), &quot;uk&quot; (Ukrainian)"
+        errorLine1="    &lt;string name=&quot;postform_options&quot;>Options&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="res/values/strings.xml"
+            line="258"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="Typos"
+        message="Did you mean &quot;PREF_KEY_DOWNLOAD_THUMBS!&quot; instead of &quot;PREF_KEY_DOWNLOAD_THUMBS1&quot;?"
+        errorLine1="    &lt;string name=&quot;pref_key_download_thumbs&quot;>PREF_KEY_DOWNLOAD_THUMBS1&lt;/string>"
+        errorLine2="                                            ^">
+        <location
+            file="res/values/donottranslate.xml"
+            line="80"
+            column="45"/>
+    </issue>
+
+    <issue
+        id="Typos"
+        message="Did you mean &quot;PREF_FONT_SIZE_VALUE_MEDIUM!&quot; instead of &quot;PREF_FONT_SIZE_VALUE_MEDIUM1&quot;?"
+        errorLine1="    &lt;string name=&quot;pref_font_size_value_medium&quot;>PREF_FONT_SIZE_VALUE_MEDIUM1&lt;/string>"
+        errorLine2="                                               ^">
+        <location
+            file="res/values/donottranslate.xml"
+            line="130"
+            column="48"/>
+    </issue>
+
+    <issue
+        id="PluralsCandidate"
+        message="Formatting %d followed by words (&quot;images&quot;): This should probably be a plural rather than a string"
+        errorLine1="    &lt;string name=&quot;download_all_confirm_format&quot;>Download %d images to Downloads folder?&lt;/string>"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="res/values/strings.xml"
+            line="167"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="PluralsCandidate"
+        message="Formatting %d followed by words (&quot;images&quot;): This should probably be a plural rather than a string"
+        errorLine1="    &lt;string name=&quot;download_all_queued_format&quot;>Queued %d images for download&lt;/string>"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="res/values/strings.xml"
+            line="168"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="PluralsCandidate"
+        message="Formatting %d followed by words (&quot;remaining&quot;): This should probably be a plural rather than a string"
+        errorLine1="    &lt;string name=&quot;downloading_title&quot;>Downloading (%d remaining)&lt;/string>"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="res/values/strings.xml"
+            line="287"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="PluralsCandidate"
+        message="Formatting %d followed by words (&quot;more&quot;): This should probably be a plural rather than a string"
+        errorLine1="    &lt;string name=&quot;subscriptions_notification_text_more&quot;>+ %d more&lt;/string>"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="res/values/strings.xml"
+            line="357"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="CustomX509TrustManager"
+        message="Implementing a custom `X509TrustManager` is error-prone and likely to be insecure. It is likely to disable certificate validation altogether, and is non-trivial to implement correctly without calling Android&apos;s default implementation."
+        errorLine1="public class ExtendedTrustManager implements X509TrustManager {"
+        errorLine2="             ~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/http/client/ExtendedTrustManager.java"
+            line="66"
+            column="14"/>
+    </issue>
+
+    <issue
+        id="WebViewClientOnReceivedSslError"
+        message="Permitting connections with SSL-related errors could allow eavesdroppers to intercept data sent by your app, which impacts the privacy of your users. Consider canceling the connections by invoking `SslErrorHandler#cancel()`."
+        errorLine1="                                handler.proceed();"
+        errorLine2="                                ~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/http/recaptcha/Recaptcha2js.java"
+            line="147"
+            column="33"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="Unnecessary; SDK_INT is always >= 11"
+        errorLine1="    @TargetApi(Build.VERSION_CODES.HONEYCOMB)"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/lib/appcompat_v7_actionbartoogle/ActionBarDrawerToggle.java"
+            line="497"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="Unnecessary; SDK_INT is always >= 14"
+        errorLine1="        @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)"
+        errorLine2="        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/lib/appcompat_v7_actionbartoogle/ActionBarDrawerToggle.java"
+            line="512"
+            column="9"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="Unnecessary; SDK_INT is always >= 18"
+        errorLine1="    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/lib/appcompat_v7_actionbartoogle/ActionBarDrawerToggle.java"
+            line="543"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="Unnecessary; SDK_INT is always >= 11"
+        errorLine1="@TargetApi(Build.VERSION_CODES.HONEYCOMB)"
+        errorLine2="~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/lib/appcompat_v7_actionbartoogle/ActionBarDrawerToggleHoneycomb.java"
+            line="31"
+            column="1"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="Unnecessary; SDK_INT is always >= 23"
+        errorLine1="    @TargetApi(Build.VERSION_CODES.M)"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/CompatibilityImpl.java"
+            line="198"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="Unnecessary; SDK_INT is always >= 23"
+        errorLine1="    @TargetApi(Build.VERSION_CODES.M)"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/CompatibilityImpl.java"
+            line="203"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="Unnecessary; SDK_INT is always >= 23"
+        errorLine1="    @TargetApi(Build.VERSION_CODES.M)"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/CompatibilityImpl.java"
+            line="208"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="Unnecessary; SDK_INT is always >= 23"
+        errorLine1="    @TargetApi(Build.VERSION_CODES.M)"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/CompatibilityImpl.java"
+            line="213"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="Unnecessary; SDK_INT is always >= 10"
+        errorLine1="@TargetApi(Build.VERSION_CODES.GINGERBREAD_MR1)"
+        errorLine2="~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/lib/gallery/FixedSubsamplingScaleImageView.java"
+            line="75"
+            column="1"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="Unnecessary; SDK_INT is always >= 8"
+        errorLine1="@TargetApi(Build.VERSION_CODES.FROYO)"
+        errorLine2="~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/presentation/FlowTextHelperImpl.java"
+            line="40"
+            column="1"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="Unnecessary; SDK_INT is always >= 17"
+        errorLine1="    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/presentation/FlowTextHelperImpl.java"
+            line="79"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="Unnecessary; SDK_INT is always >= 17"
+        errorLine1="    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/presentation/FlowTextHelperImpl.java"
+            line="84"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="Unnecessary; SDK_INT is always >= 14"
+        errorLine1="    @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/gallery/GalleryFullscreen.java"
+            line="46"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="Unnecessary; SDK_INT is always >= 11"
+        errorLine1="@TargetApi(Build.VERSION_CODES.HONEYCOMB)"
+        errorLine2="~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/http/cloudflare/InterceptingAntiDDOS.java"
+            line="45"
+            column="1"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="Unnecessary; SDK_INT is always >= 11"
+        errorLine1="    @TargetApi(Build.VERSION_CODES.HONEYCOMB)"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/http/recaptcha/RecaptchaAjax.java"
+            line="144"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="Unnecessary; SDK_INT is always >= 12"
+        errorLine1="@TargetApi(Build.VERSION_CODES.HONEYCOMB_MR1)"
+        errorLine2="~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/lib/SwipeDismissListViewTouchListener.java"
+            line="81"
+            column="1"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="Unnecessary; SDK_INT is always >= 8"
+        errorLine1="@TargetApi(Build.VERSION_CODES.FROYO)"
+        errorLine2="~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/lib/gallery/TouchGifView.java"
+            line="30"
+            column="1"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="Unnecessary; SDK_INT is always >= 9"
+        errorLine1="    @TargetApi(Build.VERSION_CODES.GINGERBREAD)"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/lib/gallery/TouchGifView.java"
+            line="405"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="This folder configuration (`v21`) is unnecessary; `minSdkVersion` is 24. Merge all the resources in this folder into `drawable-anydpi`.">
+        <location
+            file="res/drawable-anydpi-v21"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="This folder configuration (`v11`) is unnecessary; `minSdkVersion` is 24. Merge all the resources in this folder into `drawable`.">
+        <location
+            file="res/drawable-v11"/>
+    </issue>
+
+    <issue
+        id="StaticFieldLeak"
+        message="Do not place Android context classes in static fields (static reference to `CloudflareChecker` which has field `webView` pointing to `WebView`); this is a memory leak"
+        errorLine1="    private static CloudflareChecker instance;"
+        errorLine2="            ~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/http/cloudflare/CloudflareChecker.java"
+            line="52"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="StaticFieldLeak"
+        message="Do not place Android context classes in static fields; this is a memory leak"
+        errorLine1="    private static Context staticContext;"
+        errorLine2="            ~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/http/client/ExtendedTrustManager.java"
+            line="78"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="StaticFieldLeak"
+        message="Do not place Android context classes in static fields; this is a memory leak"
+        errorLine1="    private static Activity foregroundAct;"
+        errorLine2="            ~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/http/client/ExtendedTrustManager.java"
+            line="79"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="StaticFieldLeak"
+        message="Do not place Android context classes in static fields (static reference to `InterceptingAntiDDOS` which has field `webView` pointing to `WebView`); this is a memory leak"
+        errorLine1="    private static InterceptingAntiDDOS instanace;"
+        errorLine2="            ~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/http/cloudflare/InterceptingAntiDDOS.java"
+            line="50"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="VectorPath"
+        message="Very long vector path (904 characters), which is bad for performance. Considering reducing precision, removing minor details or rasterizing vector."
+        errorLine1="            android:pathData=&quot;M19.14,12.94c0.04,-0.3 0.06,-0.61 0.06,-0.94c0,-0.32 -0.02,-0.64 -0.07,-0.94l2.03,-1.58c0.18,-0.14 0.23,-0.41 0.12,-0.61l-1.92,-3.32c-0.12,-0.22 -0.37,-0.29 -0.59,-0.22l-2.39,0.96c-0.5,-0.38 -1.03,-0.7 -1.62,-0.94L14.4,2.81c-0.04,-0.24 -0.24,-0.41 -0.48,-0.41h-3.84c-0.24,0 -0.43,0.17 -0.47,0.41L9.25,5.35C8.66,5.59 8.12,5.92 7.63,6.29L5.24,5.33c-0.22,-0.08 -0.47,0 -0.59,0.22L2.74,8.87C2.62,9.08 2.66,9.34 2.86,9.48l2.03,1.58C4.84,11.36 4.8,11.69 4.8,12s0.02,0.64 0.07,0.94l-2.03,1.58c-0.18,0.14 -0.23,0.41 -0.12,0.61l1.92,3.32c0.12,0.22 0.37,0.29 0.59,0.22l2.39,-0.96c0.5,0.38 1.03,0.7 1.62,0.94l0.36,2.54c0.05,0.24 0.24,0.41 0.48,0.41h3.84c0.24,0 0.44,-0.17 0.47,-0.41l0.36,-2.54c0.59,-0.24 1.13,-0.56 1.62,-0.94l2.39,0.96c0.22,0.08 0.47,0 0.59,-0.22l1.92,-3.32c0.12,-0.22 0.07,-0.47 -0.12,-0.61L19.14,12.94zM12,15.6c-1.98,0 -3.6,-1.62 -3.6,-3.6s1.62,-3.6 3.6,-3.6 3.6,1.62 3.6,3.6 -1.62,3.6 -3.6,3.6z&quot;/>"
+        errorLine2="                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="res/drawable/ic_menu_settings.xml"
+            line="13"
+            column="31"/>
+    </issue>
+
+    <issue
+        id="Overdraw"
+        message="Possible overdraw: Root element paints background `?attr/postBackground` with a theme that also paints a background (inferred theme is `@android:style/Theme.Holo`)"
+        errorLine1="    android:background=&quot;?attr/postBackground&quot; >"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="res/layout/board_fragment.xml"
+            line="25"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.drawable.ic_menu_attachment` appears to be unused">
+        <location
+            file="res/drawable-hdpi/ic_menu_attachment.png"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.drawable.ic_menu_edit` appears to be unused">
+        <location
+            file="res/drawable-hdpi/ic_menu_edit.png"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.drawable.ic_menu_refresh` appears to be unused">
+        <location
+            file="res/drawable-hdpi/ic_menu_refresh.png"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.drawable.ic_menu_windows` appears to be unused">
+        <location
+            file="res/drawable-hdpi/ic_menu_windows.png"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.downloading_error_mkdir` appears to be unused"
+        errorLine1="    &lt;string name=&quot;downloading_error_mkdir&quot;>Cannot create the directory&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="res/values/strings.xml"
+            line="289"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.crash_dialog_title` appears to be unused"
+        errorLine1="    &lt;string name=&quot;crash_dialog_title&quot;>esochan has crashed&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="res/values/strings.xml"
+            line="395"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.crash_dialog_text` appears to be unused"
+        errorLine1="    &lt;string name=&quot;crash_dialog_text&quot;>An unexpected error occurred forcing the application to stop."
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="res/values/strings.xml"
+            line="396"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.crash_dialog_comment_prompt` appears to be unused"
+        errorLine1="    &lt;string name=&quot;crash_dialog_comment_prompt&quot;>You might add your comments about the problem below:&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="res/values/strings.xml"
+            line="398"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.crash_dialog_ok_toast` appears to be unused"
+        errorLine1="    &lt;string name=&quot;crash_dialog_ok_toast&quot;>Thank you!&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="res/values/strings.xml"
+            line="399"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.kraut_prefs_kompturcode` appears to be unused"
+        errorLine1="    &lt;string name=&quot;kraut_prefs_kompturcode&quot;>Komturcode&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="res/values/strings.xml"
+            line="404"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.kraut_prefs_kompturcode_summary` appears to be unused"
+        errorLine1="    &lt;string name=&quot;kraut_prefs_kompturcode_summary&quot;>Komturcode cookie&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="res/values/strings.xml"
+            line="405"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.makaba_prefs_captcha_category` appears to be unused"
+        errorLine1="    &lt;string name=&quot;makaba_prefs_captcha_category&quot;>Captcha&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="res/values/strings.xml"
+            line="413"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.makaba_prefs_skip_captcha` appears to be unused"
+        errorLine1="    &lt;string name=&quot;makaba_prefs_skip_captcha&quot;>Skip captcha&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="res/values/strings.xml"
+            line="415"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.mikuba_password_ignored` appears to be unused"
+        errorLine1="    &lt;string name=&quot;mikuba_password_ignored&quot;>(ignored)&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="res/values/strings.xml"
+            line="417"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.pref_use_onion` appears to be unused"
+        errorLine1="    &lt;string name=&quot;pref_use_onion&quot;>Use .onion domain&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="res/values/strings.xml"
+            line="444"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.pref_use_onion_summary` appears to be unused"
+        errorLine1="    &lt;string name=&quot;pref_use_onion_summary&quot;>Requires a connection through the Tor network&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="res/values/strings.xml"
+            line="445"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="UnusedResources"
+        message="The resource `R.string.pref_captcha_type` appears to be unused"
+        errorLine1="    &lt;string name=&quot;pref_captcha_type&quot;>Captcha type&lt;/string>"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="res/values/strings.xml"
+            line="454"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="IconDensities"
+        message="Missing the following drawables in `drawable-xhdpi`: ic_menu_add_bookmark.png, ic_menu_attachment.png, ic_menu_browser.png, ic_menu_edit.png, ic_menu_list.png... (3 more)">
+        <location
+            file="res/drawable-xhdpi"/>
+    </issue>
+
+    <issue
+        id="IconDensities"
+        message="Missing the following drawables in `drawable-xxhdpi`: ic_menu_add_bookmark.png, ic_menu_attachment.png, ic_menu_browser.png, ic_menu_edit.png, ic_menu_list.png... (3 more)">
+        <location
+            file="res/drawable-xxhdpi"/>
+    </issue>
+
+    <issue
+        id="ButtonStyle"
+        message="Buttons in button bars should be borderless; use `style=&quot;?android:attr/buttonBarButtonStyle&quot;` (and `?android:attr/buttonBarStyle` on the parent)"
+        errorLine1="        &lt;Button"
+        errorLine2="         ~~~~~~">
+        <location
+            file="res/layout/downloading_error_report_layout.xml"
+            line="50"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="ButtonStyle"
+        message="Buttons in button bars should be borderless; use `style=&quot;?android:attr/buttonBarButtonStyle&quot;` (and `?android:attr/buttonBarStyle` on the parent)"
+        errorLine1="        &lt;Button"
+        errorLine2="         ~~~~~~">
+        <location
+            file="res/layout/downloading_error_report_layout.xml"
+            line="56"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="ButtonStyle"
+        message="Buttons in button bars should be borderless; use `style=&quot;?android:attr/buttonBarButtonStyle&quot;` (and `?android:attr/buttonBarStyle` on the parent)"
+        errorLine1="                &lt;Button"
+        errorLine2="                 ~~~~~~">
+        <location
+            file="res/layout/filedialog_main.xml"
+            line="43"
+            column="18"/>
+    </issue>
+
+    <issue
+        id="ButtonStyle"
+        message="Buttons in button bars should be borderless; use `style=&quot;?android:attr/buttonBarButtonStyle&quot;` (and `?android:attr/buttonBarStyle` on the parent)"
+        errorLine1="                &lt;Button"
+        errorLine2="                 ~~~~~~">
+        <location
+            file="res/layout/filedialog_main.xml"
+            line="49"
+            column="18"/>
+    </issue>
+
+    <issue
+        id="ButtonStyle"
+        message="Buttons in button bars should be borderless; use `style=&quot;?android:attr/buttonBarButtonStyle&quot;` (and `?android:attr/buttonBarStyle` on the parent)"
+        errorLine1="                &lt;Button"
+        errorLine2="                 ~~~~~~">
+        <location
+            file="res/layout/filedialog_main.xml"
+            line="81"
+            column="18"/>
+    </issue>
+
+    <issue
+        id="ButtonStyle"
+        message="Buttons in button bars should be borderless; use `style=&quot;?android:attr/buttonBarButtonStyle&quot;` (and `?android:attr/buttonBarStyle` on the parent)"
+        errorLine1="                &lt;Button"
+        errorLine2="                 ~~~~~~">
+        <location
+            file="res/layout/filedialog_main.xml"
+            line="87"
+            column="18"/>
+    </issue>
+
+    <issue
+        id="ButtonStyle"
+        message="Buttons in button bars should be borderless; use `style=&quot;?android:attr/buttonBarButtonStyle&quot;` (and `?android:attr/buttonBarStyle` on the parent)"
+        errorLine1="        &lt;Button"
+        errorLine2="         ~~~~~~">
+        <location
+            file="res/layout/newtab_fragment.xml"
+            line="34"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="ButtonStyle"
+        message="Buttons in button bars should be borderless; use `style=&quot;?android:attr/buttonBarButtonStyle&quot;` (and `?android:attr/buttonBarStyle` on the parent)"
+        errorLine1="        &lt;Button"
+        errorLine2="         ~~~~~~">
+        <location
+            file="res/layout/newtab_fragment.xml"
+            line="42"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="TextFields"
+        message="This text field does not specify an `inputType`"
+        errorLine1="        &lt;EditText"
+        errorLine2="         ~~~~~~~~">
+        <location
+            file="res/layout/board_fragment.xml"
+            line="34"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="TextFields"
+        message="This text field does not specify an `inputType`"
+        errorLine1="        &lt;EditText"
+        errorLine2="         ~~~~~~~~">
+        <location
+            file="res/layout/dialog_autohide_rule.xml"
+            line="29"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="TextFields"
+        message="This text field does not specify an `inputType`"
+        errorLine1="            &lt;EditText"
+        errorLine2="             ~~~~~~~~">
+        <location
+            file="res/layout/dialog_autohide_rule.xml"
+            line="45"
+            column="14"/>
+    </issue>
+
+    <issue
+        id="TextFields"
+        message="This text field does not specify an `inputType`"
+        errorLine1="            &lt;EditText"
+        errorLine2="             ~~~~~~~~">
+        <location
+            file="res/layout/dialog_autohide_rule.xml"
+            line="52"
+            column="14"/>
+    </issue>
+
+    <issue
+        id="TextFields"
+        message="This text field does not specify an `inputType`"
+        errorLine1="            &lt;EditText"
+        errorLine2="             ~~~~~~~~">
+        <location
+            file="res/layout/filedialog_main.xml"
+            line="70"
+            column="14"/>
+    </issue>
+
+    <issue
+        id="TextFields"
+        message="This text field does not specify an `inputType`"
+        errorLine1="    &lt;EditText"
+        errorLine2="     ~~~~~~~~">
+        <location
+            file="res/layout/fragment_post_form.xml"
+            line="295"
+            column="6"/>
+    </issue>
+
+    <issue
+        id="TextFields"
+        message="This text field does not specify an `inputType`"
+        errorLine1="            &lt;EditText "
+        errorLine2="             ~~~~~~~~">
+        <location
+            file="res/layout/postform_layout.xml"
+            line="209"
+            column="14"/>
+    </issue>
+
+    <issue
+        id="TextFields"
+        message="This text field does not specify an `inputType`"
+        errorLine1="                &lt;EditText "
+        errorLine2="                 ~~~~~~~~">
+        <location
+            file="res/layout/postform_layout_pinned_markup.xml"
+            line="214"
+            column="18"/>
+    </issue>
+
+    <issue
+        id="Autofill"
+        message="Missing `autofillHints` attribute"
+        errorLine1="        &lt;EditText"
+        errorLine2="         ~~~~~~~~">
+        <location
+            file="res/layout/board_fragment.xml"
+            line="34"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="Autofill"
+        message="Missing `autofillHints` attribute"
+        errorLine1="        &lt;EditText"
+        errorLine2="         ~~~~~~~~">
+        <location
+            file="res/layout/boardslist_fragment.xml"
+            line="30"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="Autofill"
+        message="Missing `autofillHints` attribute"
+        errorLine1="        &lt;EditText"
+        errorLine2="         ~~~~~~~~">
+        <location
+            file="res/layout/dialog_autohide_rule.xml"
+            line="29"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="Autofill"
+        message="Missing `autofillHints` attribute"
+        errorLine1="            &lt;EditText"
+        errorLine2="             ~~~~~~~~">
+        <location
+            file="res/layout/dialog_autohide_rule.xml"
+            line="45"
+            column="14"/>
+    </issue>
+
+    <issue
+        id="Autofill"
+        message="Missing `autofillHints` attribute"
+        errorLine1="            &lt;EditText"
+        errorLine2="             ~~~~~~~~">
+        <location
+            file="res/layout/dialog_autohide_rule.xml"
+            line="52"
+            column="14"/>
+    </issue>
+
+    <issue
+        id="Autofill"
+        message="Missing `autofillHints` attribute"
+        errorLine1="    &lt;EditText"
+        errorLine2="     ~~~~~~~~">
+        <location
+            file="res/layout/dialog_delete.xml"
+            line="25"
+            column="6"/>
+    </issue>
+
+    <issue
+        id="Autofill"
+        message="Missing `autofillHints` attribute"
+        errorLine1="            &lt;EditText"
+        errorLine2="             ~~~~~~~~">
+        <location
+            file="res/layout/filedialog_main.xml"
+            line="70"
+            column="14"/>
+    </issue>
+
+    <issue
+        id="Autofill"
+        message="Missing `autofillHints` attribute"
+        errorLine1="    &lt;EditText"
+        errorLine2="     ~~~~~~~~">
+        <location
+            file="res/layout/fragment_post_form.xml"
+            line="27"
+            column="6"/>
+    </issue>
+
+    <issue
+        id="Autofill"
+        message="Missing `autofillHints` attribute"
+        errorLine1="        &lt;EditText"
+        errorLine2="         ~~~~~~~~">
+        <location
+            file="res/layout/fragment_post_form.xml"
+            line="187"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="Autofill"
+        message="Missing `autofillHints` attribute"
+        errorLine1="            &lt;EditText"
+        errorLine2="             ~~~~~~~~">
+        <location
+            file="res/layout/fragment_post_form.xml"
+            line="203"
+            column="14"/>
+    </issue>
+
+    <issue
+        id="Autofill"
+        message="Missing `autofillHints` attribute"
+        errorLine1="            &lt;EditText"
+        errorLine2="             ~~~~~~~~">
+        <location
+            file="res/layout/fragment_post_form.xml"
+            line="213"
+            column="14"/>
+    </issue>
+
+    <issue
+        id="Autofill"
+        message="Missing `autofillHints` attribute"
+        errorLine1="            &lt;EditText"
+        errorLine2="             ~~~~~~~~">
+        <location
+            file="res/layout/fragment_post_form.xml"
+            line="235"
+            column="14"/>
+    </issue>
+
+    <issue
+        id="Autofill"
+        message="Missing `autofillHints` attribute"
+        errorLine1="    &lt;EditText"
+        errorLine2="     ~~~~~~~~">
+        <location
+            file="res/layout/fragment_post_form.xml"
+            line="295"
+            column="6"/>
+    </issue>
+
+    <issue
+        id="Autofill"
+        message="Missing `autofillHints` attribute"
+        errorLine1="        &lt;EditText"
+        errorLine2="         ~~~~~~~~">
+        <location
+            file="res/layout/newtab_fragment.xml"
+            line="58"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="Autofill"
+        message="Missing `autofillHints` attribute"
+        errorLine1="            &lt;EditText"
+        errorLine2="             ~~~~~~~~">
+        <location
+            file="res/layout/postform_layout.xml"
+            line="39"
+            column="14"/>
+    </issue>
+
+    <issue
+        id="Autofill"
+        message="Missing `autofillHints` attribute"
+        errorLine1="            &lt;EditText "
+        errorLine2="             ~~~~~~~~">
+        <location
+            file="res/layout/postform_layout.xml"
+            line="48"
+            column="14"/>
+    </issue>
+
+    <issue
+        id="Autofill"
+        message="Missing `autofillHints` attribute"
+        errorLine1="            &lt;EditText"
+        errorLine2="             ~~~~~~~~">
+        <location
+            file="res/layout/postform_layout.xml"
+            line="68"
+            column="14"/>
+    </issue>
+
+    <issue
+        id="Autofill"
+        message="Missing `autofillHints` attribute"
+        errorLine1="        &lt;EditText "
+        errorLine2="         ~~~~~~~~">
+        <location
+            file="res/layout/postform_layout.xml"
+            line="106"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="Autofill"
+        message="Missing `autofillHints` attribute"
+        errorLine1="        &lt;EditText "
+        errorLine2="         ~~~~~~~~">
+        <location
+            file="res/layout/postform_layout.xml"
+            line="170"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="Autofill"
+        message="Missing `autofillHints` attribute"
+        errorLine1="            &lt;EditText "
+        errorLine2="             ~~~~~~~~">
+        <location
+            file="res/layout/postform_layout.xml"
+            line="209"
+            column="14"/>
+    </issue>
+
+    <issue
+        id="Autofill"
+        message="Missing `autofillHints` attribute"
+        errorLine1="                &lt;EditText"
+        errorLine2="                 ~~~~~~~~">
+        <location
+            file="res/layout/postform_layout_pinned_markup.xml"
+            line="99"
+            column="18"/>
+    </issue>
+
+    <issue
+        id="Autofill"
+        message="Missing `autofillHints` attribute"
+        errorLine1="                &lt;EditText "
+        errorLine2="                 ~~~~~~~~">
+        <location
+            file="res/layout/postform_layout_pinned_markup.xml"
+            line="108"
+            column="18"/>
+    </issue>
+
+    <issue
+        id="Autofill"
+        message="Missing `autofillHints` attribute"
+        errorLine1="                &lt;EditText"
+        errorLine2="                 ~~~~~~~~">
+        <location
+            file="res/layout/postform_layout_pinned_markup.xml"
+            line="128"
+            column="18"/>
+    </issue>
+
+    <issue
+        id="Autofill"
+        message="Missing `autofillHints` attribute"
+        errorLine1="            &lt;EditText "
+        errorLine2="             ~~~~~~~~">
+        <location
+            file="res/layout/postform_layout_pinned_markup.xml"
+            line="166"
+            column="14"/>
+    </issue>
+
+    <issue
+        id="Autofill"
+        message="Missing `autofillHints` attribute"
+        errorLine1="            &lt;EditText "
+        errorLine2="             ~~~~~~~~">
+        <location
+            file="res/layout/postform_layout_pinned_markup.xml"
+            line="175"
+            column="14"/>
+    </issue>
+
+    <issue
+        id="Autofill"
+        message="Missing `autofillHints` attribute"
+        errorLine1="                &lt;EditText "
+        errorLine2="                 ~~~~~~~~">
+        <location
+            file="res/layout/postform_layout_pinned_markup.xml"
+            line="214"
+            column="18"/>
+    </issue>
+
+    <issue
+        id="ViewConstructor"
+        message="Custom view `CircleImageView` is missing constructor used by tools: `(Context)` or `(Context,AttributeSet)` or `(Context,AttributeSet,int)`"
+        errorLine1="class CircleImageView extends AppCompatImageView {"
+        errorLine2="      ~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/lib/pullable_layout/CircleImageView.java"
+            line="30"
+            column="7"/>
+    </issue>
+
+    <issue
+        id="ClickableViewAccessibility"
+        message="Custom view ``ListView`` has `setOnTouchListener` called on it but does not override `performClick`"
+        errorLine1="            listView.setOnTouchListener(null);"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/presentation/BoardFragment.java"
+            line="434"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="ClickableViewAccessibility"
+        message="Custom view ``ListView`` has `setOnTouchListener` called on it but does not override `performClick`"
+        errorLine1="                    listView.setOnTouchListener(touchListener);"
+        errorLine2="                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/presentation/BoardFragment.java"
+            line="1458"
+            column="21"/>
+    </issue>
+
+    <issue
+        id="ClickableViewAccessibility"
+        message="Custom view ``TextureView`` has `setOnTouchListener` called on it but does not override `performClick`"
+        errorLine1="                            textureView.setOnTouchListener(new View.OnTouchListener() {"
+        errorLine2="                            ^">
+        <location
+            file="src/dev/esoc/esochan/ui/gallery/GalleryActivity.java"
+            line="1028"
+            column="29"/>
+    </issue>
+
+    <issue
+        id="ClickableViewAccessibility"
+        message="`onTouch` should call `View#performClick` when a click is detected"
+        errorLine1="                                public boolean onTouch(View v, MotionEvent event) {"
+        errorLine2="                                               ~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/gallery/GalleryActivity.java"
+            line="1030"
+            column="48"/>
+    </issue>
+
+    <issue
+        id="LabelFor"
+        message="Missing accessibility label: provide either a view with an `android:labelFor` that references this view or provide an `android:hint`"
+        errorLine1="    &lt;EditText"
+        errorLine2="     ~~~~~~~~">
+        <location
+            file="res/layout/dialog_delete.xml"
+            line="25"
+            column="6"/>
+    </issue>
+
+    <issue
+        id="SetTextI18n"
+        message="Do not concatenate text displayed with `setText`. Use resource string with placeholders."
+        errorLine1="                    results.setText((newResultIndex + 1) + &quot;/&quot; + cachedSearchResults.size());"
+        errorLine2="                                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/presentation/BoardFragment.java"
+            line="2682"
+            column="37"/>
+    </issue>
+
+    <issue
+        id="SetTextI18n"
+        message="Do not concatenate text displayed with `setText`. Use resource string with placeholders."
+        errorLine1="                    results.setText((newResultIndex + 1) + &quot;/&quot; + cachedSearchResults.size());"
+        errorLine2="                                     ~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/presentation/BoardFragment.java"
+            line="2682"
+            column="38"/>
+    </issue>
+
+    <issue
+        id="SetTextI18n"
+        message="String literal in `setText` can not be translated. Use Android resources instead."
+        errorLine1="                text = &quot;Slide to align, then type the text&quot;"
+        errorLine2="                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/chans/fourchan/Chan4Captcha.kt"
+            line="226"
+            column="25"/>
+    </issue>
+
+    <issue
+        id="SetTextI18n"
+        message="Do not concatenate text displayed with `setText`. Use resource string with placeholders."
+        errorLine1="                text = &quot;Image 1 of $imageCount&quot;"
+        errorLine2="                       ~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/chans/fourchan/Chan4Captcha.kt"
+            line="345"
+            column="24"/>
+    </issue>
+
+    <issue
+        id="SetTextI18n"
+        message="String literal in `setText` can not be translated. Use Android resources instead."
+        errorLine1="                text = &quot;Image 1 of $imageCount&quot;"
+        errorLine2="                        ~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/chans/fourchan/Chan4Captcha.kt"
+            line="345"
+            column="25"/>
+    </issue>
+
+    <issue
+        id="SetTextI18n"
+        message="Do not concatenate text displayed with `setText`. Use resource string with placeholders."
+        errorLine1="                    counterText.text = &quot;Image ${progress + 1} of $imageCount&quot;"
+        errorLine2="                                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/chans/fourchan/Chan4Captcha.kt"
+            line="362"
+            column="40"/>
+    </issue>
+
+    <issue
+        id="SetTextI18n"
+        message="Do not concatenate text displayed with `setText`. Use resource string with placeholders."
+        errorLine1="                    counterText.text = &quot;Image ${progress + 1} of $imageCount&quot;"
+        errorLine2="                                                ~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/chans/fourchan/Chan4Captcha.kt"
+            line="362"
+            column="49"/>
+    </issue>
+
+    <issue
+        id="SetTextI18n"
+        message="String literal in `setText` can not be translated. Use Android resources instead."
+        errorLine1="                    counterText.text = &quot;Image ${progress + 1} of $imageCount&quot;"
+        errorLine2="                                        ~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/chans/fourchan/Chan4Captcha.kt"
+            line="362"
+            column="41"/>
+    </issue>
+
+    <issue
+        id="SetTextI18n"
+        message="String literal in `setText` can not be translated. Use Android resources instead."
+        errorLine1="                    counterText.text = &quot;Image ${progress + 1} of $imageCount&quot;"
+        errorLine2="                                                             ~~~~">
+        <location
+            file="src/dev/esoc/esochan/chans/fourchan/Chan4Captcha.kt"
+            line="362"
+            column="62"/>
+    </issue>
+
+    <issue
+        id="SetTextI18n"
+        message="Do not concatenate text displayed with `setText`. Use resource string with placeholders."
+        errorLine1="                        text = &quot;Step ${taskIndex + 1} of ${data.tasks.size}&quot;"
+        errorLine2="                               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/chans/fourchan/Chan4Captcha.kt"
+            line="387"
+            column="32"/>
+    </issue>
+
+    <issue
+        id="SetTextI18n"
+        message="Do not concatenate text displayed with `setText`. Use resource string with placeholders."
+        errorLine1="                        text = &quot;Step ${taskIndex + 1} of ${data.tasks.size}&quot;"
+        errorLine2="                                       ~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/chans/fourchan/Chan4Captcha.kt"
+            line="387"
+            column="40"/>
+    </issue>
+
+    <issue
+        id="SetTextI18n"
+        message="String literal in `setText` can not be translated. Use Android resources instead."
+        errorLine1="                        text = &quot;Step ${taskIndex + 1} of ${data.tasks.size}&quot;"
+        errorLine2="                                ~~~~~">
+        <location
+            file="src/dev/esoc/esochan/chans/fourchan/Chan4Captcha.kt"
+            line="387"
+            column="33"/>
+    </issue>
+
+    <issue
+        id="SetTextI18n"
+        message="String literal in `setText` can not be translated. Use Android resources instead."
+        errorLine1="                        text = &quot;Step ${taskIndex + 1} of ${data.tasks.size}&quot;"
+        errorLine2="                                                     ~~~~">
+        <location
+            file="src/dev/esoc/esochan/chans/fourchan/Chan4Captcha.kt"
+            line="387"
+            column="54"/>
+    </issue>
+
+    <issue
+        id="SetTextI18n"
+        message="Do not concatenate text displayed with `setText`. Use resource string with placeholders."
+        errorLine1="        myPath.setText(getText(R.string.filedialog_location) + &quot;: &quot; + currentPath);"
+        errorLine2="                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/lib/FileDialogActivity.java"
+            line="250"
+            column="24"/>
+    </issue>
+
+    <issue
+        id="SetTextI18n"
+        message="Do not concatenate text displayed with `setText`. Use resource string with placeholders."
+        errorLine1="                                        durationView.setText(&quot;00:00 / &quot; + formatMediaPlayerTime((int)duration));"
+        errorLine2="                                                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/gallery/GalleryActivity.java"
+            line="1085"
+            column="62"/>
+    </issue>
+
+    <issue
+        id="SetTextI18n"
+        message="String literal in `setText` can not be translated. Use Android resources instead."
+        errorLine1="                                        durationView.setText(&quot;00:00 / &quot; + formatMediaPlayerTime((int)duration));"
+        errorLine2="                                                             ~~~~~~~~~~">
+        <location
+            file="src/dev/esoc/esochan/ui/gallery/GalleryActivity.java"
+            line="1085"
+            column="62"/>
+    </issue>
+
+    <issue
+        id="SetTextI18n"
+        message="Do not concatenate text displayed with `setText`. Use resource string with placeholders."
+        errorLine1="                                                            durationView.setText(formatMediaPlayerTime((int)exoPlayer.getCurrentPosition()) + &quot; / &quot; +"
+        errorLine2="                                                                                 ^">
+        <location
+            file="src/dev/esoc/esochan/ui/gallery/GalleryActivity.java"
+            line="1095"
+            column="82"/>
+    </issue>
+
+</issues>
