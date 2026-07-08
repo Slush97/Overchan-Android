@@ -60,6 +60,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <attr name="actionAddAttachment" format="reference" />
         <attr name="actionAddGallery" format="reference" />
         <attr name="actionSave" format="reference" />
+
+        <attr name="iconTint" format="color|reference" />
+        <attr name="iconTintSecondary" format="color|reference" />
+        <attr name="iconTintOnPrimary" format="color|reference" />
     </declare-styleable>
     
 </resources>

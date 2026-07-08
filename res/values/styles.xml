@@ -63,6 +63,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <item name="actionAddAttachment">@drawable/ic_action_new_attachment_light</item>
         <item name="actionAddGallery">@drawable/ic_action_new_picture_light</item>
         <item name="actionSave">@drawable/ic_action_save_light</item>
+        <item name="iconTint">?android:attr/textColorPrimary</item>
+        <item name="iconTintSecondary">?attr/itemInfoForeground</item>
+        <item name="iconTintOnPrimary">?android:attr/textColorPrimary</item>
     </style>
     
     <style name="Theme_Dark_Base" parent="@style/Theme_Dark_Switch">
@@ -80,6 +83,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <item name="actionAddAttachment">@drawable/ic_action_new_attachment_dark</item>
         <item name="actionAddGallery">@drawable/ic_action_new_picture_dark</item>
         <item name="actionSave">@drawable/ic_action_save_dark</item>
+        <item name="iconTint">?android:attr/textColorPrimary</item>
+        <item name="iconTintSecondary">?attr/itemInfoForeground</item>
+        <item name="iconTintOnPrimary">?android:attr/textColorPrimary</item>
     </style>
     
     <style name="TextAppearance_Small.Small" parent="@android:style/TextAppearance.Small"> <item name="android:textSize">11sp</item> </style>
