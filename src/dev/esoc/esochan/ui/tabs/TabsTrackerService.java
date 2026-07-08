@@ -405,14 +405,14 @@ public class TabsTrackerService extends Service {
         }
         
         private NotificationCompat.Builder notifUpdate = new NotificationCompat.Builder(TabsTrackerService.this, "tabs_tracker").
-                setSmallIcon(R.drawable.ic_launcher).
+                setSmallIcon(R.mipmap.ic_launcher).
                 setCategory(NotificationCompat.CATEGORY_SERVICE).
                 setContentIntent(PendingIntent.getActivity(
                         TabsTrackerService.this, 0, new Intent(TabsTrackerService.this, MainActivity.class), PendingIntent.FLAG_CANCEL_CURRENT | PendingIntent.FLAG_IMMUTABLE));
         
         
         private NotificationCompat.Builder notifSubscription = new NotificationCompat.Builder(TabsTrackerService.this, "tabs_tracker").
-                setSmallIcon(R.drawable.ic_launcher).
+                setSmallIcon(R.mipmap.ic_launcher).
                 setDefaults(NotificationCompat.DEFAULT_ALL).
                 setOngoing(false).
                 setAutoCancel(true).

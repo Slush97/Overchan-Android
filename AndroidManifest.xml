@@ -38,7 +38,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         android:name="dev.esoc.esochan.common.MainApplication"
         android:allowBackup="true"
         android:supportsRtl="false"
-        android:icon="@drawable/ic_launcher"
+        android:icon="@mipmap/ic_launcher"
+        android:roundIcon="@mipmap/ic_launcher_round"
         android:label="@string/app_name" >
         
         <activity
