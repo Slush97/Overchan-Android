@@ -29,6 +29,7 @@ import dev.esoc.esochan.common.Async;
 import dev.esoc.esochan.common.MainApplication;
 import dev.esoc.esochan.ui.tabs.TabModel;
 import dev.esoc.esochan.ui.tabs.UrlHandler;
+import dev.esoc.esochan.ui.theme.ThemeUtils;
 import android.content.res.Resources;
 import android.os.Build;
 import android.os.Bundle;
@@ -107,7 +108,8 @@ public class HistoryFragment extends Fragment implements AdapterView.OnItemClick
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        menu.add(Menu.NONE, R.id.menu_clear_history, 101, R.string.menu_clear_history).setIcon(android.R.drawable.ic_menu_close_clear_cancel);
+        menu.add(Menu.NONE, R.id.menu_clear_history, 101, R.string.menu_clear_history).setIcon(
+                ThemeUtils.getTintedIcon(activity.getTheme(), activity.getResources(), R.drawable.ic_menu_clear, R.attr.iconTint));
     }
     
     @Override

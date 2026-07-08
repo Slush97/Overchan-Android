@@ -102,6 +102,27 @@ public class ThemeUtils {
             return null;
         }
     }
+
+    /**
+     * Получить значок (drawable) по прямому ID ресурса, перекрашенный в цвет указанного атрибута темы
+     * @param theme тема
+     * @param resources ресурсы
+     * @param drawableId id ресурса значка (R.drawable.[...])
+     * @param tintAttrId id атрибута цвета (R.attr.iconTint / iconTintSecondary / iconTintOnPrimary)
+     * @return объект Drawable со значком, или null, если не удалось получить
+     */
+    public static Drawable getTintedIcon(Theme theme, Resources resources, int drawableId, int tintAttrId) {
+        try {
+            Drawable drawable = ResourcesCompat.getDrawable(resources, drawableId, theme);
+            int color = getThemeColor(theme, tintAttrId, Color.TRANSPARENT);
+            if (color != Color.TRANSPARENT) {
+                drawable.setColorFilter(color, PorterDuff.Mode.SRC_ATOP);
+            }
+            return drawable;
+        } catch (Exception e) {
+            return null;
+        }
+    }
     
     /**
      * Объект, содержащий цвета, нужные при программной обработке (парсинг html, создание заголовков постов)

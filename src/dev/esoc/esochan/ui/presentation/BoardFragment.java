@@ -510,16 +510,19 @@ public class BoardFragment extends Fragment implements AdapterView.OnItemClickLi
         itemUpdate.setIcon(ThemeUtils.getActionbarIcon(activity.getTheme(), resources, R.attr.actionRefresh));
         itemAddPost.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
         itemUpdate.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
-        menu.add(Menu.NONE, R.id.menu_catalog, 103, resources.getString(R.string.menu_catalog)).setIcon(R.drawable.ic_menu_list);
-        menu.add(Menu.NONE, R.id.menu_search, 104, resources.getString(R.string.menu_search)).setIcon(android.R.drawable.ic_menu_search);
-        menu.add(Menu.NONE, R.id.menu_save_page, 105, resources.getString(R.string.menu_save_page)).setIcon(android.R.drawable.ic_menu_save);
+        menu.add(Menu.NONE, R.id.menu_catalog, 103, resources.getString(R.string.menu_catalog)).setIcon(
+                ThemeUtils.getTintedIcon(activity.getTheme(), resources, R.drawable.ic_menu_catalog, R.attr.iconTint));
+        menu.add(Menu.NONE, R.id.menu_search, 104, resources.getString(R.string.menu_search)).setIcon(
+                ThemeUtils.getTintedIcon(activity.getTheme(), resources, R.drawable.ic_menu_search, R.attr.iconTint));
+        menu.add(Menu.NONE, R.id.menu_save_page, 105, resources.getString(R.string.menu_save_page)).setIcon(
+                ThemeUtils.getTintedIcon(activity.getTheme(), resources, R.drawable.ic_action_save, R.attr.iconTint));
         menu.add(Menu.NONE, R.id.menu_download_all_images, 106,
                 resources.getString(R.string.menu_download_all_images))
                 .setIcon(ThemeUtils.getActionbarIcon(activity.getTheme(), resources, R.attr.actionSave));
-        menu.add(Menu.NONE, R.id.menu_board_gallery, 107, resources.getString(R.string.menu_board_gallery)).setIcon(android.R.drawable.
-                ic_menu_slideshow);
-        menu.add(Menu.NONE, R.id.menu_quickaccess_add, 108, resources.getString(R.string.menu_quickaccess_add)).setIcon(R.drawable.
-                ic_menu_add_bookmark);
+        menu.add(Menu.NONE, R.id.menu_board_gallery, 107, resources.getString(R.string.menu_board_gallery)).setIcon(
+                ThemeUtils.getTintedIcon(activity.getTheme(), resources, R.drawable.ic_menu_gallery, R.attr.iconTint));
+        menu.add(Menu.NONE, R.id.menu_quickaccess_add, 108, resources.getString(R.string.menu_quickaccess_add)).setIcon(
+                ThemeUtils.getTintedIcon(activity.getTheme(), resources, R.drawable.ic_menu_favorite, R.attr.iconTint));
         this.menu = menu;
         updateMenu();
     }

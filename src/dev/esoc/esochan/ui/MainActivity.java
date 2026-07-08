@@ -273,14 +273,18 @@ public class MainActivity extends AppCompatActivity {
         if (tabsAdapter != null && tabsAdapter.getSelectedItem() >= 0) {
             TabModel tab = tabsAdapter.getItem(tabsAdapter.getSelectedItem());
             if (canFavorite(tab)) {
-                menu.add(Menu.NONE, R.id.menu_favorites, 201, R.string.menu_add_favorites).setIcon(R.drawable.ic_menu_add_bookmark);
+                menu.add(Menu.NONE, R.id.menu_favorites, 201, R.string.menu_add_favorites).setIcon(
+                        ThemeUtils.getTintedIcon(getTheme(), getResources(), R.drawable.ic_menu_favorite, R.attr.iconTint));
             }
             if (tab.webUrl != null) {
-                menu.add(Menu.NONE, R.id.menu_open_browser, 202, R.string.menu_open_browser).setIcon(R.drawable.ic_menu_browser);
+                menu.add(Menu.NONE, R.id.menu_open_browser, 202, R.string.menu_open_browser).setIcon(
+                        ThemeUtils.getTintedIcon(getTheme(), getResources(), R.drawable.ic_menu_browser, R.attr.iconTint));
             }
         }
-        menu.add(Menu.NONE, R.id.menu_history, 200, R.string.tabs_history).setIcon(R.drawable.ic_menu_history);
-        menu.add(Menu.NONE, R.id.menu_settings, 203, R.string.menu_preferences).setIcon(R.drawable.ic_menu_settings);
+        menu.add(Menu.NONE, R.id.menu_history, 200, R.string.tabs_history).setIcon(
+                ThemeUtils.getTintedIcon(getTheme(), getResources(), R.drawable.ic_menu_history, R.attr.iconTint));
+        menu.add(Menu.NONE, R.id.menu_settings, 203, R.string.menu_preferences).setIcon(
+                ThemeUtils.getTintedIcon(getTheme(), getResources(), R.drawable.ic_menu_settings, R.attr.iconTint));
         return super.onCreateOptionsMenu(menu);
     }
     

@@ -28,6 +28,7 @@ import dev.esoc.esochan.common.MainApplication;
 import dev.esoc.esochan.ui.Database.FavoritesEntry;
 import dev.esoc.esochan.ui.settings.ApplicationSettings;
 import dev.esoc.esochan.ui.tabs.UrlHandler;
+import dev.esoc.esochan.ui.theme.ThemeUtils;
 
 import dev.esoc.esochan.common.Tuples.Pair;
 
@@ -96,7 +97,8 @@ public class FavoritesFragment extends Fragment implements AdapterView.OnItemCli
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        menu.add(Menu.NONE, R.id.menu_clear_favorites, 101, R.string.menu_clear_favorites).setIcon(android.R.drawable.ic_menu_close_clear_cancel);
+        menu.add(Menu.NONE, R.id.menu_clear_favorites, 101, R.string.menu_clear_favorites).setIcon(
+                ThemeUtils.getTintedIcon(activity.getTheme(), activity.getResources(), R.drawable.ic_menu_clear, R.attr.iconTint));
     }
     
     @Override

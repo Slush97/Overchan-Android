@@ -163,7 +163,7 @@ public class BoardsListFragment extends Fragment implements AdapterView.OnItemCl
             if (entry.boardName == null && entry.chan != null && entry.chan.getChanName().equals(chan.getChanName()))
                 return;
         menu.add(Menu.NONE, R.id.menu_quickaccess_add, 102, resources.getString(R.string.menu_quickaccess_add)).
-                setIcon(R.drawable.ic_menu_add_bookmark);
+                setIcon(ThemeUtils.getTintedIcon(activity.getTheme(), resources, R.drawable.ic_menu_favorite, R.attr.iconTint));
     }
     
     @Override

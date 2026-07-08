@@ -402,11 +402,16 @@ public class GalleryActivity extends AppCompatActivity implements View.OnClickLi
         itemSave.setIcon(ThemeUtils.getActionbarIcon(getTheme(), getResources(), R.attr.actionSave));
         itemUpdate.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
         itemSave.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
-        menu.add(Menu.NONE, R.id.menu_open_external, 3, R.string.menu_open).setIcon(R.drawable.ic_menu_set_as);
-        menu.add(Menu.NONE, R.id.menu_share, 4, R.string.menu_share).setIcon(android.R.drawable.ic_menu_share);
-        menu.add(Menu.NONE, R.id.menu_share_link, 5, R.string.menu_share_link).setIcon(android.R.drawable.ic_menu_share);
-        menu.add(Menu.NONE, R.id.menu_reverse_search, 6, R.string.menu_reverse_search).setIcon(android.R.drawable.ic_menu_search);
-        menu.add(Menu.NONE, R.id.menu_open_browser, 7, R.string.menu_open_browser).setIcon(R.drawable.ic_menu_browser);
+        menu.add(Menu.NONE, R.id.menu_open_external, 3, R.string.menu_open).setIcon(
+                ThemeUtils.getTintedIcon(getTheme(), getResources(), R.drawable.ic_menu_open_external, R.attr.iconTint));
+        menu.add(Menu.NONE, R.id.menu_share, 4, R.string.menu_share).setIcon(
+                ThemeUtils.getTintedIcon(getTheme(), getResources(), R.drawable.ic_menu_share, R.attr.iconTint));
+        menu.add(Menu.NONE, R.id.menu_share_link, 5, R.string.menu_share_link).setIcon(
+                ThemeUtils.getTintedIcon(getTheme(), getResources(), R.drawable.ic_menu_share, R.attr.iconTint));
+        menu.add(Menu.NONE, R.id.menu_reverse_search, 6, R.string.menu_reverse_search).setIcon(
+                ThemeUtils.getTintedIcon(getTheme(), getResources(), R.drawable.ic_menu_search, R.attr.iconTint));
+        menu.add(Menu.NONE, R.id.menu_open_browser, 7, R.string.menu_open_browser).setIcon(
+                ThemeUtils.getTintedIcon(getTheme(), getResources(), R.drawable.ic_menu_browser, R.attr.iconTint));
         updateMenu();
         
         return true;
