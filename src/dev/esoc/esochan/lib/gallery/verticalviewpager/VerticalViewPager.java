@@ -1790,6 +1790,7 @@ public class VerticalViewPager extends ViewGroup {
         return (y < mGutterSize && dy > 0) || (y > getHeight() - mGutterSize && dy < 0);
     }
 
+    @SuppressLint("WrongConstant") // ViewCompat.LAYER_TYPE_* values match the framework constants
     private void enableLayers(boolean enable) {
         final int childCount = getChildCount();
         for (int i = 0; i < childCount; i++) {
@@ -2734,6 +2735,7 @@ public class VerticalViewPager extends ViewGroup {
     }
 
     @Override
+    @SuppressLint("WrongConstant") // AccessibilityEventCompat.TYPE_VIEW_SCROLLED matches the framework constant
     public boolean dispatchPopulateAccessibilityEvent(AccessibilityEvent event) {
         // Dispatch scroll events from this VerticalViewPager.
         if (event.getEventType() == AccessibilityEventCompat.TYPE_VIEW_SCROLLED) {
@@ -2779,6 +2781,7 @@ public class VerticalViewPager extends ViewGroup {
     class MyAccessibilityDelegate extends AccessibilityDelegateCompat {
 
         @Override
+        @SuppressLint("WrongConstant") // AccessibilityEventCompat.TYPE_VIEW_SCROLLED matches the framework constant
         public void onInitializeAccessibilityEvent(View host, AccessibilityEvent event) {
             super.onInitializeAccessibilityEvent(host, event);
             event.setClassName(VerticalViewPager.class.getName());
