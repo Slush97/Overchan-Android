@@ -139,6 +139,7 @@ public class GalleryActivity extends AppCompatActivity implements View.OnClickLi
     private SparseArray<View> instantiatedViews;
     
     private BroadcastReceiver broadcastReceiver;
+    private BroadcastReceiver downloadReportReceiver;
     private ServiceConnection serviceConnection;
     private GalleryRemote remote;
     
@@ -329,10 +330,30 @@ public class GalleryActivity extends AppCompatActivity implements View.OnClickLi
     }
     
     @Override
+    protected void onStart() {
+        super.onStart();
+        downloadReportReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if (intent.getIntExtra(DownloadingService.EXTRA_DOWNLOADING_REPORT, DownloadingService.REPORT_NONE)
+                        == DownloadingService.REPORT_OK) {
+                    Toast.makeText(GalleryActivity.this, R.string.notification_download_saved, Toast.LENGTH_SHORT).show();
+                }
+            }
+        };
+        ContextCompat.registerReceiver(this, downloadReportReceiver,
+                new IntentFilter(DownloadingService.BROADCAST_UPDATED), ContextCompat.RECEIVER_NOT_EXPORTED);
+    }
+
+    @Override
     protected void onStop() {
         super.onStop();
         BroadcastReceiver receiver = broadcastReceiver;
         if (receiver != null) unregisterReceiver(receiver);
+        if (downloadReportReceiver != null) {
+            unregisterReceiver(downloadReportReceiver);
+            downloadReportReceiver = null;
+        }
     }
     
     @Override
@@ -463,6 +484,7 @@ public class GalleryActivity extends AppCompatActivity implements View.OnClickLi
                 Intent downloadIntent = new Intent(this, DownloadingService.class);
                 downloadIntent.putExtra(DownloadingService.EXTRA_DOWNLOADING_ITEM, queueItem);
                 startService(downloadIntent);
+                Toast.makeText(this, getString(R.string.notification_download_started, itemName), Toast.LENGTH_SHORT).show();
             }
         }
     }

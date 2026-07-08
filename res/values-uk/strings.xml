@@ -362,6 +362,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <string name="notification_comment_copied">Тест скопійовано до буферу</string>
     <string name="notification_download_already_in_queue">Завдання вже на черзі:\n%s</string>
     <string name="notification_download_already_exists">Файл існує:\n%s</string>
+    <string name="notification_download_started">Збереження %s</string>
+    <string name="notification_download_saved">Збережено в «Завантаження»</string>
     <string name="notification_download_exists_or_in_queue">Деякі файли вже звантажені або на черзі</string>
     <string name="notification_not_found">Не знайдено</string>
     <string name="notifacation_updating_now">Список оновлюється, спробуйте пізніше</string>
