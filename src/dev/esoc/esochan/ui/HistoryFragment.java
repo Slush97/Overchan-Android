@@ -86,7 +86,7 @@ public class HistoryFragment extends Fragment implements AdapterView.OnItemClick
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         activity.setTitle(R.string.tabs_history);
-        CompatibilityImpl.setActionBarDefaultIcon(activity);
+
         listView = (ListView) inflater.inflate(R.layout.history_fragment, container, false);
         listView.setOnItemClickListener(this);
         registerForContextMenu(listView);

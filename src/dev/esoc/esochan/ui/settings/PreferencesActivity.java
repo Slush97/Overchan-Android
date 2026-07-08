@@ -25,7 +25,6 @@ import dev.esoc.esochan.common.Async;
 import dev.esoc.esochan.common.Logger;
 import dev.esoc.esochan.common.MainApplication;
 import dev.esoc.esochan.ui.BoardsListFragment;
-import dev.esoc.esochan.ui.CompatibilityImpl;
 import dev.esoc.esochan.ui.NewTabFragment;
 import dev.esoc.esochan.ui.tabs.TabsTrackerService;
 import dev.esoc.esochan.ui.tabs.UrlHandler;
@@ -396,7 +395,7 @@ public class PreferencesActivity extends PreferenceActivity {
             PreferenceScreen curScreen = getPreferenceManager().createPreferenceScreen(this);
             curScreen.setTitle(chan.getDisplayingName());
             curScreen.setKey("chan_preference_screen_" + chan.getChanName());
-            CompatibilityImpl.setIcon(curScreen, chan.getChanFavicon());
+            curScreen.setIcon(chan.getChanFavicon());
             chansCat.addPreference(curScreen);
             chan.addPreferencesOnScreen(curScreen);
             ++visibleChansCount;

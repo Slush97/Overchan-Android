@@ -40,8 +40,8 @@ import dev.esoc.esochan.http.client.ExtendedHttpClient;
 import dev.esoc.esochan.http.streamer.HttpRequestModel;
 import dev.esoc.esochan.http.streamer.HttpStreamer;
 import dev.esoc.esochan.lib.FileDialogActivity;
-import dev.esoc.esochan.lib.org_json.JSONArray;
-import dev.esoc.esochan.ui.CompatibilityUtils;
+import org.json.JSONArray;
+import dev.esoc.esochan.ui.AppearanceUtils;
 
 public class CustomThemeListActivity extends ListActivity {
     private static final int REQUEST_CODE_SELECT_CUSTOM_THEME = 1;
@@ -111,7 +111,7 @@ public class CustomThemeListActivity extends ListActivity {
     @Override
     protected void onListItemClick(ListView l, View v, int position, long id) {
         if (position == 0) {
-            if (!CompatibilityUtils.hasAccessStorage(this)) return;
+            if (!AppearanceUtils.hasAccessStorage(this)) return;
             Intent selectFile = new Intent(this, FileDialogActivity.class);
             selectFile.putExtra(FileDialogActivity.CAN_SELECT_DIR, false);
             selectFile.putExtra(FileDialogActivity.START_PATH, MainApplication.getInstance().settings.getDownloadDirectory().getAbsolutePath());

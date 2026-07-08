@@ -50,7 +50,7 @@ import dev.esoc.esochan.common.MainApplication
 import dev.esoc.esochan.http.interactive.InteractiveException
 import dev.esoc.esochan.lib.FileDialogActivity
 import dev.esoc.esochan.lib.UriFileUtils
-import dev.esoc.esochan.ui.CompatibilityUtils
+import dev.esoc.esochan.ui.AppearanceUtils
 import java.io.File
 
 class PostFormFragment : BottomSheetDialogFragment() {
@@ -453,7 +453,7 @@ class PostFormFragment : BottomSheetDialogFragment() {
             Toast.makeText(requireContext(), R.string.postform_max_attachments, Toast.LENGTH_LONG).show()
             return
         }
-        if (!CompatibilityUtils.hasAccessStorage(requireActivity())) return
+        if (!AppearanceUtils.hasAccessStorage(requireActivity())) return
         val intent = Intent(requireContext(), FileDialogActivity::class.java).apply {
             putExtra(FileDialogActivity.CAN_SELECT_DIR, false)
             putExtra(FileDialogActivity.START_PATH, currentPath)
@@ -471,7 +471,7 @@ class PostFormFragment : BottomSheetDialogFragment() {
             Toast.makeText(requireContext(), R.string.postform_max_attachments, Toast.LENGTH_LONG).show()
             return
         }
-        if (!CompatibilityUtils.hasAccessStorage(requireActivity())) return
+        if (!AppearanceUtils.hasAccessStorage(requireActivity())) return
         val intent = Intent(Intent.ACTION_GET_CONTENT).apply { type = "image/*" }
         @Suppress("DEPRECATION")
         startActivityForResult(intent, REQUEST_CODE_ATTACH_GALLERY)

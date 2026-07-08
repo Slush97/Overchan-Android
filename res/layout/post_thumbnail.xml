@@ -26,8 +26,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         android:layout_width="@dimen/post_thumbnail_size"
         android:layout_height="@dimen/post_thumbnail_size"
         android:layout_gravity="center"
-        android:adjustViewBounds="true"
-        android:scaleType="centerInside"
+        android:adjustViewBounds="false"
+        android:scaleType="fitXY"
         android:contentDescription="@string/postitem_contentdescription_thumbnail_image"
         android:visibility="visible" />
 

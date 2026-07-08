@@ -95,7 +95,7 @@ public class NewTabFragment extends Fragment implements AdapterView.OnItemClickL
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         activity.setTitle(R.string.tabs_newtab);
-        CompatibilityImpl.setActionBarDefaultIcon(activity);
+
         binding = NewtabFragmentBinding.inflate(inflater, container, false);
         View v = binding.getRoot();
         listView = (DragSortListView) v.findViewById(android.R.id.list);
@@ -234,7 +234,7 @@ public class NewTabFragment extends Fragment implements AdapterView.OnItemClickL
     }
     
     private void openLocal() {
-        if (!CompatibilityUtils.hasAccessStorage(activity)) return;
+        if (!AppearanceUtils.hasAccessStorage(activity)) return;
         final ListAdapter savedThreadsAdapter = new ArrayAdapter<Object>(activity, 0) {
             private static final int HEAD_ITEM = 0;
             private static final int NORMAL_ITEM = 1;

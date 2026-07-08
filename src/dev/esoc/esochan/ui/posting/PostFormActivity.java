@@ -38,8 +38,7 @@ import dev.esoc.esochan.http.interactive.InteractiveException;
 import dev.esoc.esochan.lib.FileDialogActivity;
 import dev.esoc.esochan.lib.UriFileUtils;
 import dev.esoc.esochan.ui.downloading.DownloadStorage;
-import dev.esoc.esochan.ui.CompatibilityImpl;
-import dev.esoc.esochan.ui.CompatibilityUtils;
+import dev.esoc.esochan.ui.AppearanceUtils;
 import dev.esoc.esochan.ui.settings.ApplicationSettings;
 import dev.esoc.esochan.ui.theme.ThemeUtils;
 import android.annotation.SuppressLint;
@@ -176,8 +175,6 @@ public class PostFormActivity extends Activity implements View.OnClickListener {
         }
         chan = MainApplication.getInstance().getChanModule(sendPostModel.chanName);
         setTitle(sendPostModel.threadNumber == null ? R.string.postform_title_thread : R.string.postform_title_post);
-        if (chan != null)
-            CompatibilityImpl.setActionBarCustomFavicon(this, chan.getChanFavicon());
         setViews();
         readSendPostModel();
         
@@ -243,8 +240,8 @@ public class PostFormActivity extends Activity implements View.OnClickListener {
         MenuItem itemGallery = menu.add(Menu.NONE, R.id.menu_attach_gallery, 2, R.string.menu_attach_gallery);
         itemAttach.setIcon(ThemeUtils.getActionbarIcon(getTheme(), getResources(), R.attr.actionAddAttachment));
         itemGallery.setIcon(ThemeUtils.getActionbarIcon(getTheme(), getResources(), R.attr.actionAddGallery));
-        CompatibilityImpl.setShowAsActionIfRoom(itemAttach);
-        CompatibilityImpl.setShowAsActionIfRoom(itemGallery);
+        itemAttach.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+        itemGallery.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
         return super.onCreateOptionsMenu(menu);
     }
     
@@ -257,7 +254,7 @@ public class PostFormActivity extends Activity implements View.OnClickListener {
                     Toast.makeText(this, getString(R.string.postform_max_attachments), Toast.LENGTH_LONG).show();
                     return true;
                 }
-                if (!CompatibilityUtils.hasAccessStorage(this)) return true;
+                if (!AppearanceUtils.hasAccessStorage(this)) return true;
                 Intent selectFile = new Intent(this, FileDialogActivity.class);
                 selectFile.putExtra(FileDialogActivity.CAN_SELECT_DIR, false);
                 selectFile.putExtra(FileDialogActivity.START_PATH, currentPath);
@@ -272,7 +269,7 @@ public class PostFormActivity extends Activity implements View.OnClickListener {
                     Toast.makeText(this, getString(R.string.postform_max_attachments), Toast.LENGTH_LONG).show();
                     return true;
                 }
-                if (!CompatibilityUtils.hasAccessStorage(this)) return true;
+                if (!AppearanceUtils.hasAccessStorage(this)) return true;
                 Intent i = new Intent(Intent.ACTION_GET_CONTENT);
                 i.setType("image/*");
                 startActivityForResult(i, REQUEST_CODE_ATTACH_GALLERY);

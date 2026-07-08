@@ -19,6 +19,8 @@
 package dev.esoc.esochan.ui;
 
 import java.io.Serializable;
+import java.lang.reflect.Field;
+import java.util.Collections;
 
 import dev.esoc.esochan.R;
 import dev.esoc.esochan.api.ChanModule;
@@ -27,6 +29,7 @@ import dev.esoc.esochan.common.Async;
 import dev.esoc.esochan.common.Logger;
 import dev.esoc.esochan.common.MainApplication;
 import dev.esoc.esochan.http.client.ExtendedTrustManager;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import dev.esoc.esochan.lib.dslv.DragSortController;
@@ -57,10 +60,15 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import androidx.core.content.ContextCompat;
+import androidx.core.graphics.Insets;
 import androidx.core.view.GravityCompat;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+import androidx.customview.widget.ViewDragHelper;
 import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import android.graphics.Point;
+import android.graphics.Rect;
 import android.os.Build;
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
@@ -85,6 +93,8 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
     
     private static final int DRAWER_GRAVITY = GravityCompat.START;
+    private static final int DRAWER_SYSTEM_GESTURE_FALLBACK_DP = 24;
+    private static final int DRAWER_SWIPE_EDGE_DP = 72;
     
     private NotificationManager notificationManager;
     private BroadcastReceiver broadcastReceiver;
@@ -106,6 +116,8 @@ public class MainActivity extends AppCompatActivity {
     
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
+    private final Rect drawerGestureExclusionRect = new Rect();
+    private boolean drawerSwipeEdgeConfigFailed = false;
     
     private HiddenTabsSection hiddenTabsSection = null;
     
@@ -118,17 +130,48 @@ public class MainActivity extends AppCompatActivity {
             public void onDrawerClosed(View drawerView) {
                 super.onDrawerClosed(drawerView);
                 if (tabsAdapter != null) tabsAdapter.setDraggingItem(-1);
+                updateDrawerGestureConfiguration();
+            }
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+                updateDrawerGestureConfiguration();
             }
             @Override
             public void onDrawerSlide(View drawerView, float slideOffset) {
                 super.onDrawerSlide(drawerView, slideOffset);
-                CompatibilityImpl.showActionBar(MainActivity.this);
+                showActionBar();
             }
         };
-        drawerLayout.setDrawerListener(drawerToggle);
+        drawerLayout.addDrawerListener(drawerToggle);
+        drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, DRAWER_GRAVITY);
+        drawerLayout.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+            @Override
+            public void onLayoutChange(View v, int left, int top, int right, int bottom,
+                    int oldLeft, int oldTop, int oldRight, int oldBottom) {
+                updateDrawerGestureConfiguration();
+            }
+        });
+        drawerLayout.post(new Runnable() {
+            @Override
+            public void run() {
+                updateDrawerGestureConfiguration();
+            }
+        });
         
         drawerLayout.setDrawerShadow(R.drawable.drawer_shadow, DRAWER_GRAVITY);
-        CompatibilityImpl.activeActionBar(this);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setHomeButtonEnabled(true);
+        }
+    }
+    
+    private boolean showActionBar() {
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar == null || actionBar.isShowing()) return false;
+        actionBar.show();
+        return true;
     }
     
     private void openDrawer() {
@@ -137,6 +180,71 @@ public class MainActivity extends AppCompatActivity {
     
     private void closeDrawer() {
         if (drawerLayout != null) drawerLayout.closeDrawers();
+    }
+    
+    private int dpToPx(int dp) {
+        return (int) (dp * getResources().getDisplayMetrics().density + 0.5f);
+    }
+    
+    private void updateDrawerGestureConfiguration() {
+        if (drawerLayout == null) return;
+        int systemGestureInset = getDrawerSystemGestureInset();
+        int appSwipeEdgeSize = dpToPx(DRAWER_SWIPE_EDGE_DP);
+        setDrawerSwipeEdgeSize(drawerLayout, Math.max(appSwipeEdgeSize, systemGestureInset + appSwipeEdgeSize));
+        updateDrawerSystemGestureExclusion(systemGestureInset);
+    }
+    
+    private int getDrawerSystemGestureInset() {
+        if (drawerLayout == null) return 0;
+        WindowInsetsCompat insets = ViewCompat.getRootWindowInsets(drawerLayout);
+        int systemGestureInset = 0;
+        if (insets != null) {
+            Insets systemGestureInsets = insets.getSystemGestureInsets();
+            systemGestureInset = isDrawerOnLeft() ? systemGestureInsets.left : systemGestureInsets.right;
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            systemGestureInset = Math.max(systemGestureInset, dpToPx(DRAWER_SYSTEM_GESTURE_FALLBACK_DP));
+        }
+        return systemGestureInset;
+    }
+    
+    private boolean isDrawerOnLeft() {
+        return ViewCompat.getLayoutDirection(drawerLayout) != ViewCompat.LAYOUT_DIRECTION_RTL;
+    }
+    
+    private void updateDrawerSystemGestureExclusion(int systemGestureInset) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q || drawerLayout == null) return;
+        if (systemGestureInset <= 0 || drawerLayout.isDrawerOpen(DRAWER_GRAVITY)) {
+            drawerLayout.setSystemGestureExclusionRects(Collections.<Rect>emptyList());
+            return;
+        }
+        int exclusionWidth = Math.min(systemGestureInset, drawerLayout.getWidth());
+        if (isDrawerOnLeft()) {
+            drawerGestureExclusionRect.set(0, 0, exclusionWidth, drawerLayout.getHeight());
+        } else {
+            drawerGestureExclusionRect.set(drawerLayout.getWidth() - exclusionWidth, 0,
+                    drawerLayout.getWidth(), drawerLayout.getHeight());
+        }
+        drawerLayout.setSystemGestureExclusionRects(Collections.singletonList(drawerGestureExclusionRect));
+    }
+    
+    private void setDrawerSwipeEdgeSize(DrawerLayout drawerLayout, int edgeSizePx) {
+        setDrawerSwipeEdgeSize(drawerLayout, "mLeftDragger", edgeSizePx);
+        setDrawerSwipeEdgeSize(drawerLayout, "mRightDragger", edgeSizePx);
+    }
+    
+    private void setDrawerSwipeEdgeSize(DrawerLayout drawerLayout, String draggerFieldName, int edgeSizePx) {
+        try {
+            Field draggerField = DrawerLayout.class.getDeclaredField(draggerFieldName);
+            draggerField.setAccessible(true);
+            ViewDragHelper dragger = (ViewDragHelper) draggerField.get(drawerLayout);
+            if (dragger != null && dragger.getEdgeSize() < edgeSizePx) dragger.setEdgeSize(edgeSizePx);
+        } catch (Exception e) {
+            if (!drawerSwipeEdgeConfigFailed) {
+                drawerSwipeEdgeConfigFailed = true;
+                Logger.e(TAG, "cannot adjust drawer swipe edge", e);
+            }
+        }
     }
     
     public void setDrawerLock(int lockMode) {
@@ -179,7 +287,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         MenuItem drawerMenuItem = menu.findItem(R.id.menu_open_close_drawer); 
-        if (drawerMenuItem != null) {
+        if (drawerMenuItem != null && drawerLayout != null) {
             drawerMenuItem.setTitle(drawerLayout.isDrawerOpen(DRAWER_GRAVITY) ? R.string.menu_close_drawer : R.string.menu_open_drawer);
         }
         MenuItem favoritesMenuItem = menu.findItem(R.id.menu_favorites);
@@ -229,6 +337,7 @@ public class MainActivity extends AppCompatActivity {
                 this.startActivity(preferencesIntent);
                 return true;
             case R.id.menu_open_close_drawer:
+                if (drawerLayout == null) return false;
                 if (drawerLayout.isDrawerOpen(DRAWER_GRAVITY)) {
                     closeDrawer();
                 } else {

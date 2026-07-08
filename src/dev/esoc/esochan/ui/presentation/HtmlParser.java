@@ -19,7 +19,7 @@
 package dev.esoc.esochan.ui.presentation;
 
 import android.graphics.Color;
-import dev.esoc.esochan.ui.CompatibilityUtils;
+
 import dev.esoc.esochan.ui.presentation.ClickableURLSpan.URLSpanClickListener;
 import dev.esoc.esochan.ui.theme.ThemeUtils;
 import dev.esoc.esochan.ui.theme.ThemeUtils.ThemeColors;
@@ -496,7 +496,7 @@ class HtmlToSpannedConverter implements NodeVisitor {
                     String name = f.mColor.substring(1);
                     int colorRes = res.getIdentifier(name, "color", "android");
                     if (colorRes != 0) {
-                        ColorStateList colors = CompatibilityUtils.getColorStateList(res, colorRes);
+                        ColorStateList colors = res.getColorStateList(colorRes, null);
                         text.setSpan(new TextAppearanceSpan(null, 0, 0, colors, null), where, len, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                     }
                 } else {

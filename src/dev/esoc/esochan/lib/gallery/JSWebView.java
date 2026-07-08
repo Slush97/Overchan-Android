@@ -18,7 +18,6 @@ import android.os.Build;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import dev.esoc.esochan.ui.AppearanceUtils;
-import dev.esoc.esochan.ui.CompatibilityImpl;
 
 public class JSWebView {
     private static final String TEMPLATE =
@@ -95,7 +94,7 @@ public class JSWebView {
         
         webView.setBackgroundColor(Color.TRANSPARENT);
         webView.setScrollBarStyle(WebView.SCROLLBARS_OUTSIDE_OVERLAY);
-        CompatibilityImpl.setScrollbarFadingEnabled(webView, true);
+        webView.setScrollbarFadingEnabled(true);
         
         WebSettings settings = webView.getSettings();
         settings.setJavaScriptEnabled(true);
@@ -104,7 +103,7 @@ public class JSWebView {
         settings.setAllowFileAccess(true);
         settings.setUseWideViewPort(true);
         settings.setCacheMode(WebSettings.LOAD_NO_CACHE);
-        CompatibilityImpl.setBlockNetworkLoads(settings, true);
+        settings.setBlockNetworkLoads(true);
         
         Runnable setup = new Runnable() {
             @Override

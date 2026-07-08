@@ -156,7 +156,7 @@ public class BoardsListFragment extends Fragment implements AdapterView.OnItemCl
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         MenuItem itemUpdate = menu.add(Menu.NONE, R.id.menu_update, 101, resources.getString(R.string.menu_update));
         itemUpdate.setIcon(ThemeUtils.getActionbarIcon(activity.getTheme(), resources, R.attr.actionRefresh));
-        CompatibilityImpl.setShowAsActionIfRoom(itemUpdate);
+        itemUpdate.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
         
         if (quickAccessList == null) return;
         for (QuickAccess.Entry entry : quickAccessList)
@@ -214,7 +214,7 @@ public class BoardsListFragment extends Fragment implements AdapterView.OnItemCl
         buttonGo = binding.boardslistBtnGo;
         buttonGo.setOnClickListener(this);
         activity.setTitle(chan.getDisplayingName());
-        CompatibilityImpl.setActionBarCustomFavicon(activity, chan.getChanFavicon());
+
         update(false);
         return rootView;
     }

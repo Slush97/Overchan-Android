@@ -34,7 +34,7 @@ import dev.esoc.esochan.http.streamer.HttpResponseModel;
 import dev.esoc.esochan.http.streamer.HttpStreamer;
 import android.util.Base64;
 import dev.esoc.esochan.ui.AppearanceUtils;
-import dev.esoc.esochan.ui.CompatibilityUtils;
+
 
 import dev.esoc.esochan.common.Tuples.Pair;
 import dev.esoc.esochan.http.HttpHeader;
@@ -156,7 +156,7 @@ public class Recaptcha2fallback extends InteractiveException {
                             if (message != null) {
                                 TextView textView = new TextView(activity);
                                 textView.setText(message);
-                                CompatibilityUtils.setTextAppearance(textView, android.R.style.TextAppearance);
+                                textView.setTextAppearance(android.R.style.TextAppearance);
                                 textView.setLayoutParams(new LinearLayout.LayoutParams(
                                         LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
                                 rootLayout.addView(textView);

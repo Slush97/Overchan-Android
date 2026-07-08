@@ -14,6 +14,8 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.widget.TextView;
 
+import androidx.appcompat.widget.AppCompatTextView;
+
 /**
  * Исправленный TextView, корректно работающий с Spanned текстом со ссылками и поддерживает выделение текста.
  * Класс взят из проекта 2ch Browser, с минимальными изменениями.
@@ -22,7 +24,7 @@ import android.widget.TextView;
  * 
  */
 //The TextView that handles correctly clickable spans.
-public class ClickableLinksTextView extends JellyBeanSpanFixTextView {
+public class ClickableLinksTextView extends AppCompatTextView {
     public static final String TAG = "ClickableLinksTextView";
 
     private boolean mBaseEditorCopied = false;

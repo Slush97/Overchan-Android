@@ -48,7 +48,6 @@ import dev.esoc.esochan.lib.gallery.verticalviewpager.VerticalViewPagerFixed;
 import dev.esoc.esochan.lib.gifdrawable.GifDrawable;
 import dev.esoc.esochan.ui.AppearanceUtils;
 import dev.esoc.esochan.ui.Attachments;
-import dev.esoc.esochan.ui.CompatibilityImpl;
 import dev.esoc.esochan.ui.ReverseImageSearch;
 import dev.esoc.esochan.ui.downloading.DownloadStorage;
 import dev.esoc.esochan.ui.downloading.DownloadingService;
@@ -57,6 +56,7 @@ import dev.esoc.esochan.ui.settings.ApplicationSettings;
 import dev.esoc.esochan.ui.tabs.UrlHandler;
 import dev.esoc.esochan.ui.theme.ThemeUtils;
 import android.annotation.SuppressLint;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -229,7 +229,8 @@ public class GalleryActivity extends AppCompatActivity implements View.OnClickLi
                 new ApplicationSettings(PreferenceManager.getDefaultSharedPreferences(getApplication()), getResources()));
         settings.getTheme().setTo(this, R.style.Transparent);
         super.onCreate(savedInstanceState);
-        CompatibilityImpl.setActionBarNoIcon(this);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) actionBar.setDisplayShowHomeEnabled(false);
         
         inflater = getLayoutInflater();
         instantiatedViews = new SparseArray<View>();
@@ -399,8 +400,8 @@ public class GalleryActivity extends AppCompatActivity implements View.OnClickLi
         MenuItem itemSave = menu.add(Menu.NONE, R.id.menu_save_attachment, 2, R.string.menu_save_attachment);
         itemUpdate.setIcon(ThemeUtils.getActionbarIcon(getTheme(), getResources(), R.attr.actionRefresh));
         itemSave.setIcon(ThemeUtils.getActionbarIcon(getTheme(), getResources(), R.attr.actionSave));
-        CompatibilityImpl.setShowAsActionIfRoom(itemUpdate);
-        CompatibilityImpl.setShowAsActionIfRoom(itemSave);
+        itemUpdate.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+        itemSave.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
         menu.add(Menu.NONE, R.id.menu_open_external, 3, R.string.menu_open).setIcon(R.drawable.ic_menu_set_as);
         menu.add(Menu.NONE, R.id.menu_share, 4, R.string.menu_share).setIcon(android.R.drawable.ic_menu_share);
         menu.add(Menu.NONE, R.id.menu_share_link, 5, R.string.menu_share_link).setIcon(android.R.drawable.ic_menu_share);
@@ -1280,18 +1281,18 @@ public class GalleryActivity extends AppCompatActivity implements View.OnClickLi
                 webView.setBackgroundColor(Color.TRANSPARENT);
                 webView.setInitialScale(100);
                 webView.setScrollBarStyle(WebView.SCROLLBARS_OUTSIDE_OVERLAY);
-                CompatibilityImpl.setScrollbarFadingEnabled(webView, true);
+                webView.setScrollbarFadingEnabled(true);
 
                 WebSettings settings = webView.getSettings();
                 settings.setBuiltInZoomControls(true);
                 settings.setSupportZoom(true);
                 settings.setAllowFileAccess(true);
-                CompatibilityImpl.setDefaultZoomFAR(settings);
-                CompatibilityImpl.setLoadWithOverviewMode(settings, true);
+                settings.setDefaultZoom(WebSettings.ZoomDensity.FAR);
+                settings.setLoadWithOverviewMode(true);
                 settings.setUseWideViewPort(true);
                 settings.setCacheMode(WebSettings.LOAD_NO_CACHE);
 
-                CompatibilityImpl.setBlockNetworkLoads(settings, true);
+                settings.setBlockNetworkLoads(true);
                 
                 setScaleWebView(webView);
             }
@@ -1325,11 +1326,11 @@ public class GalleryActivity extends AppCompatActivity implements View.OnClickLi
                 //Logger.d(TAG, "Scale: "+(Math.min(scaleX, scaleY) * 100d));
                 double picdpi = (getResources().getDisplayMetrics().density * 160d) / scaleX;
                 if (picdpi >= 240) {
-                    CompatibilityImpl.setDefaultZoomFAR(webView.getSettings());
+                    webView.getSettings().setDefaultZoom(WebSettings.ZoomDensity.FAR);
                 } else if (picdpi <= 120) {
-                    CompatibilityImpl.setDefaultZoomCLOSE(webView.getSettings());
+                    webView.getSettings().setDefaultZoom(WebSettings.ZoomDensity.CLOSE);
                 } else {
-                    CompatibilityImpl.setDefaultZoomMEDIUM(webView.getSettings());
+                    webView.getSettings().setDefaultZoom(WebSettings.ZoomDensity.MEDIUM);
                 }
                 
                 webView.setInitialScale(scale);

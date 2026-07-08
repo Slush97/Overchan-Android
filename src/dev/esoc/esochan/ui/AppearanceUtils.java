@@ -18,10 +18,18 @@
 
 package dev.esoc.esochan.ui;
 
+import android.app.Activity;
+import android.content.pm.PackageManager;
 import android.graphics.Point;
+import android.graphics.drawable.Drawable;
+import android.os.Build;
+import android.view.ActionMode;
 import android.view.Display;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewTreeObserver;
+import android.widget.TextView;
 
 public class AppearanceUtils {
     private AppearanceUtils(){}
@@ -30,7 +38,7 @@ public class AppearanceUtils {
         view.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
-                CompatibilityUtils.removeOnGlobalLayoutListener(view, this);
+                view.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                 runnable.run();
             }
         });
@@ -38,7 +46,60 @@ public class AppearanceUtils {
     
     public static Point getDisplaySize(Display display) {
         Point size = new Point();
-        CompatibilityUtils.getDisplaySize(display, size);
+        display.getSize(size);
         return size;
+    }
+
+    public static boolean hasAccessStorage(Activity activity) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            return true;
+        }
+        if (activity.checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            activity.requestPermissions(new String[] { android.Manifest.permission.WRITE_EXTERNAL_STORAGE }, 0);
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    public static interface CustomSelectionActionModeCallback {
+        void onCreate();
+        void onClick();
+        void onDestroy();
+    }
+
+    public static void setCustomSelectionActionModeMenuCallback(TextView textView, final int titleRes, final Drawable icon,
+            final CustomSelectionActionModeCallback callback) {
+        textView.setCustomSelectionActionModeCallback(new ActionMode.Callback() {
+            @Override
+            public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+                try {
+                    callback.onCreate();
+                    MenuItem item = menu.add(Menu.NONE, 1, Menu.FIRST, titleRes).setIcon(icon);
+                    item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+                    menu.removeItem(android.R.id.selectAll);
+                    return true;
+                } catch (Exception e) {
+                    return false;
+                }
+            }
+            @Override
+            public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+                return false;
+            }
+            @Override
+            public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+                if (item.getItemId() == 1) {
+                    callback.onClick();
+                    mode.finish();
+                    return true;
+                }
+                return false;
+            }
+            @Override
+            public void onDestroyActionMode(ActionMode mode) {
+                callback.onDestroy();
+            }
+        });
     }
 }

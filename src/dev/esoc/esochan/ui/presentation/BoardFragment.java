@@ -35,6 +35,7 @@ import java.util.concurrent.Executors;
 
 import dev.esoc.esochan.common.Tuples.Triple;
 
+import android.Manifest;
 import dev.esoc.esochan.R;
 import dev.esoc.esochan.databinding.BoardFragmentBinding;
 import dev.esoc.esochan.api.ChanModule;
@@ -58,20 +59,18 @@ import dev.esoc.esochan.containers.ReadableContainer;
 import dev.esoc.esochan.http.interactive.InteractiveException;
 import dev.esoc.esochan.lib.ClickableLinksTextView;
 import dev.esoc.esochan.lib.ClickableToast;
-import dev.esoc.esochan.lib.JellyBeanSpanFixTextView;
+import androidx.appcompat.widget.AppCompatTextView;
 import dev.esoc.esochan.lib.SwipeDismissListViewTouchListener;
-import dev.esoc.esochan.lib.pullable_layout.SwipeRefreshLayout;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import dev.esoc.esochan.ui.AppearanceUtils;
 import dev.esoc.esochan.ui.Attachments;
 import dev.esoc.esochan.ui.BoardsListFragment;
 import dev.esoc.esochan.ui.posting.PostFormFragment;
 import dev.esoc.esochan.ui.Clipboard;
-import dev.esoc.esochan.ui.CompatibilityImpl;
 import dev.esoc.esochan.ui.Database;
 import dev.esoc.esochan.ui.MainActivity;
 import dev.esoc.esochan.ui.QuickAccess;
 import dev.esoc.esochan.ui.ReverseImageSearch;
-import dev.esoc.esochan.ui.CompatibilityUtils;
 import dev.esoc.esochan.ui.downloading.DownloadStorage;
 import dev.esoc.esochan.ui.downloading.DownloadingService;
 import dev.esoc.esochan.ui.gallery.GalleryActivity;
@@ -97,12 +96,14 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.os.Build;
 import android.os.Bundle;
+import androidx.appcompat.app.ActionBar;
 import androidx.fragment.app.Fragment;
 import androidx.drawerlayout.widget.DrawerLayout;
 import android.text.Editable;
@@ -125,6 +126,7 @@ import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.ContextThemeWrapper;
 import android.view.Gravity;
+import android.view.ActionMode;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -393,7 +395,6 @@ public class BoardFragment extends Fragment implements AdapterView.OnItemClickLi
         floatingModels = measureFloatingModels(inflater);
         
         activity.setTitle(tabModel.title);
-        CompatibilityImpl.setActionBarCustomFavicon(activity, chan.getChanFavicon());
 
         viewModel.getUiState().observe(getViewLifecycleOwner(), state -> {
             if (state instanceof BoardUiState.Loading) {
@@ -437,7 +438,6 @@ public class BoardFragment extends Fragment implements AdapterView.OnItemClickLi
         }
         if (pullableLayout != null) {
             pullableLayout.setOnRefreshListener(null);
-            pullableLayout.setOnEdgeReachedListener(null);
         }
         
         if (tabModel != null && tabModel.type == TabModel.TYPE_LOCAL) {
@@ -451,6 +451,29 @@ public class BoardFragment extends Fragment implements AdapterView.OnItemClickLi
         imagesDownloadExecutor.shutdown();
         
         if (tabModel != null) dialogs.onDestroyFragment(tabModel.id);
+    }
+    
+    private boolean hideActionBar() {
+        ActionBar actionBar = activity.getSupportActionBar();
+        if (actionBar == null || !actionBar.isShowing()) return false;
+        actionBar.hide();
+        return true;
+    }
+    
+    private boolean showActionBar() {
+        ActionBar actionBar = activity.getSupportActionBar();
+        if (actionBar == null || actionBar.isShowing()) return false;
+        actionBar.show();
+        return true;
+    }
+    
+    private boolean hasAccessStorage() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) return true;
+        if (activity.checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            activity.requestPermissions(new String[] { Manifest.permission.WRITE_EXTERNAL_STORAGE }, 0);
+            return false;
+        }
+        return true;
     }
     
     private void saveHistory() {
@@ -485,8 +508,8 @@ public class BoardFragment extends Fragment implements AdapterView.OnItemClickLi
                 resources.getString(tabModel.type != TabModel.TYPE_LOCAL ? R.string.menu_update : R.string.menu_from_internet));
         itemAddPost.setIcon(ThemeUtils.getActionbarIcon(activity.getTheme(), resources, R.attr.actionAddPost));
         itemUpdate.setIcon(ThemeUtils.getActionbarIcon(activity.getTheme(), resources, R.attr.actionRefresh));
-        CompatibilityImpl.setShowAsActionIfRoom(itemAddPost);
-        CompatibilityImpl.setShowAsActionIfRoom(itemUpdate);
+        itemAddPost.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+        itemUpdate.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
         menu.add(Menu.NONE, R.id.menu_catalog, 103, resources.getString(R.string.menu_catalog)).setIcon(R.drawable.ic_menu_list);
         menu.add(Menu.NONE, R.id.menu_search, 104, resources.getString(R.string.menu_search)).setIcon(android.R.drawable.ic_menu_search);
         menu.add(Menu.NONE, R.id.menu_save_page, 105, resources.getString(R.string.menu_save_page)).setIcon(android.R.drawable.ic_menu_save);
@@ -928,7 +951,7 @@ public class BoardFragment extends Fragment implements AdapterView.OnItemClickLi
     public void onPause() {
         super.onPause();
         activity.setDrawerLock(DrawerLayout.LOCK_MODE_UNLOCKED);
-        CompatibilityImpl.showActionBar(activity);
+        showActionBar();
         saveCurrentPostPosition();
     }
     
@@ -1497,12 +1520,12 @@ public class BoardFragment extends Fragment implements AdapterView.OnItemClickLi
                             long currentTime = System.currentTimeMillis();
                             if (top || currentTime - lastActionTime > 1000) {
                                 if (currentTopDelta < -maxTopDelta) {
-                                    if (CompatibilityImpl.hideActionBar(activity)) {
+                                    if (hideActionBar()) {
                                         lastActionTime = currentTime;
                                         currentTopDelta = 0;
                                     }
                                 } else if (top || currentTopDelta > maxTopDelta) {
-                                    if (CompatibilityImpl.showActionBar(activity)) {
+                                    if (showActionBar()) {
                                         lastActionTime = currentTime;
                                         currentTopDelta = 0;
                                     }
@@ -1517,12 +1540,6 @@ public class BoardFragment extends Fragment implements AdapterView.OnItemClickLi
                         private int currentTopDelta = 0;
                         private int maxTopDelta = (int) (resources.getDisplayMetrics().density * 24 + 0.5f);
                         private long lastActionTime = System.currentTimeMillis();
-                    });
-                    pullableLayout.setOnEdgeReachedListener(new SwipeRefreshLayout.OnEdgeReachedListener() {
-                        @Override
-                        public void onEdgeReached() {
-                            adapter.setBusy(false);
-                        }
                     });
                 switchToListView();
                 updateMenu();
@@ -1692,7 +1709,7 @@ public class BoardFragment extends Fragment implements AdapterView.OnItemClickLi
             public View unreadFrame;
             public boolean unreadFrameIsVisible = false;
             
-            public JellyBeanSpanFixTextView headerView;
+            public AppCompatTextView headerView;
             public TextView stickyClosedThreadView;
             public boolean stickyClosedThreadIsVisible = false;
             public View deletedPostView;
@@ -1722,7 +1739,7 @@ public class BoardFragment extends Fragment implements AdapterView.OnItemClickLi
             
             public TextView showFullTextView;
             public boolean showFullTextIsVisible = false;
-            public JellyBeanSpanFixTextView repliesView;
+            public AppCompatTextView repliesView;
             public boolean repliesIsVisible = false;
             public View replyButton;
             public TextView postsCountView;
@@ -1879,7 +1896,7 @@ public class BoardFragment extends Fragment implements AdapterView.OnItemClickLi
                 tag.unreadFrame = view.findViewById(R.id.post_frame_unread);
                 tag.unreadFrame.setOnClickListener(onUnreadFrameListener);
                 tag.unreadFrame.setOnLongClickListener(onUnreadFrameListener);
-                tag.headerView = (JellyBeanSpanFixTextView) view.findViewById(R.id.post_header);
+                tag.headerView = (AppCompatTextView) view.findViewById(R.id.post_header);
                 tag.stickyClosedThreadView = (TextView) view.findViewById(R.id.post_sticky_closed_thread);
                 tag.deletedPostView = view.findViewById(R.id.post_deleted_mark);
                 tag.dateView = (TextView) view.findViewById(R.id.post_date);
@@ -1889,7 +1906,7 @@ public class BoardFragment extends Fragment implements AdapterView.OnItemClickLi
                 tag.singleThumbnailView = view.findViewById(R.id.post_thumbnail);
                 tag.commentView = (ClickableLinksTextView) view.findViewById(R.id.post_comment);
                 tag.showFullTextView = (TextView) view.findViewById(R.id.post_show_full_text);
-                tag.repliesView = (JellyBeanSpanFixTextView) view.findViewById(R.id.post_replies);
+                tag.repliesView = (AppCompatTextView) view.findViewById(R.id.post_replies);
                 tag.replyButton = view.findViewById(R.id.post_reply_button);
                 tag.postsCountView = (TextView) view.findViewById(R.id.post_posts_count);
                 if (fragment().pageType == TYPE_POSTSLIST && !fragment().presentationModel.source.boardModel.readonlyBoard) {
@@ -1905,38 +1922,54 @@ public class BoardFragment extends Fragment implements AdapterView.OnItemClickLi
                             }
                         }
                     });
-                    CompatibilityImpl.setCustomSelectionActionModeMenuCallback(tag.commentView,
-                            R.string.context_menu_reply_with_quote,
-                            ThemeUtils.getActionbarIcon(fragment().activity.getTheme(), fragment().resources, R.attr.actionAddPost),
-                            new CompatibilityImpl.CustomSelectionActionModeCallback() {
+                    tag.commentView.setCustomSelectionActionModeCallback(new ActionMode.Callback() {
                         @Override
-                        public void onClick() {
+                        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
                             try {
-                                int start = tag.commentView.getSelectionStart();
-                                int end = tag.commentView.getSelectionEnd();
-                                String quote = tag.commentView.getText().subSequence(start, end).toString();
-                                fragment().openReply(tag.position, true, quote);
+                                if (!tag.isPopupDialog && tag.position == getCount() - 1) {
+                                    final int margin = (int) (50 * fragment().resources.getDisplayMetrics().density + 0.5f);
+                                    ViewGroup.LayoutParams params = tag.commentView.getLayoutParams();
+                                    if (params.height == ViewGroup.LayoutParams.WRAP_CONTENT) {
+                                        params.height = tag.commentView.getHeight() + margin;
+                                        tag.commentView.setLayoutParams(params);
+                                        fragment().scrollDown();
+                                    }
+                                }
+                                menu.add(Menu.NONE, 1, Menu.FIRST, R.string.context_menu_reply_with_quote)
+                                        .setIcon(ThemeUtils.getActionbarIcon(fragment().activity.getTheme(), fragment().resources, R.attr.actionAddPost))
+                                        .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+                                menu.removeItem(android.R.id.selectAll);
+                                return true;
                             } catch (Exception e) {
                                 Logger.e(TAG, e);
+                                return false;
                             }
                         }
+
                         @Override
-                        public void onCreate() {
-                            try {
-                                if (tag.isPopupDialog || tag.position != getCount() - 1) return;
-                                final int margin = (int) (50 * fragment().resources.getDisplayMetrics().density + 0.5f);
-                                ViewGroup.LayoutParams params = tag.commentView.getLayoutParams();
-                                if (params.height != ViewGroup.LayoutParams.WRAP_CONTENT) return;
-                                params.height = tag.commentView.getHeight() + margin;
-                                tag.commentView.setLayoutParams(params);
-                                fragment().scrollDown();
-                                
-                            } catch (Exception e) {
-                                Logger.e(TAG, e);
-                            }
+                        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+                            return false;
                         }
+
                         @Override
-                        public void onDestroy() {
+                        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+                            if (item.getItemId() == 1) {
+                                try {
+                                    int start = tag.commentView.getSelectionStart();
+                                    int end = tag.commentView.getSelectionEnd();
+                                    String quote = tag.commentView.getText().subSequence(start, end).toString();
+                                    fragment().openReply(tag.position, true, quote);
+                                } catch (Exception e) {
+                                    Logger.e(TAG, e);
+                                }
+                                mode.finish();
+                                return true;
+                            }
+                            return false;
+                        }
+
+                        @Override
+                        public void onDestroyActionMode(ActionMode mode) {
                             try {
                                 ViewGroup.LayoutParams params = tag.commentView.getLayoutParams();
                                 if (params.height == ViewGroup.LayoutParams.WRAP_CONTENT) return;
@@ -2316,7 +2349,7 @@ public class BoardFragment extends Fragment implements AdapterView.OnItemClickLi
         
         private void setImageViewSpoiler(ImageView imageView, boolean isSpoiler) {
             int alphaValue = isSpoiler ? 8 : 255;
-            CompatibilityUtils.setImageAlpha(imageView, alphaValue);
+            imageView.setImageAlpha(alphaValue);
         }
         
         private void fillThumbnail(View thumbnailView, AttachmentModel attachment, String hash, boolean nonBusy) {
@@ -3053,7 +3086,7 @@ public class BoardFragment extends Fragment implements AdapterView.OnItemClickLi
                     dialog.getWindow().setAttributes(params);
                     
                     //затемнение в планшетном режиме не нужно
-                    CompatibilityImpl.setDimAmount(dialog.getWindow(), 0.1f);
+                    dialog.getWindow().setDimAmount(0.1f);
                 }
                 dialog.show();
                 dialogs.add(dialog);
@@ -3266,7 +3299,7 @@ public class BoardFragment extends Fragment implements AdapterView.OnItemClickLi
     }
 
     private void downloadAllImages() {
-        if (!CompatibilityUtils.hasAccessStorage(activity)) return;
+        if (!hasAccessStorage()) return;
         List<Triple<AttachmentModel, String, String>> allAttachments = presentationModel.getAttachments();
         if (allAttachments == null || allAttachments.isEmpty()) {
             Toast.makeText(activity, R.string.download_all_no_images, Toast.LENGTH_SHORT).show();
@@ -3317,7 +3350,7 @@ public class BoardFragment extends Fragment implements AdapterView.OnItemClickLi
     }
     
     private boolean downloadFile(AttachmentModel attachment, boolean fromGridGallery) {
-        if (!CompatibilityUtils.hasAccessStorage(activity)) return true;
+        if (!hasAccessStorage()) return true;
         if (attachment.type == AttachmentModel.TYPE_OTHER_NOTFILE) return true;
         String subdir = (fromGridGallery && tabModel.pageModel.type == UrlPageModel.TYPE_THREADPAGE) ? getCustomSubdir(tabModel.pageModel) : null;
         DownloadingService.DownloadingQueueItem item = (subdir != null) ?
@@ -3346,7 +3379,7 @@ public class BoardFragment extends Fragment implements AdapterView.OnItemClickLi
     
     @SuppressLint("InflateParams")
     private void saveThisPage() {
-        if (!CompatibilityUtils.hasAccessStorage(activity)) return;
+        if (!hasAccessStorage()) return;
         DownloadingService.DownloadingQueueItem check = new DownloadingService.DownloadingQueueItem(
                 tabModel.pageModel, presentationModel.source.boardModel, DownloadingService.MODE_DOWNLOAD_ALL);
         String itemName = resources.getString(R.string.downloading_thread_format, tabModel.pageModel.boardName, tabModel.pageModel.threadNumber);
@@ -3599,7 +3632,7 @@ public class BoardFragment extends Fragment implements AdapterView.OnItemClickLi
             
             final Button btnToSelecting = new Button(activity);
             btnToSelecting.setText(R.string.grid_gallery_select);
-            CompatibilityUtils.setTextAppearance(btnToSelecting, android.R.style.TextAppearance_Small);
+            btnToSelecting.setTextAppearance(android.R.style.TextAppearance_Small);
             btnToSelecting.setSingleLine();
             btnToSelecting.setVisibility(View.VISIBLE);
             btnToSelecting.setLayoutParams(
@@ -3611,17 +3644,17 @@ public class BoardFragment extends Fragment implements AdapterView.OnItemClickLi
             Button btnDownload = new Button(activity);
             btnDownload.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 3.25f));
             btnDownload.setText(R.string.grid_gallery_download);
-            CompatibilityUtils.setTextAppearance(btnDownload, android.R.style.TextAppearance_Small);
+            btnDownload.setTextAppearance(android.R.style.TextAppearance_Small);
             btnDownload.setSingleLine();
             Button btnSelectAll = new Button(activity);
             btnSelectAll.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 3.75f));
             btnSelectAll.setText(android.R.string.selectAll);
-            CompatibilityUtils.setTextAppearance(btnSelectAll, android.R.style.TextAppearance_Small);
+            btnSelectAll.setTextAppearance(android.R.style.TextAppearance_Small);
             btnSelectAll.setSingleLine();
             Button btnCancel = new Button(activity);
             btnCancel.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 3f));
             btnCancel.setText(android.R.string.cancel);
-            CompatibilityUtils.setTextAppearance(btnCancel, android.R.style.TextAppearance_Small);
+            btnCancel.setTextAppearance(android.R.style.TextAppearance_Small);
             btnCancel.setSingleLine();
             layoutSelectingButtons.addView(btnDownload);
             layoutSelectingButtons.addView(btnSelectAll);

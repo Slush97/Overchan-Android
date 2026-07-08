@@ -28,7 +28,7 @@ import dev.esoc.esochan.http.streamer.HttpRequestModel;
 import dev.esoc.esochan.http.streamer.HttpResponseModel;
 import dev.esoc.esochan.http.streamer.HttpStreamer;
 import dev.esoc.esochan.lib.WebViewProxy;
-import dev.esoc.esochan.ui.CompatibilityImpl;
+
 
 import android.annotation.SuppressLint;
 import android.app.Activity;

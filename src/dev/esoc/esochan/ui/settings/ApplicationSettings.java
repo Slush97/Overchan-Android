@@ -21,7 +21,6 @@ package dev.esoc.esochan.ui.settings;
 import java.io.File;
 
 import dev.esoc.esochan.R;
-import dev.esoc.esochan.ui.CompatibilityImpl;
 import dev.esoc.esochan.ui.FavoritesFragment;
 import dev.esoc.esochan.ui.downloading.DownloadingService;
 import dev.esoc.esochan.ui.theme.GenericThemeEntry;
@@ -29,6 +28,7 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Build;
+import android.os.Environment;
 
 public class ApplicationSettings {
     private final SharedPreferences preferences;
@@ -53,7 +53,8 @@ public class ApplicationSettings {
     }
     
     public File getDefaultDownloadDir() {
-        return CompatibilityImpl.getDefaultDownloadDir();
+        // TODO: Migrate DownloadingService to MediaStore API for proper scoped storage support
+        return Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
     }
     
     public boolean isHidePersonalData() {

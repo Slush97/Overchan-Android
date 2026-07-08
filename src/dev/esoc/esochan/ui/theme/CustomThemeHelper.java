@@ -43,7 +43,7 @@ import android.widget.TextView;
 import dev.esoc.esochan.R;
 import dev.esoc.esochan.common.Logger;
 import dev.esoc.esochan.ui.AppearanceUtils;
-import dev.esoc.esochan.ui.CompatibilityImpl;
+
 
 public class CustomThemeHelper implements LayoutInflaterFactory {
     private static final String TAG = "CustomThemeHelper";
@@ -100,7 +100,7 @@ public class CustomThemeHelper implements LayoutInflaterFactory {
             constructor.setAccessible(true);
             View view = constructor.newInstance(args);
             if (view instanceof ViewStub)
-                CompatibilityImpl.setLayoutInflater((ViewStub) view, inflater.cloneInContext(context));
+                ((ViewStub) view).setLayoutInflater(inflater.cloneInContext(context));
             return view;
         } catch (Exception e) {
             Logger.e(TAG, "couldn't instantiate class " + name, e);
