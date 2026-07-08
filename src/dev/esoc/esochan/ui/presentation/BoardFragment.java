@@ -51,6 +51,7 @@ import dev.esoc.esochan.cache.BitmapCache;
 import dev.esoc.esochan.cache.PagesCache;
 import dev.esoc.esochan.cache.SerializablePage;
 import dev.esoc.esochan.common.Async;
+import dev.esoc.esochan.common.InternalBroadcasts;
 import dev.esoc.esochan.common.Logger;
 import dev.esoc.esochan.common.MainApplication;
 import dev.esoc.esochan.containers.ReadableContainer;
@@ -1363,7 +1364,7 @@ public class BoardFragment extends Fragment implements AdapterView.OnItemClickLi
         presentationModel.updateViewModels(isThreadPage, task, null);
         pagesCache.putPresentationModel(tabModel.hash, presentationModel, putToFileCache);
         if (task.isCancelled()) return;
-        activity.sendBroadcast(new Intent(BROADCAST_PAGE_LOADED));
+        InternalBroadcasts.send(activity, BROADCAST_PAGE_LOADED);
         toListView(needUpdateAfter, false);
     }
 

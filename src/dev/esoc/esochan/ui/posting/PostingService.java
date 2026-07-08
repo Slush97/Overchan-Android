@@ -25,6 +25,7 @@ import dev.esoc.esochan.api.models.BoardModel;
 import dev.esoc.esochan.api.models.SendPostModel;
 import dev.esoc.esochan.api.models.UrlPageModel;
 import dev.esoc.esochan.common.Async;
+import dev.esoc.esochan.common.InternalBroadcasts;
 import dev.esoc.esochan.common.Logger;
 import dev.esoc.esochan.common.MainApplication;
 import dev.esoc.esochan.http.interactive.InteractiveException;
@@ -188,7 +189,7 @@ public class PostingService extends Service {
                         notificationManager.notify(POSTING_NOTIFICATION_ID, progressNotifBuilder.build());
                         Intent broadcastIntent = new Intent(BROADCAST_ACTION_PROGRESS);
                         broadcastIntent.putExtra(EXTRA_BROADCAST_PROGRESS_STATUS, newProgress);
-                        sendBroadcast(broadcastIntent);
+                        InternalBroadcasts.send(PostingService.this, broadcastIntent);
                     }
                     @Override
                     public void setMaxValue(long value) {
@@ -202,7 +203,7 @@ public class PostingService extends Service {
                         curProgress = -1;
                         Intent broadcastIntent = new Intent(BROADCAST_ACTION_PROGRESS);
                         broadcastIntent.putExtra(EXTRA_BROADCAST_PROGRESS_STATUS, curProgress);
-                        sendBroadcast(broadcastIntent);
+                        InternalBroadcasts.send(PostingService.this, broadcastIntent);
                     }
                 }, this);
                 success = true;
@@ -249,7 +250,7 @@ public class PostingService extends Service {
                             setAutoCancel(true).
                             setCategory(NotificationCompat.CATEGORY_ERROR);
                     notificationManager.notify(POSTING_NOTIFICATION_ID, errorNotifBuilder.build());
-                    sendBroadcast(broadcastIntent);
+                    InternalBroadcasts.send(PostingService.this, broadcastIntent);
                 }
             }
             
@@ -311,7 +312,7 @@ public class PostingService extends Service {
                 Intent broadcastIntent = new Intent(BROADCAST_ACTION_STATUS);
                 broadcastIntent.putExtra(EXTRA_BROADCAST_PROGRESS_STATUS, BROADCAST_STATUS_SUCCESS);
                 broadcastIntent.putExtra(EXTRA_TARGET_URL, targetUrl);
-                sendBroadcast(broadcastIntent);
+                InternalBroadcasts.send(PostingService.this, broadcastIntent);
             } else if (isCancelled()) {
                 notificationManager.notify(POSTING_NOTIFICATION_ID, new NotificationCompat.Builder(PostingService.this, "posting").
                         setSmallIcon(android.R.drawable.ic_delete).

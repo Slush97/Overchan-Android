@@ -54,6 +54,7 @@ import dev.esoc.esochan.cache.BitmapCache;
 import dev.esoc.esochan.cache.FileCache;
 import dev.esoc.esochan.cache.SerializablePage;
 import dev.esoc.esochan.common.Async;
+import dev.esoc.esochan.common.InternalBroadcasts;
 import dev.esoc.esochan.common.IOUtils;
 import dev.esoc.esochan.common.Logger;
 import dev.esoc.esochan.common.MainApplication;
@@ -215,7 +216,7 @@ public class DownloadingService extends Service {
                 progressNotifBuilder.setContentTitle(getString(R.string.downloading_title, downloadingQueue.size() + 1));
                 notifyForeground(DOWNLOADING_NOTIFICATION_ID, progressNotifBuilder.build());
             }
-            sendBroadcast(new Intent(BROADCAST_UPDATED));
+            InternalBroadcasts.send(this, BROADCAST_UPDATED);
             currentTask.setStartId(startId);
         }
     }
@@ -280,8 +281,8 @@ public class DownloadingService extends Service {
                     curProgress = -1;
                     progressNotifBuilder.setContentText(filename).setProgress(100, 0, true);
                     notifyForeground(DOWNLOADING_NOTIFICATION_ID, progressNotifBuilder.build());
-                    sendBroadcast(new Intent(BROADCAST_UPDATED));
-                    
+                    InternalBroadcasts.send(DownloadingService.this, BROADCAST_UPDATED);
+
                     ProgressListener listener = new ProgressListener() {
                         @Override
                         public void setProgress(long value) {
@@ -290,7 +291,7 @@ public class DownloadingService extends Service {
                             curProgress = newProgress;
                             progressNotifBuilder.setProgress(100, newProgress, false);
                             notifyForeground(DOWNLOADING_NOTIFICATION_ID, progressNotifBuilder.build());
-                            sendBroadcast(new Intent(BROADCAST_UPDATED));
+                            InternalBroadcasts.send(DownloadingService.this, BROADCAST_UPDATED);
                         }
                         @Override
                         public void setMaxValue(long value) {
@@ -301,7 +302,7 @@ public class DownloadingService extends Service {
                             if (curProgress == -1) return;
                             progressNotifBuilder.setProgress(100, 0, true);
                             notifyForeground(DOWNLOADING_NOTIFICATION_ID, progressNotifBuilder.build());
-                            sendBroadcast(new Intent(BROADCAST_UPDATED));
+                            InternalBroadcasts.send(DownloadingService.this, BROADCAST_UPDATED);
                             curProgress = -1;
                         }
                     };
@@ -373,8 +374,8 @@ public class DownloadingService extends Service {
                     curProgress = -1;
                     progressNotifBuilder.setContentText(elementName).setProgress(100, 0, true);
                     notifyForeground(DOWNLOADING_NOTIFICATION_ID, progressNotifBuilder.build());
-                    sendBroadcast(new Intent(BROADCAST_UPDATED));
-                    
+                    InternalBroadcasts.send(DownloadingService.this, BROADCAST_UPDATED);
+
                     File directory = DownloadStorage.getSavedThreadsDir(DownloadingService.this, item.chanName);
 
                     WriteableContainer zip = null;
@@ -570,8 +571,8 @@ public class DownloadingService extends Service {
                             curProgress = Math.round(100f * i / attachments.size());
                             progressNotifBuilder.setProgress(attachments.size(), i, false);
                             notifyForeground(DOWNLOADING_NOTIFICATION_ID, progressNotifBuilder.build());
-                            sendBroadcast(new Intent(BROADCAST_UPDATED));
-                            
+                            InternalBroadcasts.send(DownloadingService.this, BROADCAST_UPDATED);
+
                             if (attachment.type != AttachmentModel.TYPE_OTHER_NOTFILE && !zip.hasFile(ORIGINALS_FOLDER+"/"+curFile)) {
                                 File cur = new File(directory, curFile);
                                 if (!cur.exists() || cur.isDirectory() || cur.length() == 0) {
@@ -710,7 +711,7 @@ public class DownloadingService extends Service {
                     notifyForeground(DOWNLOADING_NOTIFICATION_ID, progressNotifBuilder.build());
                     Intent broadcast = new Intent(BROADCAST_UPDATED);
                     broadcast.putExtra(EXTRA_DOWNLOADING_REPORT, REPORT_OK);
-                    sendBroadcast(broadcast);
+                    InternalBroadcasts.send(DownloadingService.this, broadcast);
                 } else {
                     Intent intentToErrorReport = new Intent(DownloadingService.this, DownloadingErrorReportActivity.class);
                     PendingIntent pIntentToErrorReport =
@@ -731,7 +732,7 @@ public class DownloadingService extends Service {
                             putString(PREF_ERROR_REPORT, errorReport.toString()).
                             putString(PREF_ERROR_ITEMS, serializeErrorItems(errorItems)).
                             commit();
-                    sendBroadcast(broadcast);
+                    InternalBroadcasts.send(DownloadingService.this, broadcast);
                 }
             }
             errorReport.setLength(0);

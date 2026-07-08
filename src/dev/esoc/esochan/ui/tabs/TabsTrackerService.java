@@ -33,6 +33,7 @@ import dev.esoc.esochan.api.util.PageLoaderFromChan;
 import dev.esoc.esochan.cache.PagesCache;
 import dev.esoc.esochan.cache.SerializablePage;
 import dev.esoc.esochan.common.Async;
+import dev.esoc.esochan.common.InternalBroadcasts;
 import dev.esoc.esochan.common.Logger;
 import dev.esoc.esochan.common.MainApplication;
 import dev.esoc.esochan.http.interactive.InteractiveException;
@@ -356,7 +357,7 @@ public class TabsTrackerService extends Service {
                         cancelForeground(TRACKER_NOTIFICATION_UPDATE_ID);
                         return;
                     } else {
-                        sendBroadcast(new Intent(BROADCAST_ACTION_NOTIFY));
+                        InternalBroadcasts.send(TabsTrackerService.this, BROADCAST_ACTION_NOTIFY);
                     }
                     
                     if (!settings.isAutoupdateEnabled()) stopSelf();
