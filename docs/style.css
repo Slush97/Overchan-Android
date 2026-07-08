@@ -1,0 +1,196 @@
+/* esochan — classic Yotsuba B imageboard styling (nostalgic, light-only by design) */
+
+:root {
+  color-scheme: light;
+
+  --bg: #eef2ff;          /* Yotsuba B page */
+  --reply-bg: #d6daf0;    /* reply post highlight */
+  --reply-border: #b7c5d9;
+  --nav-bg: #d6daf0;
+  --ink: #000000;
+  --title-red: #af0a0f;   /* board banner */
+  --subject: #0f0c5d;     /* navy subject */
+  --name: #117743;        /* poster name green */
+  --green: #789922;       /* greentext */
+  --link: #34345c;
+  --link-hover: #dd0000;
+  --info: #707070;
+
+  --font: arial, helvetica, sans-serif;
+  --font-title: "Tahoma", "Verdana", arial, sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font);
+  font-size: 13px;
+  line-height: 1.4;
+  padding: 0 0 40px;
+}
+
+a { color: var(--link); text-decoration: underline; }
+a:hover { color: var(--link-hover); }
+:focus-visible { outline: 1px dotted var(--ink); outline-offset: 1px; }
+
+hr {
+  border: none;
+  border-top: 1px solid var(--reply-border);
+  margin: 8px 0;
+  clear: both;
+}
+
+/* ---- top board bar ---- */
+.navbar {
+  background: var(--nav-bg);
+  border-bottom: 1px solid var(--reply-border);
+  font-size: 12px;
+  padding: 2px 6px;
+  line-height: 1.5;
+}
+.navbar a { text-decoration: none; }
+.navbar a:hover { text-decoration: underline; }
+.navbar .right { float: right; }
+.navbar .brackets { color: var(--info); }
+@media (max-width: 620px) { .navbar .right { float: none; display: block; } }
+
+/* ---- board banner ---- */
+.banner { text-align: center; padding: 8px 8px 2px; }
+.banner img.logo {
+  display: block; margin: 6px auto 4px;
+  width: 80px; height: 80px;
+  border: 1px solid var(--reply-border);
+}
+.banner .boardTitle {
+  font-family: var(--font-title);
+  color: var(--title-red);
+  font-weight: bold;
+  font-size: 28px;
+  line-height: 1.1;
+  margin: 4px 0 0;
+  letter-spacing: -0.5px;
+}
+.banner .boardSubtitle { color: var(--title-red); font-size: 12px; margin: 2px 0 4px; }
+.banner .pages { font-size: 12px; color: var(--info); }
+
+.content { padding: 0 8px; }
+
+/* ---- shared post pieces ---- */
+.file { font-size: 12px; margin: 4px 0 2px; }
+.file .fileText { color: var(--info); }
+.fileThumb { float: left; margin: 2px 20px 5px 0; }
+.fileThumb img, .thumbBox {
+  display: block;
+  border: none;
+}
+.thumbBox {
+  border: 1px solid var(--reply-border);
+  background: #fff;
+}
+
+.postInfo { font-size: 12px; margin-bottom: 2px; }
+.postInfo .subject { color: var(--subject); font-weight: bold; }
+.postInfo .name { color: var(--name); font-weight: bold; }
+.postInfo .dateTime { color: var(--ink); }
+.postInfo .postNum a { color: var(--link); text-decoration: none; }
+.postInfo .postNum a:hover { color: var(--link-hover); }
+.postInfo .replyLink { color: var(--link); }
+.postInfo input[type=checkbox] { vertical-align: middle; margin: 0 2px 0 0; }
+
+blockquote.postMessage {
+  margin: 8px 0 8px 30px;
+  max-width: 66ch;
+  font-size: 13px;
+  word-wrap: break-word;
+}
+blockquote.postMessage p { margin: 0 0 8px; }
+blockquote.postMessage p:last-child { margin-bottom: 0; }
+.quote { color: var(--green); }              /* greentext */
+.backlink { color: var(--link); text-decoration: underline; font-size: 13px; }
+.backlink:hover { color: var(--link-hover); }
+
+/* ---- OP post (thread root) ---- */
+.thread { margin: 6px 0; }
+.op .postInfo { display: inline; }
+.op blockquote.postMessage { margin-left: 30px; }
+
+/* ---- reply posts ---- */
+.replyContainer { display: block; margin: 4px 0; clear: both; }
+.replyContainer::before { content: ">>"; color: var(--reply-border); margin-right: 2px; font-size: 12px; }
+.post.reply {
+  display: inline-block;
+  background: var(--reply-bg);
+  border: 1px solid var(--reply-border);
+  padding: 2px 6px 6px;
+  max-width: 100%;
+  vertical-align: top;
+}
+.post.reply blockquote.postMessage { margin: 6px 0 4px 24px; }
+.post.reply h3 {
+  display: inline;
+  font-size: 13px;
+  color: var(--subject);
+  margin: 0;
+}
+
+/* ---- screenshots row (classic inline thumbs) ---- */
+.shots { margin: 6px 0 2px 24px; }
+.shots .shotThumb { display: inline-block; margin: 0 14px 10px 0; vertical-align: top; }
+.shots .fileText { font-size: 11px; color: var(--info); display: block; margin-bottom: 2px; }
+.phScreen {
+  width: 108px; height: 190px;
+  border: 1px solid var(--reply-border);
+  background: #fff;
+  overflow: hidden;
+}
+.phScreen .bar { height: 20px; background: var(--title-red); }
+.phScreen .strip { height: 8px; margin: 7px 6px 0; background: var(--reply-bg); }
+.phScreen .strip.g { background: #cfe0a8; width: 60%; }
+.phScreen .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; padding: 7px 6px; }
+.phScreen .grid span { height: 34px; background: var(--reply-bg); display: block; }
+.phScreen .label { text-align: center; font-size: 9px; color: var(--info); margin-top: 6px; }
+.shots figcaption { font-size: 11px; color: var(--info); text-align: center; }
+
+/* ---- board tag list ---- */
+.boardList { margin: 6px 0 2px 24px; font-size: 13px; }
+.boardList a { margin-right: 2px; }
+
+/* ---- download / code ---- */
+.getbox blockquote { margin-left: 24px; }
+pre.code {
+  background: #f6f7ff;
+  border: 1px solid var(--reply-border);
+  padding: 8px 10px;
+  overflow-x: auto;
+  font-family: "Courier New", monospace;
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--ink);
+  margin: 6px 0 0;
+}
+pre.code .c { color: var(--info); }
+.dl { font-weight: bold; }
+
+/* ---- footer ---- */
+.footer {
+  text-align: center;
+  font-size: 11px;
+  color: var(--info);
+  margin-top: 18px;
+  padding: 0 8px;
+}
+.footer .nav { font-size: 12px; margin-bottom: 8px; }
+.footer .nav a { text-decoration: none; }
+.footer .nav a:hover { text-decoration: underline; }
+.footer .disclaimer { max-width: 70ch; margin: 8px auto 0; line-height: 1.5; }
+.footer .delform {
+  margin: 10px 0 12px;
+  font-size: 12px;
+}
+.footer .delform input[type=text] {
+  font-size: 12px; padding: 1px 3px;
+  border: 1px solid var(--reply-border); width: 90px;
+}
