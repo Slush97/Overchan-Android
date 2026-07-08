@@ -80,6 +80,7 @@ public class ThemePreference extends ListPreference {
     private int themeStyleForValue(String value) {
         Context c = getContext();
         if (value.equals(c.getString(R.string.pref_theme_value_futaba))) return R.style.Theme_Futaba;
+        if (value.equals(c.getString(R.string.pref_theme_value_yotsuba_b))) return R.style.Theme_YotsubaB;
         if (value.equals(c.getString(R.string.pref_theme_value_photon))) return R.style.Theme_Photon;
         if (value.equals(c.getString(R.string.pref_theme_value_paper))) return R.style.Theme_Paper;
         if (value.equals(c.getString(R.string.pref_theme_value_neutron))) return R.style.Theme_Neutron;

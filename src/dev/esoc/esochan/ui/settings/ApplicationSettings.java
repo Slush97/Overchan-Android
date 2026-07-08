@@ -172,6 +172,7 @@ public class ApplicationSettings {
         String defaultThemeValue = resources.getString(R.string.pref_theme_value_default);
         String theme = preferences.getString(resources.getString(R.string.pref_key_theme), defaultThemeValue);
         if (theme.equals(resources.getString(R.string.pref_theme_value_futaba))) return R.style.Theme_Futaba;
+        if (theme.equals(resources.getString(R.string.pref_theme_value_yotsuba_b))) return R.style.Theme_YotsubaB;
         if (theme.equals(resources.getString(R.string.pref_theme_value_photon))) return R.style.Theme_Photon;
         if (theme.equals(resources.getString(R.string.pref_theme_value_paper))) return R.style.Theme_Paper;
         if (theme.equals(resources.getString(R.string.pref_theme_value_neutron))) return R.style.Theme_Neutron;

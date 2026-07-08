@@ -38,12 +38,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="?attr/postForeground"
             android:singleLine="true" />
         <TextView
             android:id="@+id/postform_attachment_size"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="?attr/itemInfoForeground"
             android:singleLine="true" />
     </LinearLayout>
     <ImageButton

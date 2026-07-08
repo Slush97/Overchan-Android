@@ -18,7 +18,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:minHeight="?android:attr/listPreferredItemHeight"
@@ -163,33 +162,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         android:layout_height="wrap_content"
         android:visibility="gone" />
     
-    <LinearLayout
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/post_replies"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical|end"
-        android:layout_marginTop="5dp">
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/post_replies"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="?attr/postForeground"
-            android:visibility="gone" />
-
-        <ImageView
-            android:id="@+id/post_reply_button"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:padding="4dp"
-            android:background="?android:attr/selectableItemBackground"
-            android:src="?attr/actionAddPost"
-            app:tint="?attr/iconTint"
-            android:contentDescription="@string/context_menu_reply"
-            android:visibility="gone" />
-    </LinearLayout>
+        android:layout_marginTop="5dp"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="?attr/postForeground"
+        android:visibility="gone" />
 
     <TextView
         android:id="@+id/post_posts_count"

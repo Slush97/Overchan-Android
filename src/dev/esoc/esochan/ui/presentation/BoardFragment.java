@@ -1744,7 +1744,6 @@ public class BoardFragment extends Fragment implements AdapterView.OnItemClickLi
             public boolean showFullTextIsVisible = false;
             public AppCompatTextView repliesView;
             public boolean repliesIsVisible = false;
-            public View replyButton;
             public TextView postsCountView;
             public boolean postsCountIsVisible = false;
         }
@@ -1910,21 +1909,8 @@ public class BoardFragment extends Fragment implements AdapterView.OnItemClickLi
                 tag.commentView = (ClickableLinksTextView) view.findViewById(R.id.post_comment);
                 tag.showFullTextView = (TextView) view.findViewById(R.id.post_show_full_text);
                 tag.repliesView = (AppCompatTextView) view.findViewById(R.id.post_replies);
-                tag.replyButton = view.findViewById(R.id.post_reply_button);
                 tag.postsCountView = (TextView) view.findViewById(R.id.post_posts_count);
                 if (fragment().pageType == TYPE_POSTSLIST && !fragment().presentationModel.source.boardModel.readonlyBoard) {
-                    // Show reply button on each post
-                    tag.replyButton.setVisibility(View.VISIBLE);
-                    tag.replyButton.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            try {
-                                fragment().openReply(tag.position, false, null);
-                            } catch (Exception e) {
-                                Logger.e(TAG, e);
-                            }
-                        }
-                    });
                     tag.commentView.setCustomSelectionActionModeCallback(new ActionMode.Callback() {
                         @Override
                         public boolean onCreateActionMode(ActionMode mode, Menu menu) {
@@ -2246,44 +2232,40 @@ public class BoardFragment extends Fragment implements AdapterView.OnItemClickLi
                 if (custom != null) return view;
                 
                 final ScrollView scrollContent = (ScrollView) view.findViewById(R.id.post_scroll_content);
-                RelativeLayout contentLayout = (RelativeLayout) view.findViewById(R.id.post_content_layout);
+                final RelativeLayout contentLayout = (RelativeLayout) view.findViewById(R.id.post_content_layout);
                 ((ViewGroup) contentLayout.getParent()).removeView(contentLayout);
                 scrollContent.addView(contentLayout);
                 scrollContent.setVisibility(View.VISIBLE);
+                scrollContent.setFillViewport(false);
+
+                // weight=1+height=0 expands short posts to full-screen blank space;
+                // ScrollView+wrap_content often measures as 0. Use an explicit measured height.
+                final int contentWidth = Math.max(1, popupWidth - fragment().postItemPadding);
+                contentLayout.measure(
+                        MeasureSpec.makeMeasureSpec(contentWidth, MeasureSpec.EXACTLY),
+                        MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
+                int measuredContentHeight = contentLayout.getMeasuredHeight();
+                int popupMaxContentHeight = (int) (fragment().resources.getDisplayMetrics().heightPixels * 0.55f);
+                LinearLayout.LayoutParams contentLp = (LinearLayout.LayoutParams) scrollContent.getLayoutParams();
+                contentLp.weight = 0;
+                contentLp.height = Math.max(1, Math.min(measuredContentHeight, popupMaxContentHeight));
+                scrollContent.setLayoutParams(contentLp);
                 
                 final ScrollView scrollReplies = (ScrollView) view.findViewById(R.id.post_scroll_replies);
                 ((ViewGroup) tag.repliesView.getParent()).removeView(tag.repliesView);
                 scrollReplies.addView(tag.repliesView);
                 scrollReplies.setVisibility(View.VISIBLE);
-                
-                tag.repliesView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
-                    @Override
-                    public boolean onPreDraw() {
-                        tag.repliesView.getViewTreeObserver().removeOnPreDrawListener(this);
-                        
-                        int contentHeight = tag.commentView.getHeight();
-                        if (tag.singleThumbnailIsVisible) contentHeight = Math.max(contentHeight, tag.singleThumbnailView.getHeight());
-                        else if (tag.multiThumbnailsIsVisible) contentHeight += tag.multiThumbnailsViewContainer.getHeight(); 
-                        
-                        if (scrollContent.getHeight() == 0 || contentHeight > scrollContent.getHeight()) {
-                            int maxHeight = (scrollContent.getHeight() + scrollReplies.getHeight()) / 2;
-                            if (maxHeight == 0) {
-                                Logger.e(TAG, "error: can't measure replies view height");
-                            } else if (contentHeight != 0 && contentHeight < maxHeight) {
-                                LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) scrollContent.getLayoutParams();
-                                params.height = contentHeight;
-                                params.weight = 0;
-                            } else if (tag.repliesView.getHeight() > maxHeight) {
-                                scrollReplies.getLayoutParams().height = maxHeight;
-                                scrollReplies.removeAllViews();
-                                scrollReplies.addView(tag.repliesView);
-                            }
-                            scrollContent.scrollTo(0, 0);
-                        }
-                        
-                        return true;
-                    }
-                });
+
+                tag.repliesView.measure(
+                        MeasureSpec.makeMeasureSpec(contentWidth, MeasureSpec.EXACTLY),
+                        MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
+                int measuredRepliesHeight = tag.repliesView.getMeasuredHeight();
+                int repliesMax = Math.max(popupMaxContentHeight / 3, 1);
+                if (measuredRepliesHeight > repliesMax) {
+                    scrollReplies.getLayoutParams().height = repliesMax;
+                } else if (measuredRepliesHeight > 0) {
+                    scrollReplies.getLayoutParams().height = measuredRepliesHeight;
+                }
             } else {
                 tag.isPopupDialog = false;
                 if (fragment().pageType == TYPE_POSTSLIST) {
@@ -3062,12 +3044,16 @@ public class BoardFragment extends Fragment implements AdapterView.OnItemClickLi
                 dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
                 dialog.setCanceledOnTouchOutside(true);
                 dialog.setContentView(view);
+                View frame = view.findViewById(R.id.post_frame_main);
+                int maxPhoneHeight = (int) (activity.getResources().getDisplayMetrics().heightPixels * 0.85f);
+                frame.measure(
+                        MeasureSpec.makeMeasureSpec(newWidth, MeasureSpec.EXACTLY),
+                        MeasureSpec.makeMeasureSpec(maxPhoneHeight, MeasureSpec.AT_MOST));
+                int measuredHeight = frame.getMeasuredHeight();
                 if (isTablet) {
-                    view.findViewById(R.id.post_frame_main).measure(
-                            MeasureSpec.makeMeasureSpec(newWidth, MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
                     int newWindowWidth = dlgWindowWidth - dlgWidth + newWidth;
                     int newWindowHeight = dlgWindowHeight - dlgHeight +
-                            Math.min(view.findViewById(R.id.post_frame_main).getMeasuredHeight(), dlgHeight);
+                            Math.min(measuredHeight, dlgHeight);
                     dialog.getWindow().setLayout(newWindowWidth, newWindowHeight);
                     WindowManager.LayoutParams params = dialog.getWindow().getAttributes();
                     if (coordinates.x > activityWindowRect.width() - coordinates.x &&
@@ -3090,6 +3076,8 @@ public class BoardFragment extends Fragment implements AdapterView.OnItemClickLi
                     
                     //затемнение в планшетном режиме не нужно
                     dialog.getWindow().setDimAmount(0.1f);
+                } else {
+                    dialog.getWindow().setLayout(newWidth, Math.max(1, Math.min(measuredHeight, maxPhoneHeight)));
                 }
                 dialog.show();
                 dialogs.add(dialog);

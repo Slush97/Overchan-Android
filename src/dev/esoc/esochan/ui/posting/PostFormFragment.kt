@@ -19,11 +19,13 @@
 package dev.esoc.esochan.ui.posting
 
 import android.app.Activity
+import android.app.Dialog
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.text.InputType
+import android.util.TypedValue
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
@@ -31,13 +33,13 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.CheckBox
 import android.widget.EditText
-import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dev.esoc.esochan.R
 import dev.esoc.esochan.api.interfaces.CancellableTask
@@ -112,8 +114,24 @@ class PostFormFragment : BottomSheetDialogFragment() {
         currentPath = settings.downloadDirectory.absolutePath
     }
 
+    override fun getTheme(): Int = R.style.ThemeOverlay_BottomSheetDialog
+
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        return (super.onCreateDialog(savedInstanceState) as BottomSheetDialog).also { dialog ->
+            dialog.setOnShowListener {
+                val sheet = dialog.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
+                    ?: return@setOnShowListener
+                val tv = TypedValue()
+                requireActivity().theme.resolveAttribute(R.attr.activityRootBackground, tv, true)
+                sheet.setBackgroundColor(tv.data)
+            }
+        }
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        return inflater.inflate(R.layout.fragment_post_form, container, false)
+        // Resolve form theme attrs against the activity theme, not the dialog fallback.
+        val themedInflater = inflater.cloneInContext(requireActivity())
+        return themedInflater.inflate(R.layout.fragment_post_form, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -127,10 +145,10 @@ class PostFormFragment : BottomSheetDialogFragment() {
 
     override fun onStart() {
         super.onStart()
-        // Expand the bottom sheet by default
         val behavior = BottomSheetBehavior.from(requireView().parent as View)
         behavior.state = BottomSheetBehavior.STATE_EXPANDED
         behavior.skipCollapsed = true
+        behavior.isFitToContents = true
     }
 
     private fun bindViews(view: View) {
@@ -152,6 +170,38 @@ class PostFormFragment : BottomSheetDialogFragment() {
         captchaLoading = view.findViewById(R.id.post_form_captcha_loading)
         captchaField = view.findViewById(R.id.post_form_captcha_field)
         sendButton = view.findViewById(R.id.post_form_send_button)
+
+        applyFormColors(view)
+    }
+
+    private fun applyFormColors(view: View) {
+        val theme = requireActivity().theme
+        val fg = resolveColor(theme, R.attr.postForeground)
+        // itemInfo is too dim on several themes for empty-field hints
+        val hint = (fg and 0x00FFFFFF) or (0x99000000.toInt())
+        val accent = resolveColor(theme, R.attr.urlLinkForeground)
+        val onAccent = resolveColor(theme, R.attr.activityRootBackground)
+        view.findViewById<TextView>(R.id.post_form_title).setTextColor(fg)
+        for (field in arrayOf(commentField, subjectField, nameField, emailField, passwordField, captchaField)) {
+            field.setTextColor(fg)
+            field.setHintTextColor(hint)
+        }
+        sageCheckbox.setTextColor(fg)
+        custommarkCheckbox.setTextColor(fg)
+        (sendButton as? com.google.android.material.button.MaterialButton)?.apply {
+            backgroundTintList = android.content.res.ColorStateList.valueOf(accent)
+            setTextColor(onAccent)
+        }
+    }
+
+    private fun resolveColor(theme: android.content.res.Resources.Theme, attr: Int): Int {
+        val tv = TypedValue()
+        theme.resolveAttribute(attr, tv, true)
+        return if (tv.resourceId != 0) {
+            requireActivity().getColor(tv.resourceId)
+        } else {
+            tv.data
+        }
     }
 
     private fun configureVisibility() {

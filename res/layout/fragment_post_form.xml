@@ -5,25 +5,28 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:background="?attr/activityRootBackground"
-    android:padding="16dp">
+    android:paddingStart="16dp"
+    android:paddingEnd="16dp"
+    android:paddingTop="8dp"
+    android:paddingBottom="16dp">
 
-    <!-- Drag handle -->
     <View
-        android:layout_width="40dp"
+        android:layout_width="36dp"
         android:layout_height="4dp"
         android:layout_gravity="center_horizontal"
         android:layout_marginBottom="12dp"
-        android:background="@android:color/darker_gray" />
+        android:background="@drawable/bg_post_form_handle"
+        android:alpha="0.5" />
 
-    <!-- Title -->
     <TextView
         android:id="@+id/post_form_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="?attr/postForeground"
+        android:textStyle="bold"
         android:layout_marginBottom="12dp" />
 
-    <!-- Comment field -->
     <EditText
         android:id="@+id/post_form_comment"
         android:layout_width="match_parent"
@@ -32,76 +35,87 @@
         android:inputType="textLongMessage|textMultiLine|textCapSentences"
         android:maxLength="15000"
         android:minLines="4"
+        android:maxLines="10"
         android:gravity="top|start"
-        android:background="?attr/postBackground"
-        android:padding="12dp" />
+        android:background="@drawable/bg_post_form_field"
+        android:textColor="?attr/postForeground"
+        android:textColorHint="?attr/itemInfoForeground"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:padding="12dp"
+        android:importantForAutofill="no" />
 
-    <!-- Markup buttons -->
     <HorizontalScrollView
         android:id="@+id/post_form_markup_scroll"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:scrollbars="none"
-        android:layout_marginTop="4dp">
+        android:layout_marginTop="4dp"
+        android:fadeScrollbars="true">
 
         <LinearLayout
             android:id="@+id/post_form_markup_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
 
             <ImageButton
                 android:id="@+id/post_form_mark_quote"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:padding="4dp"
-                android:background="?android:attr/selectableItemBackground"
+                android:padding="6dp"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
                 android:src="@drawable/mark_quote"
+                android:scaleType="fitCenter"
                 android:contentDescription="@string/mark_quote" />
             <ImageButton
                 android:id="@+id/post_form_mark_bold"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:padding="4dp"
-                android:background="?android:attr/selectableItemBackground"
+                android:padding="6dp"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
                 android:src="@drawable/mark_bold"
+                android:scaleType="fitCenter"
                 android:contentDescription="@string/mark_bold" />
             <ImageButton
                 android:id="@+id/post_form_mark_italic"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:padding="4dp"
-                android:background="?android:attr/selectableItemBackground"
+                android:padding="6dp"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
                 android:src="@drawable/mark_italic"
+                android:scaleType="fitCenter"
                 android:contentDescription="@string/mark_italic" />
             <ImageButton
                 android:id="@+id/post_form_mark_underline"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:padding="4dp"
-                android:background="?android:attr/selectableItemBackground"
+                android:padding="6dp"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
                 android:src="@drawable/mark_underline"
+                android:scaleType="fitCenter"
                 android:contentDescription="@string/mark_underline" />
             <ImageButton
                 android:id="@+id/post_form_mark_strike"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:padding="4dp"
-                android:background="?android:attr/selectableItemBackground"
+                android:padding="6dp"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
                 android:src="@drawable/mark_strike"
+                android:scaleType="fitCenter"
                 android:contentDescription="@string/mark_strike" />
             <ImageButton
                 android:id="@+id/post_form_mark_spoiler"
                 android:layout_width="56dp"
                 android:layout_height="40dp"
-                android:padding="4dp"
-                android:background="?android:attr/selectableItemBackground"
+                android:padding="6dp"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
                 android:src="@drawable/mark_spoiler"
+                android:scaleType="fitCenter"
                 android:contentDescription="@string/mark_spoiler" />
         </LinearLayout>
     </HorizontalScrollView>
 
-    <!-- Attachments area -->
     <LinearLayout
         android:id="@+id/post_form_attachments_layout"
         android:layout_width="match_parent"
@@ -109,7 +123,6 @@
         android:orientation="vertical"
         android:layout_marginTop="8dp" />
 
-    <!-- Attach + Send row -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -121,8 +134,8 @@
             android:id="@+id/post_form_attach_button"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:padding="8dp"
-            android:background="?android:attr/selectableItemBackground"
+            android:padding="10dp"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
             android:src="?attr/actionAddAttachment"
             app:tint="?attr/iconTint"
             android:contentDescription="@string/menu_attach_file" />
@@ -131,8 +144,8 @@
             android:id="@+id/post_form_gallery_button"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:padding="8dp"
-            android:background="?android:attr/selectableItemBackground"
+            android:padding="10dp"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
             android:src="?attr/actionAddGallery"
             app:tint="?attr/iconTint"
             android:contentDescription="@string/menu_attach_gallery" />
@@ -142,23 +155,23 @@
             android:layout_height="0dp"
             android:layout_weight="1" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/post_form_send_button"
+            style="@style/Widget_Eso_PostForm_Button"
             android:layout_width="wrap_content"
             android:layout_height="48dp"
             android:minWidth="120dp"
-            android:text="@string/postform_send"
-            android:textAllCaps="true" />
+            android:text="@string/postform_send" />
     </LinearLayout>
 
-    <!-- Expandable Options section -->
     <LinearLayout
         android:id="@+id/post_form_options_toggle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center_vertical"
-        android:padding="8dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
         android:layout_marginTop="4dp"
         android:background="?android:attr/selectableItemBackground">
 
@@ -167,13 +180,15 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/postform_options"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="?attr/postForeground" />
 
         <ImageView
             android:id="@+id/post_form_options_arrow"
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:src="@android:drawable/arrow_down_float"
+            app:tint="?attr/iconTint"
             android:contentDescription="@null" />
     </LinearLayout>
 
@@ -183,93 +198,128 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:visibility="gone"
-        android:paddingStart="8dp"
-        android:paddingEnd="8dp">
+        android:paddingStart="4dp"
+        android:paddingEnd="4dp">
 
         <EditText
             android:id="@+id/post_form_subject"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
             android:hint="@string/postform_subject"
             android:inputType="textShortMessage|textCapSentences"
             android:maxLength="255"
-            android:singleLine="true" />
+            android:singleLine="true"
+            android:background="@drawable/bg_post_form_field"
+            android:textColor="?attr/postForeground"
+            android:textColorHint="?attr/itemInfoForeground"
+            android:padding="12dp"
+            android:importantForAutofill="no" />
 
         <LinearLayout
             android:id="@+id/post_form_name_email_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:weightSum="2">
+            android:weightSum="2"
+            android:layout_marginBottom="4dp">
 
             <EditText
                 android:id="@+id/post_form_name"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:layout_marginEnd="4dp"
                 android:hint="@string/postform_name"
                 android:inputType="textShortMessage|textCapSentences"
                 android:maxLength="255"
-                android:singleLine="true" />
+                android:singleLine="true"
+                android:background="@drawable/bg_post_form_field"
+                android:textColor="?attr/postForeground"
+                android:textColorHint="?attr/itemInfoForeground"
+                android:padding="12dp"
+                android:importantForAutofill="no" />
 
             <EditText
                 android:id="@+id/post_form_email"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:layout_marginStart="4dp"
                 android:hint="@string/postform_email"
                 android:inputType="textEmailAddress"
                 android:maxLength="255"
-                android:singleLine="true" />
+                android:singleLine="true"
+                android:background="@drawable/bg_post_form_field"
+                android:textColor="?attr/postForeground"
+                android:textColorHint="?attr/itemInfoForeground"
+                android:padding="12dp"
+                android:importantForAutofill="no" />
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/post_form_password_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="4dp">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/postform_password" />
+                android:layout_marginEnd="8dp"
+                android:text="@string/postform_password"
+                android:textColor="?attr/postForeground"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
 
             <EditText
                 android:id="@+id/post_form_password"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:inputType="textVisiblePassword"
                 android:typeface="monospace"
                 android:maxLength="255"
-                android:singleLine="true" />
+                android:singleLine="true"
+                android:background="@drawable/bg_post_form_field"
+                android:textColor="?attr/postForeground"
+                android:textColorHint="?attr/itemInfoForeground"
+                android:padding="12dp"
+                android:importantForAutofill="no" />
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/post_form_checkbox_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:layout_marginBottom="4dp">
 
             <CheckBox
                 android:id="@+id/post_form_sage"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/postform_sage" />
+                android:text="@string/postform_sage"
+                android:textColor="?attr/postForeground"
+                android:buttonTint="?attr/postNameForeground" />
 
             <CheckBox
                 android:id="@+id/post_form_custommark"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/postform_opmark" />
+                android:text="@string/postform_opmark"
+                android:textColor="?attr/postForeground"
+                android:buttonTint="?attr/postNameForeground" />
         </LinearLayout>
 
         <Spinner
             android:id="@+id/post_form_spinner"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:popupBackground="?attr/postBackground" />
     </LinearLayout>
 
-    <!-- Captcha area (usually hidden for 4chan interactive captcha) -->
     <FrameLayout
         android:id="@+id/post_form_captcha_layout"
         android:layout_width="match_parent"
@@ -282,6 +332,7 @@
             android:layout_height="90dp"
             android:scaleType="fitCenter"
             android:adjustViewBounds="true"
+            android:background="@drawable/bg_post_form_field"
             android:contentDescription="@string/captcha" />
 
         <ProgressBar
@@ -298,8 +349,14 @@
         android:id="@+id/post_form_captcha_field"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
         android:hint="@string/postform_captcha_hint"
         android:imeOptions="flagNoExtractUi|flagNoFullscreen|actionSend"
-        android:singleLine="true" />
+        android:singleLine="true"
+        android:background="@drawable/bg_post_form_field"
+        android:textColor="?attr/postForeground"
+        android:textColorHint="?attr/itemInfoForeground"
+        android:padding="12dp"
+        android:importantForAutofill="no" />
 
 </LinearLayout>
