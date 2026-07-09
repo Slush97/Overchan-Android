@@ -101,6 +101,7 @@ import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import androidx.appcompat.app.ActionBar;
@@ -1672,7 +1673,7 @@ public class BoardFragment extends Fragment implements AdapterView.OnItemClickLi
                 if (fragment != null) fragment.openAttachment((AttachmentModel)v.getTag());
             }
         }
-        
+
         private OnUnreadFrameListener onUnreadFrameListener;
         private OnAttachmentClickListener onAttachmentClickListener;
         private final WeakOnCreateContextMenuListener contextMenuListener;
@@ -2260,6 +2261,11 @@ public class BoardFragment extends Fragment implements AdapterView.OnItemClickLi
                         MeasureSpec.makeMeasureSpec(contentWidth, MeasureSpec.EXACTLY),
                         MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
                 int measuredRepliesHeight = tag.repliesView.getMeasuredHeight();
+                ViewGroup.LayoutParams repliesParams = tag.repliesView.getLayoutParams();
+                if (repliesParams instanceof ViewGroup.MarginLayoutParams) {
+                    ViewGroup.MarginLayoutParams marginParams = (ViewGroup.MarginLayoutParams) repliesParams;
+                    measuredRepliesHeight += marginParams.topMargin + marginParams.bottomMargin;
+                }
                 int repliesMax = Math.max(popupMaxContentHeight / 3, 1);
                 if (measuredRepliesHeight > repliesMax) {
                     scrollReplies.getLayoutParams().height = repliesMax;
@@ -3050,10 +3056,20 @@ public class BoardFragment extends Fragment implements AdapterView.OnItemClickLi
                         MeasureSpec.makeMeasureSpec(newWidth, MeasureSpec.EXACTLY),
                         MeasureSpec.makeMeasureSpec(maxPhoneHeight, MeasureSpec.AT_MOST));
                 int measuredHeight = frame.getMeasuredHeight();
+                Rect popupBackgroundPadding = new Rect();
+                Drawable popupBackground = activity.getResources().getDrawable(bgShadowResource);
+                if (popupBackground != null) {
+                    popupBackground.getPadding(popupBackgroundPadding);
+                }
+                int minPopupHeightAllowance = Math.round(8 * activity.getResources().getDisplayMetrics().density);
+                int popupHeightAllowance = Math.max(
+                        minPopupHeightAllowance,
+                        popupBackgroundPadding.top + popupBackgroundPadding.bottom);
                 if (isTablet) {
                     int newWindowWidth = dlgWindowWidth - dlgWidth + newWidth;
+                    int popupHeight = Math.min(measuredHeight + popupHeightAllowance, dlgHeight);
                     int newWindowHeight = dlgWindowHeight - dlgHeight +
-                            Math.min(measuredHeight, dlgHeight);
+                            popupHeight;
                     dialog.getWindow().setLayout(newWindowWidth, newWindowHeight);
                     WindowManager.LayoutParams params = dialog.getWindow().getAttributes();
                     if (coordinates.x > activityWindowRect.width() - coordinates.x &&
@@ -3077,7 +3093,8 @@ public class BoardFragment extends Fragment implements AdapterView.OnItemClickLi
                     //затемнение в планшетном режиме не нужно
                     dialog.getWindow().setDimAmount(0.1f);
                 } else {
-                    dialog.getWindow().setLayout(newWidth, Math.max(1, Math.min(measuredHeight, maxPhoneHeight)));
+                    int popupHeight = Math.max(1, Math.min(measuredHeight + popupHeightAllowance, maxPhoneHeight));
+                    dialog.getWindow().setLayout(newWidth, popupHeight);
                 }
                 dialog.show();
                 dialogs.add(dialog);
@@ -3472,7 +3489,7 @@ public class BoardFragment extends Fragment implements AdapterView.OnItemClickLi
                     convertView.setLayoutParams(new AbsListView.LayoutParams(tnSize, tnSize));
                     ImageView tnImage = new ImageView(activity);
                     tnImage.setLayoutParams(new FrameLayout.LayoutParams(tnSize, tnSize, Gravity.CENTER));
-                    tnImage.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+                    tnImage.setScaleType(ImageView.ScaleType.CENTER_CROP);
                     tnImage.setId(R.id.post_thumbnail_image);
                     ((FrameLayout) convertView).addView(tnImage);
                 }
