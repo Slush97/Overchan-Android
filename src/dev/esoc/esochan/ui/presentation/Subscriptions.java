@@ -131,6 +131,45 @@ public class Subscriptions {
         database.resetDB();
         cached = null;
     }
+
+    public static class SubscriptionEntry {
+        public final String chan;
+        public final String board;
+        public final String thread;
+        public final String post;
+        public SubscriptionEntry(String chan, String board, String thread, String post) {
+            this.chan = chan;
+            this.board = board;
+            this.thread = thread;
+            this.post = post;
+        }
+    }
+
+    /** All subscriptions, newest first. */
+    public List<SubscriptionEntry> listAll() {
+        return database.listAll();
+    }
+
+    /** Unique threads that have at least one subscription, newest first. */
+    public List<SubscriptionEntry> listThreads() {
+        List<SubscriptionEntry> all = listAll();
+        List<SubscriptionEntry> threads = new ArrayList<>();
+        HashSet<String> seen = new HashSet<>();
+        for (SubscriptionEntry e : all) {
+            String key = e.chan + '\0' + e.board + '\0' + e.thread;
+            if (seen.add(key)) {
+                threads.add(new SubscriptionEntry(e.chan, e.board, e.thread, null));
+            }
+        }
+        return threads;
+    }
+
+    public void removeThread(String chan, String board, String thread) {
+        database.removeThread(chan, board, thread);
+        Object[] tuple = cached;
+        if (tuple != null && tuple[0].equals(chan) && tuple[1].equals(board) && tuple[2].equals(thread))
+            cached = null;
+    }
     
     /**
      * Установить детектор своего поста (для борд, которые не отдают номер своего поста после отправки)
@@ -273,6 +312,31 @@ public class Subscriptions {
         
         public long getNumEntries() {
             return DatabaseUtils.queryNumEntries(dbHelper.getReadableDatabase(), TABLE_NAME);
+        }
+
+        public List<SubscriptionEntry> listAll() {
+            List<SubscriptionEntry> list = new ArrayList<>();
+            Cursor c = dbHelper.getReadableDatabase().query(TABLE_NAME, null, null, null, null, null,
+                    BaseColumns._ID + " desc", "500");
+            if (c != null && c.moveToFirst()) {
+                int chanIndex = c.getColumnIndex(COL_CHAN);
+                int boardIndex = c.getColumnIndex(COL_BOARD);
+                int threadIndex = c.getColumnIndex(COL_THREAD);
+                int postIndex = c.getColumnIndex(COL_POST);
+                do {
+                    list.add(new SubscriptionEntry(
+                            c.getString(chanIndex), c.getString(boardIndex),
+                            c.getString(threadIndex), c.getString(postIndex)));
+                } while (c.moveToNext());
+            }
+            if (c != null) c.close();
+            return list;
+        }
+
+        public void removeThread(String chan, String board, String thread) {
+            dbHelper.getWritableDatabase().delete(TABLE_NAME,
+                    COL_CHAN + " = ? AND " + COL_BOARD + " = ? AND " + COL_THREAD + " = ?",
+                    new String[] { chan, board, thread });
         }
         
         private static class DBHelper extends SQLiteOpenHelper implements BaseColumns {

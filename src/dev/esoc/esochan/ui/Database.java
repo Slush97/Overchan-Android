@@ -370,6 +370,10 @@ public class Database {
         if (c != null) c.close();
         return list;
     }
+
+    public void clearSavedThreads() {
+        dbHelper.recreateSaved();
+    }
     
     /* *********************** DB HELPER *********************** */
     
@@ -433,6 +437,11 @@ public class Database {
             getWritableDatabase().execSQL(dropTable(TABLE_FAVORITES));
             getWritableDatabase().execSQL(createTable(TABLE_FAVORITES,
                     new String[] { COL_CHAN, COL_BOARD, COL_BOARDPAGE, COL_THREAD, COL_TITLE, COL_URL }));
+        }
+
+        public void recreateSaved() {
+            getWritableDatabase().execSQL(dropTable(TABLE_SAVED));
+            getWritableDatabase().execSQL(createTable(TABLE_SAVED, new String[] { COL_CHAN, COL_TITLE, COL_FILEPATH }));
         }
     }
 }

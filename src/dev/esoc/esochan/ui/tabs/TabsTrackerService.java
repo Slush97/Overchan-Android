@@ -71,6 +71,10 @@ public class TabsTrackerService extends Service {
     public static final String EXTRA_CLEAR_SUBSCRIPTIONS = "ClearSubscriptions";
     public static final String BROADCAST_ACTION_NOTIFY = "dev.esoc.esochan.BROADCAST_ACTION_TRACKER_NOTIFY";
     public static final String BROADCAST_ACTION_CLEAR_SUBSCRIPTIONS = "dev.esoc.esochan.BROADCAST_ACTION_CLEAR_SUBSCRIPTIONS";
+    /** In-app toast for a reply to a tracked post while the UI is visible. */
+    public static final String BROADCAST_ACTION_SUBSCRIPTION_REPLY = "dev.esoc.esochan.BROADCAST_ACTION_SUBSCRIPTION_REPLY";
+    public static final String EXTRA_SUBSCRIPTION_TITLE = "SubscriptionTitle";
+    public static final String EXTRA_SUBSCRIPTION_URL = "SubscriptionUrl";
     public static final int TRACKER_NOTIFICATION_UPDATE_ID = 40;
     public static final int TRACKER_NOTIFICATION_SUBSCRIPTIONS_ID = 50;
     
@@ -90,29 +94,39 @@ public class TabsTrackerService extends Service {
         return running;
     }
     
-    /** добавить тред, в котором есть ответы на отслеживаемые посты (будет выведено уведомление) */
+    /**
+     * Record a reply to a tracked post.
+     * Background: system notification. Foreground: in-app toast only (no dual alert).
+     */
     public static void addSubscriptionNotification(String tabUrl, String postNumber, String tabTitle) {
         List<Triple<String, String, String>> list = subscriptionsData;
         if (list == null) list = new ArrayList<>();
+        String postUrl = tabUrl;
+        try {
+            UrlPageModel pageModel = UrlHandler.getPageModel(tabUrl);
+            if (pageModel != null) {
+                pageModel.postNumber = postNumber;
+                postUrl = MainApplication.getInstance().getChanModule(pageModel.chanName).buildUrl(pageModel);
+            }
+        } catch (Exception e) {
+            Logger.e(TAG, e);
+        }
         int index = findTab(list, tabUrl, tabTitle);
         if (index == -1) {
-            String postUrl = tabUrl;
-            try {
-                UrlPageModel pageModel = UrlHandler.getPageModel(tabUrl);
-                if (pageModel != null) {
-                    pageModel.postNumber = postNumber;
-                    postUrl = MainApplication.getInstance().getChanModule(pageModel.chanName).buildUrl(pageModel);
-                }
-            } catch (Exception e) {
-                Logger.e(TAG, e);
-            }
             list.add(Triple.of(tabUrl, postUrl, tabTitle));
         } else {
-            String postUrl = list.get(index).getMiddle();
             list.set(index, Triple.of(tabUrl, postUrl, tabTitle));
         }
         subscriptionsData = list;
-        subscriptions = true;
+        if (MainActivity.isUiResumed()) {
+            Context ctx = MainApplication.getInstance();
+            Intent intent = InternalBroadcasts.intent(ctx, BROADCAST_ACTION_SUBSCRIPTION_REPLY);
+            intent.putExtra(EXTRA_SUBSCRIPTION_TITLE, tabTitle);
+            intent.putExtra(EXTRA_SUBSCRIPTION_URL, postUrl);
+            InternalBroadcasts.send(ctx, intent);
+        } else {
+            subscriptions = true;
+        }
     }
     
     /** установить флаг непрочитанных сообщений: в заголовке уведомления об автообновлении будет написано "есть новые сообщения" */

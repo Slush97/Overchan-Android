@@ -33,6 +33,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <item name="menu_board_gallery" type="id"/>
     <item name="menu_clear_history" type="id"/>
     <item name="menu_clear_favorites" type="id"/>
+    <item name="menu_clear_saved" type="id"/>
+    <item name="menu_clear_activity" type="id"/>
+    <item name="context_menu_remove_saved" type="id"/>
+    <item name="context_menu_remove_subscription" type="id"/>
+    <item name="context_menu_remove_thread_subscriptions" type="id"/>
     <item name="menu_save_attachment" type="id"/>
     <item name="menu_open_external" type="id"/>
     <item name="menu_share" type="id"/>

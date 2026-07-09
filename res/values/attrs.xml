@@ -51,6 +51,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <attr name="sidebarBtnNewTab" format="reference" />
         <attr name="sidebarBtnHome" format="reference" />
         <attr name="sidebarBtnFavorites" format="reference" />
+        <attr name="sidebarBtnSaved" format="reference" />
+        <attr name="sidebarBtnActivity" format="reference" />
         <attr name="iconBtnClose" format="reference" />
         <attr name="iconItemPrevious" format="reference" />
         <attr name="iconItemNext" format="reference" />

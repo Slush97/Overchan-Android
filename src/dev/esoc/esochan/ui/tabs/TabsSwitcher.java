@@ -21,8 +21,10 @@ package dev.esoc.esochan.ui.tabs;
 import dev.esoc.esochan.R;
 import dev.esoc.esochan.common.Logger;
 import dev.esoc.esochan.common.MainApplication;
+import dev.esoc.esochan.ui.ActivityFragment;
 import dev.esoc.esochan.ui.FavoritesFragment;
 import dev.esoc.esochan.ui.HistoryFragment;
+import dev.esoc.esochan.ui.SavedThreadsFragment;
 import dev.esoc.esochan.ui.presentation.BoardFragment;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -58,7 +60,8 @@ public class TabsSwitcher {
             if (!force) {
                 if (currentId != null && currentId.equals(Long.valueOf(tabModel.id))) {
                     if (tabModel.forceUpdate && currentFragment != null && currentFragment instanceof BoardFragment) {
-                        ((BoardFragment) currentFragment).update();
+                        String expectPost = tabModel.startItemNumber;
+                        ((BoardFragment) currentFragment).update(expectPost);
                         tabModel.forceUpdate = false;
                         MainApplication.getInstance().serializer.serializeTabsState(MainApplication.getInstance().tabsState);
                     }
@@ -78,11 +81,8 @@ public class TabsSwitcher {
     }
     
     /**
-     * Переключиться на скрытую вкладку (Избранное / История).
+     * Switch to a virtual tab (Favorites / History / Saved / Activity).
      * POSITION_NEWTAB is handled in MainActivity (opens 4chan index) and is not a fragment.
-     * @param virtualPosition виртуальная позиция вкладки
-     * (см. {@link TabModel#POSITION_FAVORITES}, {@link TabModel#POSITION_HISTORY})
-     * @param fragmentManager менеджер фрагментов
      */
     public void switchTo(int virtualPosition, FragmentManager fragmentManager) {
         if (currentId != null && currentId.equals(Long.valueOf(virtualPosition))) return;
@@ -93,6 +93,12 @@ public class TabsSwitcher {
                 break;
             case TabModel.POSITION_FAVORITES:
                 newFragment = new FavoritesFragment();
+                break;
+            case TabModel.POSITION_SAVED:
+                newFragment = new SavedThreadsFragment();
+                break;
+            case TabModel.POSITION_ACTIVITY:
+                newFragment = new ActivityFragment();
                 break;
             default:
                 Logger.e(TAG, "unsupported virtual tab position: " + virtualPosition);
@@ -105,13 +111,13 @@ public class TabsSwitcher {
     
     private void replace(FragmentManager fragmentManager, Fragment newFragment) {
         try {
-            fragmentManager.beginTransaction().setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right).
-                    replace(R.id.main_fragment_container, newFragment).commit();
+            fragmentManager.beginTransaction()
+                    .replace(R.id.main_fragment_container, newFragment).commit();
         } catch (Exception e) {
             Logger.e(TAG, e);
             try {
-                fragmentManager.beginTransaction().setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right).
-                        replace(R.id.main_fragment_container, newFragment).commitAllowingStateLoss();
+                fragmentManager.beginTransaction()
+                        .replace(R.id.main_fragment_container, newFragment).commitAllowingStateLoss();
             } catch (Exception e1) {
                 Logger.e(TAG, e1);
             }

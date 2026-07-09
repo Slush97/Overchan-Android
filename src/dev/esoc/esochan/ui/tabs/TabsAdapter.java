@@ -21,6 +21,7 @@ package dev.esoc.esochan.ui.tabs;
 import dev.esoc.esochan.R;
 import dev.esoc.esochan.databinding.SidebarTabitemBinding;
 import dev.esoc.esochan.api.ChanModule;
+import dev.esoc.esochan.api.models.UrlPageModel;
 import dev.esoc.esochan.common.MainApplication;
 import dev.esoc.esochan.ui.HistoryFragment;
 import dev.esoc.esochan.ui.theme.ThemeUtils;
@@ -233,34 +234,38 @@ public class TabsAdapter extends ArrayAdapter<TabModel> {
                     titleText = titleStringBuilder.append(titleText).toString();
                 }
                 title.setText(titleText);
-                ChanModule chan = MainApplication.getInstance().getChanModule(model.pageModel.chanName);
-                Drawable icon = chan != null ? chan.getChanFavicon() :
-                    ResourcesCompat.getDrawable(context.getResources(), android.R.drawable.ic_delete, null);
-                if (icon != null) {
-                    if (model.type == TabModel.TYPE_LOCAL) {
-                        Drawable[] layers = new Drawable[] {
-                                icon, ResourcesCompat.getDrawable(context.getResources(), R.drawable.favicon_overlay_local, null) };
-                        icon = new LayerDrawable(layers);
-                    }
-                    /* XXX
-                    Была идея помечать вкладки на автообновлении дополнительным значком (небольшой overlay поверх favicon в левом верхнем углу),
-                    чтобы сразу видеть в списке вкладок, какие будут обновлены, а где автообновление отключено (по умолчанию включено везде).
-                    Но в таком виде это выглядит плохо, возможно, стоит запилить-поискать какую-нибудь лёгкую иконку, чтобы не загромождать интерфейс.
-                    Или придумать другой способ отображать это, или вообще это всё не нужно.
-                    
-                    else if (model.type == TabModel.TYPE_NORMAL && model.pageModel != null &&
-                            model.pageModel.type == UrlPageModel.TYPE_THREADPAGE && model.autoupdateBackground &&
-                            MainApplication.getInstance().settings.isAutoupdateEnabled() &&
-                            MainApplication.getInstance().settings.isAutoupdateBackground()) {
-                        Drawable[] layers = new Drawable[] {
-                                icon, ResourcesCompat.getDrawable(context.getResources(), R.drawable.favicon_overlay_autoupdate, null) };
-                        icon = new LayerDrawable(layers);
-                    }
-                    */
-                    favIcon.setImageDrawable(icon);
-                    favIcon.setVisibility(View.VISIBLE);
-                } else {
+                if (model.pageModel != null && model.pageModel.type == UrlPageModel.TYPE_THREADPAGE) {
                     favIcon.setVisibility(View.GONE);
+                } else {
+                    ChanModule chan = MainApplication.getInstance().getChanModule(model.pageModel.chanName);
+                    Drawable icon = chan != null ? chan.getChanFavicon() :
+                        ResourcesCompat.getDrawable(context.getResources(), android.R.drawable.ic_delete, null);
+                    if (icon != null) {
+                        if (model.type == TabModel.TYPE_LOCAL) {
+                            Drawable[] layers = new Drawable[] {
+                                    icon, ResourcesCompat.getDrawable(context.getResources(), R.drawable.favicon_overlay_local, null) };
+                            icon = new LayerDrawable(layers);
+                        }
+                        /* XXX
+                        Была идея помечать вкладки на автообновлении дополнительным значком (небольшой overlay поверх favicon в левом верхнем углу),
+                        чтобы сразу видеть в списке вкладок, какие будут обновлены, а где автообновление отключено (по умолчанию включено везде).
+                        Но в таком виде это выглядит плохо, возможно, стоит запилить-поискать какую-нибудь лёгкую иконку, чтобы не загромождать интерфейс.
+                        Или придумать другой способ отображать это, или вообще это всё не нужно.
+                        
+                        else if (model.type == TabModel.TYPE_NORMAL && model.pageModel != null &&
+                                model.pageModel.type == UrlPageModel.TYPE_THREADPAGE && model.autoupdateBackground &&
+                                MainApplication.getInstance().settings.isAutoupdateEnabled() &&
+                                MainApplication.getInstance().settings.isAutoupdateBackground()) {
+                            Drawable[] layers = new Drawable[] {
+                                    icon, ResourcesCompat.getDrawable(context.getResources(), R.drawable.favicon_overlay_autoupdate, null) };
+                            icon = new LayerDrawable(layers);
+                        }
+                        */
+                        favIcon.setImageDrawable(icon);
+                        favIcon.setVisibility(View.VISIBLE);
+                    } else {
+                        favIcon.setVisibility(View.GONE);
+                    }
                 }
                 break;
             default:

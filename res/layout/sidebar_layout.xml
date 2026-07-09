@@ -67,7 +67,47 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <dev.esoc.esochan.lib.dslv.DragSortListView
         android:id="@+id/sidebar_tabs_list"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:nextFocusUp="@id/sidebar_btn_home" />
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:nextFocusUp="@id/sidebar_btn_home"
+        android:nextFocusDown="@+id/sidebar_btn_saved" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="?android:attr/listDivider" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/tab_height"
+        android:orientation="horizontal"
+        android:weightSum="2" >
+        <ImageView
+            style="@style/SelectableItem"
+            android:id="@+id/sidebar_btn_saved"
+            android:layout_height="match_parent"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:src="?attr/sidebarBtnSaved"
+            app:tint="?attr/iconTint"
+            android:scaleType="center"
+            android:focusable="true"
+            android:nextFocusUp="@id/sidebar_tabs_list"
+            android:nextFocusRight="@+id/sidebar_btn_activity"
+            android:contentDescription="@string/tabs_saved" />
+        <ImageView
+            style="@style/SelectableItem"
+            android:id="@+id/sidebar_btn_activity"
+            android:layout_height="match_parent"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:src="?attr/sidebarBtnActivity"
+            app:tint="?attr/iconTint"
+            android:scaleType="center"
+            android:focusable="true"
+            android:nextFocusUp="@id/sidebar_tabs_list"
+            android:nextFocusLeft="@id/sidebar_btn_saved"
+            android:contentDescription="@string/tabs_activity" />
+    </LinearLayout>
 
 </LinearLayout>

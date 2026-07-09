@@ -32,6 +32,7 @@ import dev.esoc.esochan.http.client.ExtendedTrustManager;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
+import dev.esoc.esochan.lib.ClickableToast;
 import dev.esoc.esochan.lib.dslv.DragSortController;
 import dev.esoc.esochan.lib.dslv.DragSortListView;
 import dev.esoc.esochan.lib.dslv.DragSortListView.DropListener;
@@ -113,6 +114,12 @@ public class MainActivity extends AppCompatActivity {
     private boolean isHorizontalOrientation;
     private boolean isPaused = false;
     private boolean isDestroyed = false;
+    private static volatile boolean uiResumed = false;
+
+    /** True while MainActivity is resumed (app UI visible). Used to prefer in-app reply toasts over system notifications. */
+    public static boolean isUiResumed() {
+        return uiResumed;
+    }
     
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
@@ -457,7 +464,12 @@ public class MainActivity extends AppCompatActivity {
         initDrawer();
         
         View[] sidebarButtons =
-            new View[] { findViewById(R.id.sidebar_btn_home), findViewById(R.id.sidebar_btn_favorites) };
+            new View[] {
+                findViewById(R.id.sidebar_btn_home),
+                findViewById(R.id.sidebar_btn_favorites),
+                findViewById(R.id.sidebar_btn_saved),
+                findViewById(R.id.sidebar_btn_activity)
+            };
         hiddenTabsSection = new HiddenTabsSection(sidebarButtons);
         
         DragSortListView list = (DragSortListView)findViewById(R.id.sidebar_tabs_list);
@@ -513,12 +525,17 @@ public class MainActivity extends AppCompatActivity {
                     tabsAdapter.notifyDataSetChanged(false);
                     tabsViewModel.refreshFromTrackerService();
                     TabsTrackerService.clearUnread();
+                } else if (action.equals(TabsTrackerService.BROADCAST_ACTION_SUBSCRIPTION_REPLY)) {
+                    showSubscriptionReplyToast(
+                            intent.getStringExtra(TabsTrackerService.EXTRA_SUBSCRIPTION_TITLE),
+                            intent.getStringExtra(TabsTrackerService.EXTRA_SUBSCRIPTION_URL));
                 }
             }
         };
         intentFilter = new IntentFilter();
         intentFilter.addAction(PostingService.BROADCAST_ACTION_STATUS);
         intentFilter.addAction(TabsTrackerService.BROADCAST_ACTION_NOTIFY);
+        intentFilter.addAction(TabsTrackerService.BROADCAST_ACTION_SUBSCRIPTION_REPLY);
         
         if (!TabsTrackerService.isRunning() && MainApplication.getInstance().settings.isAutoupdateEnabled())
             startService(new Intent(this, TabsTrackerService.class));
@@ -553,17 +570,31 @@ public class MainActivity extends AppCompatActivity {
     public boolean isPaused() {
         return isPaused;
     }
+
+    private void showSubscriptionReplyToast(String tabTitle, final String postUrl) {
+        if (isPaused || isDestroyed) return;
+        String title = tabTitle != null ? tabTitle : getString(R.string.subscriptions_notification_title);
+        String message = getString(R.string.subscriptions_reply_toast, title);
+        ClickableToast.showText(this, message, new ClickableToast.OnClickListener() {
+            @Override
+            public void onClick() {
+                if (postUrl != null) UrlHandler.open(postUrl, MainActivity.this);
+            }
+        }, true);
+    }
     
     @Override
     protected void onPause() {
         super.onPause();
         isPaused = true;
+        uiResumed = false;
     }
     
     @Override
     protected void onResume() {
         super.onResume();
         isPaused = false;
+        uiResumed = true;
         TabsTrackerService.clearUnread();
         
         StaticSettingsContainer newSettings = MainApplication.getInstance().settings.getStaticSettings();
@@ -690,6 +721,8 @@ public class MainActivity extends AppCompatActivity {
     class HiddenTabsSection implements View.OnClickListener {
         private View btnHome;
         private View btnFavorites;
+        private View btnSaved;
+        private View btnActivity;
         public HiddenTabsSection(View[] views) {
             for (View view : views) {
                 view.setOnClickListener(this);
@@ -700,6 +733,12 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.sidebar_btn_home:
                         btnHome = view;
                         break;
+                    case R.id.sidebar_btn_saved:
+                        btnSaved = view;
+                        break;
+                    case R.id.sidebar_btn_activity:
+                        btnActivity = view;
+                        break;
                 }
             }
         }
@@ -707,6 +746,8 @@ public class MainActivity extends AppCompatActivity {
         public void updateViewSelection(int selectedPosition) {
             setSelectedBackground(btnHome, false);
             setSelectedBackground(btnFavorites, selectedPosition == TabModel.POSITION_FAVORITES);
+            setSelectedBackground(btnSaved, selectedPosition == TabModel.POSITION_SAVED);
+            setSelectedBackground(btnActivity, selectedPosition == TabModel.POSITION_ACTIVITY);
         }
 
         @Override
@@ -716,7 +757,18 @@ public class MainActivity extends AppCompatActivity {
                 openHomePage();
                 return;
             }
-            int position = TabModel.POSITION_FAVORITES;
+            int position;
+            switch (v.getId()) {
+                case R.id.sidebar_btn_saved:
+                    position = TabModel.POSITION_SAVED;
+                    break;
+                case R.id.sidebar_btn_activity:
+                    position = TabModel.POSITION_ACTIVITY;
+                    break;
+                default:
+                    position = TabModel.POSITION_FAVORITES;
+                    break;
+            }
             boolean needSerialize = tabsAdapter.getSelectedItem() != position;
             tabsAdapter.setSelectedItem(position, needSerialize);
             closeDrawer();
