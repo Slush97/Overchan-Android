@@ -489,11 +489,11 @@ public class FourchanModule extends CloudflareChanModule {
                 HttpCookie passId = new HttpCookie("pass_id", cookie);
                 passId.setDomain(domain);
                 passId.setPath("/");
-                httpClient.getCookieStore().addCookie(passId);
+                httpClient.getCookieStore().addSecureCookie(passId);
                 HttpCookie passEnabled = new HttpCookie("pass_enabled", "1");
                 passEnabled.setDomain(domain);
                 passEnabled.setPath("/");
-                httpClient.getCookieStore().addCookie(passEnabled);
+                httpClient.getCookieStore().addSecureCookie(passEnabled);
             }
         } else {
             usingPasscode = false;
@@ -501,11 +501,11 @@ public class FourchanModule extends CloudflareChanModule {
                 HttpCookie passId = new HttpCookie("pass_id", "0");
                 passId.setDomain(domain);
                 passId.setPath("/");
-                httpClient.getCookieStore().addCookie(passId);
+                httpClient.getCookieStore().addSecureCookie(passId);
                 HttpCookie passEnabled = new HttpCookie("pass_enabled", "0");
                 passEnabled.setDomain(domain);
                 passEnabled.setPath("/");
-                httpClient.getCookieStore().addCookie(passEnabled);
+                httpClient.getCookieStore().addSecureCookie(passEnabled);
             }
         }
     }

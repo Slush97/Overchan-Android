@@ -67,20 +67,22 @@ public abstract class CloudflareChanModule extends AbstractChanModule {
             if (cloudflareCookieValue != null && cloudflareCookieDomain != null) {
                 HttpCookie c = new HttpCookie(CLOUDFLARE_COOKIE_NAME, cloudflareCookieValue);
                 c.setDomain(cloudflareCookieDomain);
-                httpClient.getCookieStore().addCookie(c);
+                httpClient.getCookieStore().addSecureCookie(c);
             }
         }
     }
 
     @Override
     public void saveCookie(HttpCookie cookie) {
-        super.saveCookie(cookie);
-        if (cookie != null) {
-            if (canCloudflare() && cookie.getName().equals(CLOUDFLARE_COOKIE_NAME)) {
+        if (cookie != null && canCloudflare() && cookie.getName().equals(CLOUDFLARE_COOKIE_NAME)) {
+            httpClient.getCookieStore().addSecureCookie(cookie);
+            if (cookie.getDomain() != null) {
                 preferences.edit().
                         putString(getSharedKey(PREF_KEY_CLOUDFLARE_COOKIE_VALUE), cookie.getValue()).
                         putString(getSharedKey(PREF_KEY_CLOUDFLARE_COOKIE_DOMAIN), cookie.getDomain()).commit();
             }
+        } else {
+            super.saveCookie(cookie);
         }
     }
 
