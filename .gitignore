@@ -1,5 +1,6 @@
 *.apk
 *.ap_
+*.aab
 *.dex
 *.class
 *.so
@@ -9,6 +10,9 @@ obj/
 gen/
 proguard/
 local.properties
+keystore.properties
+*.jks
+*.keystore
 
 .gradle/*
 .idea/*

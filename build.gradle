@@ -3,6 +3,11 @@ plugins {
     alias(libs.plugins.kotlin.android)
 }
 
+def keystorePropertiesFile = rootProject.file('keystore.properties')
+def keystoreProperties = new Properties()
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+}
 
 dependencies {
     implementation libs.androidx.core
@@ -59,15 +64,30 @@ android {
     sourceSets.test {
         java.srcDirs = ['test']
     }
+    signingConfigs {
+        release {
+            if (keystorePropertiesFile.exists()) {
+                storeFile file(keystoreProperties['storeFile'])
+                storePassword keystoreProperties['storePassword']
+                keyAlias keystoreProperties['keyAlias']
+                keyPassword keystoreProperties['keyPassword']
+            }
+        }
+    }
     buildTypes.release {
         minifyEnabled true
         shrinkResources true
         proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-project.txt'
+        if (keystorePropertiesFile.exists()) {
+            signingConfig signingConfigs.release
+        }
     }
     defaultConfig {
         applicationId "dev.esoc.esochan"
         minSdk 24
         targetSdk 35
+        versionCode 100
+        versionName "1.0.0"
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17

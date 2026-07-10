@@ -1,0 +1,86 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v4
+        with:
+          packages: platform-tools
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Decode release keystore
+        env:
+          SIGNING_KEYSTORE_BASE64: ${{ secrets.SIGNING_KEYSTORE_BASE64 }}
+          SIGNING_STORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD }}
+          SIGNING_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
+          SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
+        run: |
+          if [ -z "$SIGNING_KEYSTORE_BASE64" ]; then
+            echo "::error::SIGNING_KEYSTORE_BASE64 secret is not set. Configure SIGNING_* repository secrets before tagging a release."
+            exit 1
+          fi
+          echo "$SIGNING_KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/esochan-release.jks"
+          {
+            echo "storeFile=$RUNNER_TEMP/esochan-release.jks"
+            echo "storePassword=$SIGNING_STORE_PASSWORD"
+            echo "keyAlias=$SIGNING_KEY_ALIAS"
+            echo "keyPassword=$SIGNING_KEY_PASSWORD"
+          } > keystore.properties
+
+      - name: Verify and build release
+        run: ./gradlew testDebugUnitTest lintDebug assembleRelease bundleRelease --continue
+
+      - name: Name release artifacts
+        id: artifacts
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          mkdir -p dist
+          APK="build/outputs/apk/release/esochan-release.apk"
+          if [ ! -f "$APK" ]; then
+            echo "Signed release APK not found (got unsigned or missing)." >&2
+            ls -laR build/outputs/apk || true
+            exit 1
+          fi
+          cp "$APK" "dist/esochan-${VERSION}.apk"
+          if [ -f build/outputs/bundle/release/esochan-release.aab ]; then
+            cp build/outputs/bundle/release/esochan-release.aab "dist/esochan-${VERSION}.aab"
+          fi
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          # Release notes: section for this version from CHANGELOG
+          awk -v ver="$VERSION" '
+            $0 ~ "^## \\[" ver "\\]" {found=1; print; next}
+            found && $0 ~ /^## \[/ {exit}
+            found {print}
+          ' CHANGELOG.md > dist/release-notes.md
+          if [ ! -s dist/release-notes.md ]; then
+            echo "esochan ${VERSION}" > dist/release-notes.md
+          fi
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: esochan ${{ steps.artifacts.outputs.version }}
+          body_path: dist/release-notes.md
+          generate_release_notes: true
+          files: dist/esochan-*

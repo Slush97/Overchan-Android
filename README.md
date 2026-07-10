@@ -1,26 +1,98 @@
 # esochan
 
-esochan is a 4chan client for Android, forked from [Overchan Android](https://github.com/miku-nyan/Overchan-Android).
+esochan is a 4chan client for Android, forked from
+[Overchan Android](https://github.com/miku-nyan/Overchan-Android).
 
-## Building
+**Package ID:** `dev.esoc.esochan`  
+**Min Android:** 7.0 (API 24)  
+**License:** [GPLv3](LICENSE.txt)
+
+## Install (users)
+
+1. Open the [latest GitHub Release](https://github.com/Slush97/esochan-android/releases/latest).
+2. Download `esochan-1.0.0.apk` (or the versioned APK attached to that release).
+3. On your phone, allow install from your browser/file manager if prompted.
+4. Open the APK and install.
+
+Updates: install a newer release APK over the previous one. Keep using builds signed with
+the same release key so Android allows the upgrade.
+
+Project site: [GitHub Pages](https://slush97.github.io/esochan-android/) (if enabled).
+
+## Building (developers)
 
 ### Dependencies
 
-* JDK 17+
+* JDK 17 (recommended; AGP may fail on newer JDKs)
 * [Android SDK](https://developer.android.com/studio)
 * [Android NDK](https://developer.android.com/ndk)
 
-### Using Gradle
+### Debug build
 
 ```sh
 ./gradlew assembleDebug
 ```
 
-The APK will be at `build/outputs/apk/debug/esochan-debug.apk`.
+APK: `build/outputs/apk/debug/esochan-debug.apk`
+
+### Signed release build
+
+1. Create a release keystore (once) and copy `keystore.properties.example` → `keystore.properties`.
+2. Fill in absolute `storeFile` path, passwords, and alias (see the example file).
+3. Build:
+
+```sh
+./gradlew assembleRelease
+```
+
+Signed APK: `build/outputs/apk/release/esochan-release.apk`  
+App Bundle: `build/outputs/bundle/release/esochan-release.aab`
+
+`keystore.properties` and `*.jks` are gitignored. **Back up the keystore and passwords**;
+losing them prevents publishing updates that install over existing installs.
+
+### Verify
+
+```sh
+./gradlew testDebugUnitTest lintDebug assembleRelease
+```
 
 ### Using Android Studio
 
-Import the project and build from the IDE.
+Import the project and build from the IDE. Use JDK 17 for the Gradle JVM.
+
+## Versioning
+
+- `versionName` / `versionCode` live in `build.gradle` (`defaultConfig`) and are mirrored in
+  `AndroidManifest.xml`.
+- Git tags use `vMAJOR.MINOR.PATCH` (e.g. `v1.0.0`).
+- See [CHANGELOG.md](CHANGELOG.md).
+
+## Releasing
+
+1. Bump `versionName` / `versionCode` in `build.gradle` and the manifest.
+2. Update `CHANGELOG.md`.
+3. Commit on `master`, push, and tag:
+
+```sh
+git tag -a v1.0.0 -m "esochan 1.0.0"
+git push origin v1.0.0
+```
+
+4. The **Release** workflow builds and publishes a GitHub Release with APK assets when
+   signing secrets are configured; otherwise attach a locally signed APK with
+   `gh release create`.
+
+### Optional GitHub Actions signing secrets
+
+For automated signed releases, add repository secrets:
+
+| Secret | Description |
+|--------|-------------|
+| `SIGNING_KEYSTORE_BASE64` | `base64 -w0 esochan-release.jks` |
+| `SIGNING_STORE_PASSWORD` | Keystore password |
+| `SIGNING_KEY_ALIAS` | Key alias (e.g. `esochan`) |
+| `SIGNING_KEY_PASSWORD` | Key password (same as store for PKCS12) |
 
 ## License
 
