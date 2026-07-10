@@ -30,6 +30,7 @@ import dev.esoc.esochan.ui.SavedThreadsFragment;
 import dev.esoc.esochan.ui.presentation.BoardFragment;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 /**
  * Переключение вкладок (фрагментов)
@@ -38,9 +39,31 @@ import androidx.fragment.app.FragmentManager;
  */
 public class TabsSwitcher {
     private static final String TAG = "TabsSwitcher";
+
+    /** Slide the next tab switch as a forward drill-in (new screen enters from the right). */
+    public static final int TRANSITION_FORWARD = 0;
+    /** Slide the next tab switch as a back navigation (previous screen enters from the left). */
+    public static final int TRANSITION_BACKWARD = 1;
+
     /** текущий ID или виртуальная позиция скрытой вкладки */
     public Long currentId = null;
     private volatile WeakReference<Fragment> currentFragmentRef = new WeakReference<>(null);
+
+    /** Direction for the next fragment swap. Consumed (reset to forward) on each swap. */
+    private int pendingTransition = TRANSITION_FORWARD;
+
+    /**
+     * Request that the next tab switch animate as a "back" (reverse) slide. One-shot: it is
+     * automatically reset to a forward slide once the switch is performed.
+     */
+    public void setNextTransitionBackward() {
+        pendingTransition = TRANSITION_BACKWARD;
+    }
+
+    /** Cancel a pending back transition (e.g. when a back gesture did not switch tabs). */
+    public void clearPendingTransition() {
+        pendingTransition = TRANSITION_FORWARD;
+    }
 
     public Fragment getCurrentFragment() {
         return currentFragmentRef.get();
@@ -128,17 +151,36 @@ public class TabsSwitcher {
     }
     
     private void replace(FragmentManager fragmentManager, Fragment newFragment) {
+        int transition = pendingTransition;
+        pendingTransition = TRANSITION_FORWARD; // one-shot: consume the requested direction
+        // Skip the slide when there is nothing to slide out yet (cold start or activity recreate),
+        // so the very first screen simply appears instead of flying in.
+        boolean animate = fragmentManager.findFragmentById(R.id.main_fragment_container) != null;
         try {
-            fragmentManager.beginTransaction()
-                    .replace(R.id.main_fragment_container, newFragment).commit();
+            FragmentTransaction transaction = fragmentManager.beginTransaction();
+            if (animate) applyTransition(transaction, transition);
+            transaction.replace(R.id.main_fragment_container, newFragment).commit();
         } catch (Exception e) {
             Logger.e(TAG, e);
             try {
-                fragmentManager.beginTransaction()
-                        .replace(R.id.main_fragment_container, newFragment).commitAllowingStateLoss();
+                FragmentTransaction transaction = fragmentManager.beginTransaction();
+                if (animate) applyTransition(transaction, transition);
+                transaction.replace(R.id.main_fragment_container, newFragment).commitAllowingStateLoss();
             } catch (Exception e1) {
                 Logger.e(TAG, e1);
             }
+        }
+    }
+
+    /**
+     * Apply the horizontal slide for a tab swap. To invert the whole app's sense of direction,
+     * swap the forward and backward resource pairs below.
+     */
+    private void applyTransition(FragmentTransaction transaction, int transition) {
+        if (transition == TRANSITION_BACKWARD) {
+            transaction.setCustomAnimations(R.anim.tab_slide_in_left, R.anim.tab_slide_out_right);
+        } else {
+            transaction.setCustomAnimations(R.anim.tab_slide_in_right, R.anim.tab_slide_out_left);
         }
     }
 }
