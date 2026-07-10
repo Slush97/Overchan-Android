@@ -19,6 +19,37 @@ the same release key so Android allows the upgrade.
 
 Project site: [GitHub Pages](https://slush97.github.io/esochan-android/) (if enabled).
 
+### Verify your download
+
+Each release attaches a `SHA256SUMS` file and a `signing-certificate.txt`.
+
+1. **Checksum** — confirm the APK wasn't altered in transit:
+
+   ```sh
+   sha256sum -c SHA256SUMS
+   ```
+
+2. **Signer** — confirm the APK was signed by esochan's release key. Print the
+   signing certificate and compare its SHA-256 to the fingerprint below (and to
+   the one in the release's `signing-certificate.txt`):
+
+   ```sh
+   # needs Android SDK build-tools
+   apksigner verify --print-certs esochan-1.0.0.apk
+   # or, with only a JDK:
+   keytool -printcert -jarfile esochan-1.0.0.apk
+   ```
+
+   Release signing certificate SHA-256:
+
+   ```
+   <maintainer: paste your release cert SHA-256 here once, e.g. from
+    `apksigner verify --print-certs` — this is a public fingerprint, not a secret>
+   ```
+
+   Every genuine esochan release must show this exact fingerprint. A different
+   fingerprint means the APK was signed by a different key — do not install it.
+
 ## Building (developers)
 
 ### Dependencies
@@ -98,4 +129,9 @@ For automated signed releases, add repository secrets:
 
 esochan is licensed under the [GPLv3](http://www.gnu.org/licenses/gpl-3.0.txt).
 
-Originally developed by [miku-nyan](https://github.com/miku-nyan).
+Originally developed by [miku-nyan](https://github.com/miku-nyan); esochan is a fork of
+[Overchan Android](https://github.com/miku-nyan/Overchan-Android) (also GPLv3).
+
+Bundled third-party components and their licenses (GIFLIB, android-gif-drawable,
+DragSortListView, and others) are documented in
+[THIRD_PARTY_LICENSES.md](THIRD_PARTY_LICENSES.md).

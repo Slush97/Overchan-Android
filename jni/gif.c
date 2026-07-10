@@ -1,3 +1,14 @@
+/*
+ * SPDX-License-Identifier: MIT
+ *
+ * Based on android-gif-drawable
+ * Copyright (c) 2013 - present, Karol Wrótniak "koral--"
+ * https://github.com/koral--/android-gif-drawable
+ *
+ * Licensed under the MIT License. See THIRD_PARTY_LICENSES.md at the
+ * repository root for the full license text.
+ */
+
 #include "gif.h"
 #include <unistd.h>
 
