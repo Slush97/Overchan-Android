@@ -66,41 +66,45 @@ public final class UriFileUtils {
     }
 
     /**
-     * Copies a file or content URI into the app cache without trusting its display name or size.
-     * Callers must invoke this on an IO thread.
+     * Streams a file or content URI into the app cache without trusting its display name or size.
+     *
+     * <p>Both {@code file://} and {@code content://} sources are copied into the cache directory, so
+     * the returned {@link File} is always app-owned and safe to delete. Never returns a handle to a
+     * user-owned path. Callers must invoke this on an IO thread.
      */
     public static File copyToCache(Context context, Uri uri, long maxBytes) throws IOException {
         if (uri == null) throw new IOException("No file was selected");
         if (maxBytes <= 0) throw new IllegalArgumentException("maxBytes must be positive");
 
-        if (ContentResolver.SCHEME_FILE.equalsIgnoreCase(uri.getScheme())) {
-            String path = uri.getPath();
-            if (path == null) throw new IOException("Selected file has no path");
-            File source = new File(path);
-            if (!source.isFile()) throw new IOException("Selected file is unavailable");
-            ensureWithinLimit(source.length(), maxBytes);
-            return source;
-        }
-        if (!ContentResolver.SCHEME_CONTENT.equalsIgnoreCase(uri.getScheme())) {
-            throw new IOException("Unsupported file URI");
-        }
-
-        ContentResolver resolver = context.getContentResolver();
-        Metadata metadata = queryMetadata(resolver, uri);
-        ensureWithinLimit(metadata.size, maxBytes);
-
-        String displayName = metadata.displayName;
-        if (!hasExtension(displayName)) {
-            String extension = MimeTypeMap.getSingleton().getExtensionFromMimeType(resolver.getType(uri));
-            if (extension != null && !extension.isEmpty()) displayName = displayName + "." + extension;
-        }
-        File destination = createDestination(context, sanitizeFileName(displayName));
-        boolean success = false;
+        String displayName;
         InputStream input = null;
         FileOutputStream output = null;
+        File destination = null;
+        boolean success = false;
         try {
-            input = resolver.openInputStream(uri);
+            if (ContentResolver.SCHEME_FILE.equalsIgnoreCase(uri.getScheme())) {
+                String path = uri.getPath();
+                if (path == null) throw new IOException("Selected file has no path");
+                File source = new File(path);
+                if (!source.isFile()) throw new IOException("Selected file is unavailable");
+                ensureWithinLimit(source.length(), maxBytes); // fast-fail; copyBounded enforces the real bound
+                displayName = source.getName();
+                input = new FileInputStream(source);
+            } else if (ContentResolver.SCHEME_CONTENT.equalsIgnoreCase(uri.getScheme())) {
+                ContentResolver resolver = context.getContentResolver();
+                Metadata metadata = queryMetadata(resolver, uri);
+                ensureWithinLimit(metadata.size, maxBytes);
+                displayName = metadata.displayName;
+                if (!hasExtension(displayName)) {
+                    String extension = MimeTypeMap.getSingleton().getExtensionFromMimeType(resolver.getType(uri));
+                    if (extension != null && !extension.isEmpty()) displayName = displayName + "." + extension;
+                }
+                input = resolver.openInputStream(uri);
+            } else {
+                throw new IOException("Unsupported file URI");
+            }
             if (input == null) throw new IOException("Could not open selected file");
+            destination = createDestination(context, sanitizeFileName(displayName));
             output = new FileOutputStream(destination);
             copyBounded(input, output, maxBytes);
             success = true;
@@ -108,7 +112,7 @@ public final class UriFileUtils {
         } finally {
             IOUtils.closeQuietly(input);
             IOUtils.closeQuietly(output);
-            if (!success) destination.delete();
+            if (!success && destination != null) destination.delete();
         }
     }
 

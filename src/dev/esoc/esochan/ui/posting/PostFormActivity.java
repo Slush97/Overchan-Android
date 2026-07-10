@@ -311,7 +311,7 @@ public class PostFormActivity extends Activity implements View.OnClickListener {
                             getApplicationContext(), uri, UriFileUtils.MAX_ATTACHMENT_BYTES);
                     unsupported = !UriFileUtils.hasAllowedExtension(
                             importedFile, boardModel.attachmentsFormatFilters);
-                    if (unsupported && "content".equalsIgnoreCase(uri.getScheme())) importedFile.delete();
+                    if (unsupported) importedFile.delete(); // always an app-owned cache copy
                 } catch (UriFileUtils.FileTooLargeException e) {
                     tooLarge = true;
                 } catch (Exception e) {
