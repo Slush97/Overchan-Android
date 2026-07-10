@@ -272,6 +272,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <string name="postform_send">Надіслати</string>
     <string name="postform_max_attachments">Більше файлів прикріпити не можна</string>
     <string name="postform_cannot_attach">Прикріпити файл не можна</string>
+    <string name="postform_attachment_too_large">Вибраний файл перевищує обмеження вкладень у %1$d МБ</string>
+    <string name="postform_unsupported_attachment">Цей тип файлу не дозволено на цій дошці</string>
     <string name="postform_required_file">Додайте файл, щоб створити тред</string>
     <string name="postform_empty_comment">Напишіть пост</string>
     <string name="postform_attachment_size_format">%1$d КБ, %2$dx%3$d</string>
@@ -284,6 +286,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <string name="posting_error">Помилка надсилання</string>
     <string name="posting_error_interactive_format">Запитано перевірку %s</string>
     <string name="posting_error_default">Невідома помилка</string>
+    <string name="posting_error_copy_details">Копіювати подробиці</string>
     <string name="posting_success">Успіх</string>
     <string name="posting_success_post">Пост надіслано</string>
     <string name="posting_success_thread">Тред створено</string>
@@ -321,17 +324,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <string name="html_external">(ззовні)</string>
     <string name="html_file">Файл:</string>
     
-    <string name="filedialog_title">Оберіть файл</string>
-    <string name="filedialog_location">Шлях</string>
-    <string name="filedialog_cant_read_folder">Не читається!</string>
-    <string name="filedialog_new">Створити</string>
-    <string name="filedialog_select">Обрати</string>
-    <string name="filedialog_filename">Назва файлу:</string>
-    <string name="filedialog_filename_hint">назва файлу</string>
-    <string name="filedialog_cancel">Скасувати</string>
-    <string name="filedialog_create">Зберегти</string>
-    <string name="filedialog_no_data">Даних немає</string>
-    
     <string name="gallery_error_incorrect_attachment">Хибний додаток</string>
     <string name="gallery_error_play">Помилка відтворення</string>
     <string name="gallery_tap_to_play">Торкніться, щоб відтворити</string>
@@ -364,6 +356,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <string name="custom_themes_title">Користувальницькі теми</string>
     <string name="custom_themes_local">(Вибрати з файлу)</string>
     <string name="custom_themes_loading">Завантаження</string>
+    <string name="custom_themes_invalid_file">Виберіть файл теми у форматі JSON</string>
+    <string name="custom_themes_file_too_large">Розмір файлу теми не має перевищувати 64 КБ</string>
     
     <string name="subscriptions_notification_title">Відстежувані відповіді</string>
     <string name="subscriptions_notification_text_format">в треді: %s</string>
@@ -396,52 +390,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <string name="error_interactive_cancelled_format">Перевірку не пройдено: %s</string>
     <string name="error_out_of_memory">Пам’ять вичерпано</string>
     
-    <string name="ssl_accept_cert">Недовірений сертифікат</string>
-    <string name="ssl_trust_anchor">Сертифікат не підписаний довіреною центром сертифікації.</string>
-    <string name="ssl_cert_expired">Термін дії сертифіката минув.</string>
-    <string name="ssl_accept_servername">Неправильна назва сертифіката</string>
-    <string name="ssl_hostname_mismatch">Сертифікат не збігається з назвою вузла \&quot;%s\&quot;.
-        Сертифікат дійсний тільки для наступних імен:</string>
-    <string name="ssl_connect_anyway">Це може бути спроба перехопити дані.
-        Ви не повинні продовжувати, якщо не впевнені, що це не атака.\n\nПідключитися в будь-якому випадку?</string>
-    <string name="ssl_cert_details">Дані сертифіката:</string>
-    <string name="ssl_decision_always">Завжди</string>
-    <string name="ssl_decision_once">Один раз</string>
-    <string name="ssl_decision_abort">Перервати</string>
-    <string name="ssl_certificates_title">Сертифікати</string>
-    <string name="ssl_certificate_delete">Видалити</string>
-    
     <string name="crash_dialog_title">esochan – збій</string>
     <string name="crash_dialog_text">Програму зупинено через невідому помилку.
         Натисніть OK, щоб надіслати звіт розробникам.</string>
     <string name="crash_dialog_comment_prompt">Коротко про ваші дії:</string>
     <string name="crash_dialog_ok_toast">Дякуємо!</string>
     
-    <string name="iichan_prefs_report_thread">Тред для скарг</string>
-    <string name="iichan_prefs_report_thread_summary">Номер треду в /d/ для повідомлень про порушення</string>
-    
-    <string name="kraut_prefs_kompturcode">Komturcode</string>
-    <string name="kraut_prefs_kompturcode_summary">Komturcode cookie</string>
-    
-    <string name="makaba_catalog_standart">Сортування за бампами</string>
-    <string name="makaba_catalog_last_reply">Сортування за останньою відповіддю</string>
-    <string name="makaba_catalog_num">Сортування за датою створення</string>
-    <string name="makaba_catalog_image_size">Сортування за розміром картинки</string>
-    <string name="makaba_no_icon">Іконки немає</string>
-    <string name="makaba_prefs_mobile_api">Мобільний API</string>
-    <string name="makaba_prefs_captcha_category">Капча</string>
-    <string name="makaba_prefs_domain_category">Домен</string>
-    <string name="makaba_prefs_skip_captcha">Пропустити капчу</string>
-    
-    <string name="mikuba_password_ignored">(ігнорується)</string>
-
     <string name="fourchan_prefs_new_recaptcha_fallback">Recaptcha 2.0 fallback</string>
     <string name="fourchan_prefs_new_recaptcha_fallback_summary">Використовувати Google Recaptcha 2 в режимі сумісності</string>
 
     <string name="preferences">Опції</string>
     <string name="pref_cat_chans">4chan</string>
     <string name="pref_cat_chans_summary">Pass, пароль видалення, з’єднання</string>
-    <string name="pref_chans_rearrange">Переставити</string>
     <string name="pref_chans_enter_url">Ввести URL</string>
     <string name="pref_chans_enter_url_hint">http://</string>
     <string name="pref_chans_enter_url_incorrect">Ця іміджборда не підтримується</string>
@@ -492,8 +452,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <string name="pref_email_hint">sage</string>
     <string name="pref_hide_personal_title">Ховати блок особистих даних</string>
     <string name="pref_hide_personal_summary">Завжди використовувати типові значення</string>
-    <string name="pref_ssl_certificates_title">SSL сертифікати</string>
-    <string name="pref_ssl_certificates_summary">Довірені SSL сертифікати (виключення)</string>
     <string name="pref_random_hash_title">Випадковий хеш</string>
     <string name="pref_random_hash_summary">Додавати кілька байтів у кінець прикріплених файлів</string>
     <string name="pref_show_all_chans_list_title">Список іміджбордів</string>
@@ -557,7 +515,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <string name="pref_autoupdate_background_title">Оновлювати вкладки на тлі</string>
     <string name="pref_autoupdate_background_summary">Оновлювати позначені для автооновлення вкладки незалежно від того, чи вони на передньому плані</string>
     <string name="pref_autoupdate_notification_title">Закріпити у шторці</string>
-    <string name="pref_autoupdate_notification_summary">Не дозволяти системі закривати мінімізований процес</string>
+    <string name="pref_autoupdate_notification_summary">Показувати стан автооновлення, поки застосунок відкритий</string>
     <string name="pref_subscriptions_enabled_title">Відстежувати відповіді</string>
     <string name="pref_subscriptions_enabled_summary">Відстежувати відповіді на пости, на які ви підписані</string>
     <string name="pref_subscribe_threads_title">Відстежувати треди</string>
@@ -621,4 +579,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <item>45\uff05</item>
         <item>50\uff05</item>
     </string-array>
+    <string name="channel_downloads">Завантаження</string>
+    <string name="channel_posting">Надсилання</string>
+    <string name="channel_tabs_tracker">Фонові оновлення</string>
+    <string name="sidebar_home">4chan</string>
+    <string name="menu_download_all_images">Завантажити всі зображення</string>
+    <string name="download_all_confirm_format">Завантажити %d зображень до папки «Завантаження»?</string>
+    <string name="download_all_queued_format">Додано до черги завантаження зображень: %d</string>
+    <string name="download_all_no_images">У цьому треді немає зображень для завантаження</string>
+    <string name="postform_options">Параметри</string>
 </resources>

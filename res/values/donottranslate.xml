@@ -34,7 +34,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <string name="pref_key_name">PREF_KEY_NAME</string>
     <string name="pref_key_email">PREF_KEY_EMAIL</string>
     <string name="pref_key_hide_personal">PREF_KEY_HIDE_PERSONAL</string>
-    <string name="pref_key_ssl_certificates">PREF_KEY_SSL_CERTIFICATES</string>
     <string name="pref_key_random_hash">PREF_KEY_RANDOM_HASH</string>
     <string name="pref_key_show_all_chans_list">PREF_KEY_SHOW_ALL_CHANS_LIST</string>
     <string name="pref_key_show_nsfw_boards">PREF_KEY_SHOW_NSFW_BOARDS</string>
@@ -43,7 +42,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <string name="pref_key_autohide">PREF_KEY_AUTOHIDE</string>
     <string name="pref_key_autohide_json">PREF_KEY_AUTOHIDE_JSON</string>
     <string name="pref_key_quickaccess_json">PREF_KEY_QUICKACCESS_JSON</string>
-    <string name="pref_key_chans_order_json">PREF_KEY_CHANS_ORDER_JSON</string>
     <string name="pref_key_custom_theme_json">PREF_KEY_CUSTOM_THEME_JSON</string>
     <!-- <string name="pref_key_hide_completely">PREF_KEY_HIDE_COMPLETELY</string> -->
     <string name="pref_key_swipe_to_hide_thread">PREF_KEY_SWIPE_TO_HIDE_THREAD</string>

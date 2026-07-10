@@ -366,11 +366,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         android:title="@string/pref_cat_advanced"
         android:summary="@string/pref_cat_advanced_summary">
 
-        <Preference
-            android:key="@string/pref_key_ssl_certificates"
-            android:title="@string/pref_ssl_certificates_title"
-            android:summary="@string/pref_ssl_certificates_summary" />
-
         <CheckBoxPreference
             android:defaultValue="false"
             android:key="@string/pref_key_random_hash"

@@ -262,6 +262,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <string name="postform_send">Senden</string>
     <string name="postform_max_attachments">Weitere Dateien können nicht angehängt werden</string>
     <string name="postform_cannot_attach">Datei Kann nicht angehängt werden</string>
+    <string name="postform_attachment_too_large">Die ausgewählte Datei überschreitet das Anhanglimit von %1$d MB</string>
+    <string name="postform_unsupported_attachment">Dieser Dateityp ist auf diesem Board nicht erlaubt</string>
     <string name="postform_required_file">Hängen sie Datei an, um einen neuen Thread zu erstellen</string>
     <string name="postform_empty_comment">Schreibe einen Kommentar</string>
     <string name="postform_attachment_size_format">%1$d KB, %2$dx%3$d</string>
@@ -274,6 +276,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <string name="posting_error">Senden fehlgeschlagen</string>
     <string name="posting_error_interactive_format">%s Überprüfung wurde beantragt</string>
     <string name="posting_error_default">Ein unbekannter Fehler</string>
+    <string name="posting_error_copy_details">Details kopieren</string>
     <string name="posting_success">Erfolgreich gesendet</string>
     <string name="posting_success_post">Der Post wurde erfolgreich versendet</string>
     <string name="posting_success_thread">Der Thread wurde erfolgreich hinzugefügt</string>
@@ -311,17 +314,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <string name="html_external">(extern)</string>
     <string name="html_file">Datei:</string>
     
-    <string name="filedialog_title">Wählen Sie die Datei</string>
-    <string name="filedialog_location">Pfad</string>
-    <string name="filedialog_cant_read_folder">Kann nicht gelesen werden!</string>
-    <string name="filedialog_new">Neu</string>
-    <string name="filedialog_select">Wählen</string>
-    <string name="filedialog_filename">Dateiname:</string>
-    <string name="filedialog_filename_hint">dateiname</string>
-    <string name="filedialog_cancel">Abbrechen</string>
-    <string name="filedialog_create">Speichern</string>
-    <string name="filedialog_no_data">Keine Daten</string>
-    
     <string name="gallery_error_incorrect_attachment">Falscher Anhang</string>
     <string name="gallery_error_play">Die Datei kann nicht wiedergeben werden</string>
     <string name="gallery_tap_to_play">Tippen Sie, um zu wiedergeben</string>
@@ -354,6 +346,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <string name="custom_themes_title">Benutzerdefinierte Themen</string>
     <string name="custom_themes_local">(Datei auswählen)</string>
     <string name="custom_themes_loading">Laden</string>
+    <string name="custom_themes_invalid_file">Wählen Sie eine JSON-Themendatei aus</string>
+    <string name="custom_themes_file_too_large">Themendateien dürfen höchstens 64 KB groß sein</string>
     
     <string name="subscriptions_notification_title">Verfolgte Antworten</string>
     <string name="subscriptions_notification_text_format">in Thread: %s</string>
@@ -386,20 +380,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <string name="error_interactive_cancelled_format">%s Überprüfung nicht bestanden</string>
     <string name="error_out_of_memory">Out of Memory</string>
     
-    <string name="ssl_accept_cert">Unbekanntes Zertifikat akzeptieren?</string>
-    <string name="ssl_trust_anchor">Das Serverzertifikat stammt nicht von einer bekannten Ausstellungsstelle (CA).</string>
-    <string name="ssl_cert_expired">Das Serverzertifikat ist abgelaufen.</string>
-    <string name="ssl_accept_servername">Abweichenden Servernamen akzeptieren?</string>
-    <string name="ssl_hostname_mismatch">Der Server konnte sich nicht als »%s« ausweisen. Das Zertifikat gilt nur für:</string>
-    <string name="ssl_connect_anyway">Das kann ein Versuch sein, Ihre Daten abzufangen.
-        Sie sollten sich nicht weiter verbinden, wenn Sie nicht sicher sind, dies ist nicht ein Angriff.\n\nVerbindung trotzdem aufbauen?</string>
-    <string name="ssl_cert_details">Zertifikatdetails:</string>
-    <string name="ssl_decision_always">Immer</string>
-    <string name="ssl_decision_once">Einmal</string>
-    <string name="ssl_decision_abort">Abbrechen</string>
-    <string name="ssl_certificates_title">Zertifikate</string>
-    <string name="ssl_certificate_delete">Löschen</string>
-    
     <string name="crash_dialog_title">esochan ist abgestürzt</string>
     <string name="crash_dialog_text">Ein unerwarteter Fehler ist aufgetreten, der
         zum Beenden der Anwendung führte. Helfen Sie diesen Fehler
@@ -407,31 +387,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <string name="crash_dialog_comment_prompt">Nachfolgend einen Kommentar zu dem Problem abgeben:</string>
     <string name="crash_dialog_ok_toast">Vielen Dank!</string>
     
-    <string name="iichan_prefs_report_thread">Thread für die Meldung</string>
-    <string name="iichan_prefs_report_thread_summary">Threadnummer in /d/ für die Meldung von Missbrauch</string>
-    
-    <string name="kraut_prefs_kompturcode">Komturcode</string>
-    <string name="kraut_prefs_kompturcode_summary">Komturcode cookie</string>
-    
-    <string name="makaba_catalog_standart">Nach Bump sortieren</string>
-    <string name="makaba_catalog_last_reply">Nach Letzten Antworten sortieren</string>
-    <string name="makaba_catalog_num">Nach Erstellungsdatum sortieren</string>
-    <string name="makaba_catalog_image_size">Nach Bildgröße sortieren</string>
-    <string name="makaba_no_icon">Kein Symbol</string>
-    <string name="makaba_prefs_mobile_api">Mobile API</string>
-    <string name="makaba_prefs_captcha_category">Captcha</string>
-    <string name="makaba_prefs_domain_category">Domain</string>
-    <string name="makaba_prefs_skip_captcha">Skip das Captcha</string>
-    
-    <string name="mikuba_password_ignored">(wird ignoriert)</string>
-
     <string name="fourchan_prefs_new_recaptcha_fallback">Recaptcha 2.0 Fallback</string>
     <string name="fourchan_prefs_new_recaptcha_fallback_summary">Den Kompatibilitätsmodus verwenden</string>
 
     <string name="preferences">Einstellungen</string>
     <string name="pref_cat_chans">4chan</string>
     <string name="pref_cat_chans_summary">Pass, Löschpasswort, Verbindung</string>
-    <string name="pref_chans_rearrange">Umstellen</string>
     <string name="pref_chans_enter_url">URL eingeben</string>
     <string name="pref_chans_enter_url_hint">http://</string>
     <string name="pref_chans_enter_url_incorrect">Diese Imageboard wird nicht unterstützt</string>
@@ -482,8 +443,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <string name="pref_email_hint">email</string>
     <string name="pref_hide_personal_title">Persönliche Daten verbergen</string>
     <string name="pref_hide_personal_summary">Immer die Standardwerte verwenden</string>
-    <string name="pref_ssl_certificates_title">SSL-Zertifikate</string>
-    <string name="pref_ssl_certificates_summary">Vertrauenswürdige Zertifikate (Ausnahmen)</string>
     <string name="pref_random_hash_title">Zufällige Hash</string>
     <string name="pref_random_hash_summary">Ein paar Bytes an das Ende der Anlagedateien fügen</string>
     <string name="pref_show_all_chans_list_title">Imageboards-Liste</string>
@@ -547,7 +506,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <string name="pref_autoupdate_background_title">Update Hintergrundtabs</string>
     <string name="pref_autoupdate_background_summary">Markierte Tabs für Auto-Update im Hintergrund aktualisieren</string>
     <string name="pref_autoupdate_notification_title">Im Infobereich</string>
-    <string name="pref_autoupdate_notification_summary">Das System darf den Prozess nicht schließen, wenn die Anwendung minimiert wird</string>
+    <string name="pref_autoupdate_notification_summary">Zeigt den Auto-Update-Status an, solange die App geöffnet ist</string>
     <string name="pref_subscriptions_enabled_title">Antworten verfolgen</string>
     <string name="pref_subscriptions_enabled_summary">Die Antworten auf jeden von Ihnen abonnierten Post verfolgen</string>
     <string name="pref_subscribe_threads_title">Threads verfolgen</string>
@@ -609,4 +568,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <item>45\uff05</item>
         <item>50\uff05</item>
     </string-array>
+    <string name="channel_downloads">Downloads</string>
+    <string name="channel_posting">Beiträge senden</string>
+    <string name="channel_tabs_tracker">Hintergrundaktualisierungen</string>
+    <string name="sidebar_home">4chan</string>
+    <string name="menu_download_all_images">Alle Bilder herunterladen</string>
+    <string name="download_all_confirm_format">%d Bilder in den Download-Ordner herunterladen?</string>
+    <string name="download_all_queued_format">%d Bilder zum Herunterladen vorgemerkt</string>
+    <string name="download_all_no_images">Keine herunterladbaren Bilder in diesem Thread</string>
+    <string name="postform_options">Optionen</string>
 </resources>

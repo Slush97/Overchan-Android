@@ -1,16 +1,32 @@
--dontobfuscate
--dontwarn java.beans.**
--dontwarn sun.nio.ch.**
--dontwarn sun.misc.**
--keep,allowshrinking class ** { *; }
--keep class dev.esoc.** { *; }
--keep class com.esotericsoftware.** { *; }
--keep class sun.reflect.** { *; }
--keep class sun.nio.ch.** { *; }
--keep class sun.misc.** { *; }
--keep class java.beans.** { *; }
--keep class androidx.media3.** { *; }
--dontwarn androidx.media3.**
--dontwarn com.google.re2j.**
--dontwarn kotlinx.coroutines.**
--keep class kotlinx.coroutines.** { *; }
+# Persisted Java serialization and Serializable Intent extras use class and field
+# names as part of their wire format. Keep that format stable across upgrades.
+-keepnames,allowoptimization class dev.esoc.** implements java.io.Serializable
+-keepclassmembers,allowoptimization class dev.esoc.** implements java.io.Serializable {
+    static final long serialVersionUID;
+    private static final java.io.ObjectStreamField[] serialPersistentFields;
+    !static !transient <fields>;
+    private void writeObject(java.io.ObjectOutputStream);
+    private void readObject(java.io.ObjectInputStream);
+    java.lang.Object writeReplace();
+    java.lang.Object readResolve();
+}
+
+# TaggedFieldSerializer discovers tagged fields reflectively. The Android base
+# configuration already retains runtime annotations; this prevents field removal.
+-keepclassmembers,allowoptimization,allowobfuscation class dev.esoc.** {
+    @com.esotericsoftware.kryo.kryo5.serializers.TaggedFieldSerializer$Tag <fields>;
+}
+
+# libgif uses statically named JNI entry points and constructs GifIOException by
+# its binary name and integer constructor.
+-keepclasseswithmembers,allowoptimization,includedescriptorclasses class dev.esoc.esochan.lib.gifdrawable.GifDrawable {
+    native <methods>;
+}
+-keep,allowoptimization class dev.esoc.esochan.lib.gifdrawable.GifIOException {
+    <init>(int);
+}
+
+# jsoup optionally delegates regular expressions to RE2/J when that artifact is
+# present. This application uses jsoup's built-in java.util.regex implementation.
+-dontwarn com.google.re2j.Matcher
+-dontwarn com.google.re2j.Pattern
