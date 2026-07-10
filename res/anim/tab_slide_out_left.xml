@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Forward navigation (opening a board / thread): the current screen slides
+    fully off to the left in lockstep with tab_slide_in_right, so the two
+    screens stay edge-to-edge like a filmstrip with no visible gap.
+-->
+<translate xmlns:android="http://schemas.android.com/apk/res/android"
+    android:duration="300"
+    android:fromXDelta="0"
+    android:toXDelta="-100%p"
+    android:interpolator="@android:interpolator/fast_out_slow_in" />

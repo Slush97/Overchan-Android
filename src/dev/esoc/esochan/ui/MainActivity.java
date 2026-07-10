@@ -963,8 +963,13 @@ public class MainActivity extends AppCompatActivity {
             closeDrawer();
             return true;
         }
-        if (tabsAdapter != null && tabsAdapter.back()) {
-            return true;
+        if (tabsAdapter != null) {
+            // Reverse the slide direction so backing out feels like sliding back over.
+            MainApplication.getInstance().tabsSwitcher.setNextTransitionBackward();
+            if (tabsAdapter.back()) {
+                return true;
+            }
+            MainApplication.getInstance().tabsSwitcher.clearPendingTransition();
         }
         return false;
     }
