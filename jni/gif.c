@@ -275,8 +275,8 @@ static int readExtensions(int ExtFunction, GifByteType* ExtData, GifInfo* info)
 	}
 	else if (ExtFunction == APPLICATION_EXT_FUNC_CODE && ExtData[0] == 11)
 	{
-		if (strcmp("NETSCAPE2.0", ExtData+1) == 0
-				|| strcmp("ANIMEXTS1.0", ExtData+1) == 0)
+			if (memcmp("NETSCAPE2.0", ExtData + 1, 11) == 0
+					|| memcmp("ANIMEXTS1.0", ExtData + 1, 11) == 0)
 		{
 			if (DGifGetExtensionNext(info->gifFilePtr, &ExtData,
 					&ExtFunction)==GIF_ERROR)

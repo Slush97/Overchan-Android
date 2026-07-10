@@ -25,9 +25,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="28" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
-    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
-    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
@@ -37,6 +34,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <application
         android:name="dev.esoc.esochan.common.MainApplication"
         android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
         android:supportsRtl="false"
         android:icon="@mipmap/ic_launcher"
         android:roundIcon="@mipmap/ic_launcher_round"
@@ -121,11 +120,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             android:launchMode="singleTask"
             android:exported="false" />
         
-        <activity android:name="dev.esoc.esochan.lib.FileDialogActivity" android:exported="false" />
         <activity android:name="dev.esoc.esochan.ui.settings.PreferencesActivity" android:exported="false" />
         <activity android:name="dev.esoc.esochan.ui.settings.AutohideActivity" android:exported="false" />
-        <activity android:name="dev.esoc.esochan.ui.settings.ChansSortActivity" android:exported="false" />
-        <activity android:name="dev.esoc.esochan.ui.settings.CertificatesActivity" android:exported="false" />
         <activity android:name="dev.esoc.esochan.ui.settings.CustomThemeListActivity" android:exported="false" />
         
         <activity android:name="dev.esoc.esochan.ui.ShareActivity"
@@ -148,9 +144,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                 android:resource="@xml/file_provider_paths" />
         </provider>
         
-        <service android:name="dev.esoc.esochan.ui.posting.PostingService" android:exported="false" />
+        <service android:name="dev.esoc.esochan.ui.posting.PostingService" android:exported="false" android:foregroundServiceType="dataSync" />
         <service android:name="dev.esoc.esochan.ui.downloading.DownloadingService" android:exported="false" android:foregroundServiceType="dataSync" />
-        <service android:name="dev.esoc.esochan.ui.tabs.TabsTrackerService" android:exported="false" android:foregroundServiceType="dataSync" />
+        <service android:name="dev.esoc.esochan.ui.tabs.TabsTrackerService" android:exported="false" />
         <service android:name="dev.esoc.esochan.ui.gallery.GalleryBackend" android:exported="false" />
         
     </application>

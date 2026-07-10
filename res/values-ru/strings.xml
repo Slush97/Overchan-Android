@@ -58,16 +58,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <string name="postitem_deleted_mark">Сообщение удалено</string>
     <plurals name="postitem_posts_quantity">
         <item quantity="one">%d сообщение</item>
+        <item quantity="few">%d сообщения</item>
         <item quantity="many">%d сообщений</item>
         <item quantity="other">%d сообщения</item>
     </plurals>
     <plurals name="postitem_files_quantity">
         <item quantity="one">%d файл</item>
+        <item quantity="few">%d файла</item>
         <item quantity="many">%d файлов</item>
         <item quantity="other">%d файла</item>
     </plurals>
     <plurals name="postitem_replies_quantity">
         <item quantity="one">%d ответ</item>
+        <item quantity="few">%d ответа</item>
         <item quantity="many">%d ответов</item>
         <item quantity="other">%d ответа</item>
     </plurals>
@@ -76,6 +79,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <string name="postslist_no_new_posts">Нет новых сообщений</string>
     <plurals name="postslist_new_posts_quantity">
         <item quantity="one">%d новое сообщение</item>
+        <item quantity="few">%d новых сообщения</item>
         <item quantity="many">%d новых сообщений</item>
         <item quantity="other">%d новых сообщения</item>
     </plurals>
@@ -106,6 +110,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <string name="tabs_tracker_updating">Выполняется обновление</string>
     <plurals name="tabs_tracker_timer">
         <item quantity="one">Обновление через %d секунду</item>
+        <item quantity="few">Обновление через %d секунды</item>
         <item quantity="many">Обновление через %d секунд</item>
         <item quantity="other">Обновление через %d секунды</item>
     </plurals>
@@ -269,6 +274,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <string name="postform_send">Отправить</string>
     <string name="postform_max_attachments">Невозможно прикрепить больше файлов</string>
     <string name="postform_cannot_attach">Невозможно прикрепить файл</string>
+    <string name="postform_attachment_too_large">Выбранный файл превышает лимит вложений %1$d МБ</string>
+    <string name="postform_unsupported_attachment">Этот тип файла не разрешён на этой доске</string>
     <string name="postform_required_file">В этом разделе для создания треда нужно прикрепить файл</string>
     <string name="postform_empty_comment">Вы ничего не написали в сообщении</string>
     <string name="postform_attachment_size_format">%1$d КБ, %2$dx%3$d</string>
@@ -281,6 +288,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <string name="posting_error">Не удалось отправить</string>
     <string name="posting_error_interactive_format">Запрошена проверка %s</string>
     <string name="posting_error_default">Неизвестная ошибка</string>
+    <string name="posting_error_copy_details">Копировать подробности</string>
     <string name="posting_success">Отправлено успешно</string>
     <string name="posting_success_post">Сообщение успешно отправлено</string>
     <string name="posting_success_thread">Тред успешно создан</string>
@@ -318,17 +326,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <string name="html_external">(внешнее)</string>
     <string name="html_file">Файл:</string>
     
-    <string name="filedialog_title">Выберите файл</string>
-    <string name="filedialog_location">Путь</string>
-    <string name="filedialog_cant_read_folder">Невозможно открыть!</string>
-    <string name="filedialog_new">Новый</string>
-    <string name="filedialog_select">Выбрать</string>
-    <string name="filedialog_filename">Имя файла:</string>
-    <string name="filedialog_filename_hint">имя файла</string>
-    <string name="filedialog_cancel">Отмена</string>
-    <string name="filedialog_create">Сохранить</string>
-    <string name="filedialog_no_data">Нет данных</string>
-    
     <string name="gallery_error_incorrect_attachment">Некорректное вложение</string>
     <string name="gallery_error_play">Ошибка при воспроизведении</string>
     <string name="gallery_tap_to_play">Нажмите, чтобы воспроизвести</string>
@@ -361,6 +358,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <string name="custom_themes_title">Пользовательские темы</string>
     <string name="custom_themes_local">(Выбрать файл)</string>
     <string name="custom_themes_loading">Загрузка</string>
+    <string name="custom_themes_invalid_file">Выберите файл темы в формате JSON</string>
+    <string name="custom_themes_file_too_large">Размер файла темы не должен превышать 64 КБ</string>
     
     <string name="subscriptions_notification_title">Отслеживаемые ответы</string>
     <string name="subscriptions_notification_text_format">в треде: %s</string>
@@ -393,52 +392,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <string name="error_interactive_cancelled_format">Проверка %s не пройдена</string>
     <string name="error_out_of_memory">Недостаточно памяти</string>
     
-    <string name="ssl_accept_cert">Недоверенный сертификат</string>
-    <string name="ssl_trust_anchor">Сертификат не подписан доверенным центром сертификации.</string>
-    <string name="ssl_cert_expired">Срок действия сертификата истёк.</string>
-    <string name="ssl_accept_servername">Неверное имя сертификата</string>
-    <string name="ssl_hostname_mismatch">Сертификат не соответствует имени узла \&quot;%s\&quot;.
-        Сертификат действителен только для следующих имён:</string>
-    <string name="ssl_connect_anyway">Это может быть попытка перехватить данные.
-        Вы не должны продолжать, если не уверены, что это не атака.\n\nПодключиться в любом случае?</string>
-    <string name="ssl_cert_details">Данные сертификата:</string>
-    <string name="ssl_decision_always">Всегда</string>
-    <string name="ssl_decision_once">Один раз</string>
-    <string name="ssl_decision_abort">Прервать</string>
-    <string name="ssl_certificates_title">Сертификаты</string>
-    <string name="ssl_certificate_delete">Удалить</string>
-    
     <string name="crash_dialog_title">esochan - сбой</string>
     <string name="crash_dialog_text">Непредвиденная ошибка привела к вынужденной остановке приложения.
         Пожалуйста, помогите исправить её, пришлите отчет об ошибке - для этого нажмите OK.</string>
     <string name="crash_dialog_comment_prompt">Здесь можно добавить ваши замечания о проблеме:</string>
     <string name="crash_dialog_ok_toast">Спасибо!</string>
     
-    <string name="iichan_prefs_report_thread">Тред для жалоб</string>
-    <string name="iichan_prefs_report_thread_summary">Номер треда в /d/ для сообщений о нарушениях</string>
-    
-    <string name="kraut_prefs_kompturcode">Komturcode</string>
-    <string name="kraut_prefs_kompturcode_summary">Komturcode cookie</string>
-    
-    <string name="makaba_catalog_standart">Сортировка по бампам</string>
-    <string name="makaba_catalog_last_reply">Сортировка по последнему ответу</string>
-    <string name="makaba_catalog_num">Сортировка по времени создания</string>
-    <string name="makaba_catalog_image_size">Сортировка по размеру изображения</string>
-    <string name="makaba_no_icon">Нет иконки</string>
-    <string name="makaba_prefs_mobile_api">Мобильный API</string>
-    <string name="makaba_prefs_captcha_category">Капча</string>
-    <string name="makaba_prefs_domain_category">Настройки домена</string>
-    <string name="makaba_prefs_skip_captcha">Пропустить капчу</string>
-    
-    <string name="mikuba_password_ignored">(игнорируется)</string>
-
     <string name="fourchan_prefs_new_recaptcha_fallback">Recaptcha 2.0 fallback</string>
     <string name="fourchan_prefs_new_recaptcha_fallback_summary">Использовать Google Recaptcha 2 в режиме совместимости</string>
 
     <string name="preferences">Настройки</string>
     <string name="pref_cat_chans">4chan</string>
     <string name="pref_cat_chans_summary">Pass, пароль удаления, соединение</string>
-    <string name="pref_chans_rearrange">Переставить</string>
     <string name="pref_chans_enter_url">Ввести URL</string>
     <string name="pref_chans_enter_url_hint">http://</string>
     <string name="pref_chans_enter_url_incorrect">Эта имиджборда не поддерживается</string>
@@ -489,8 +454,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <string name="pref_email_hint">email</string>
     <string name="pref_hide_personal_title">Скрывать блок личных данных</string>
     <string name="pref_hide_personal_summary">Всегда использовать значения по умолчанию</string>
-    <string name="pref_ssl_certificates_title">SSL сертификаты</string>
-    <string name="pref_ssl_certificates_summary">Доверенные SSL сертификаты (исключения)</string>
     <string name="pref_random_hash_title">Произвольный хэш</string>
     <string name="pref_random_hash_summary">Добавлять несколько байт в конец прикрепляемых файлов</string>
     <string name="pref_show_all_chans_list_title">Список имиджборд</string>
@@ -554,7 +517,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <string name="pref_autoupdate_background_title">Обновление фоновых вкладок</string>
     <string name="pref_autoupdate_background_summary">Обновлять вкладки, отмеченные для автообновления, в фоновом режиме</string>
     <string name="pref_autoupdate_notification_title">В области уведомлений</string>
-    <string name="pref_autoupdate_notification_summary">Не даёт системе закрыть процесс, когда приложение свёрнуто</string>
+    <string name="pref_autoupdate_notification_summary">Показывать ход автообновления, пока приложение открыто</string>
     <string name="pref_subscriptions_enabled_title">Отслеживать ответы</string>
     <string name="pref_subscriptions_enabled_summary">Отслеживать ответы на сообщения, на которые вы подписаны</string>
     <string name="pref_subscribe_threads_title">Отслеживать треды</string>
@@ -566,6 +529,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <string name="pref_clear_subscriptions_title">Очистить подписки</string>
     <plurals name="pref_clear_subscriptions_summary">
         <item quantity="one">%d запись</item>
+        <item quantity="few">%d записи</item>
         <item quantity="many">%d записей</item>
         <item quantity="other">%d записи</item>
     </plurals>
@@ -617,4 +581,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <item>45\uff05</item>
         <item>50\uff05</item>
     </string-array>
+    <string name="channel_downloads">Загрузки</string>
+    <string name="channel_posting">Отправка</string>
+    <string name="channel_tabs_tracker">Фоновые обновления</string>
+    <string name="sidebar_home">4chan</string>
+    <string name="menu_download_all_images">Скачать все изображения</string>
+    <string name="download_all_confirm_format">Скачать %d изображений в папку «Загрузки»?</string>
+    <string name="download_all_queued_format">В очередь загрузки добавлено изображений: %d</string>
+    <string name="download_all_no_images">В этом треде нет изображений для скачивания</string>
+    <string name="postform_options">Параметры</string>
 </resources>
