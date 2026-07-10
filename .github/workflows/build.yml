@@ -27,11 +27,31 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
 
-      - name: Build debug APK
-        run: ./gradlew assembleDebug
+      - name: Verify and build
+        run: ./gradlew testDebugUnitTest lintDebug assembleDebug assembleRelease bundleRelease --continue
 
-      - name: Upload APK
+      - name: Upload APKs
+        if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: esochan-debug
-          path: build/outputs/apk/debug/*.apk
+          name: esochan-apks
+          path: build/outputs/apk/**/*.apk
+          if-no-files-found: warn
+
+      - name: Upload verification reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: esochan-reports
+          path: |
+            build/reports/lint-results-debug.html
+            build/reports/tests/testDebugUnitTest/
+          if-no-files-found: warn
+
+      - name: Upload app bundle
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: esochan-release-bundle
+          path: build/outputs/bundle/release/*.aab
+          if-no-files-found: warn
