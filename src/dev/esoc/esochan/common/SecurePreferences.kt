@@ -3,7 +3,8 @@ package dev.esoc.esochan.common
 import android.content.SharedPreferences
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKeys
-import java.io.File
+import java.io.IOException
+import java.security.GeneralSecurityException
 
 object SecurePreferences {
 
@@ -15,11 +16,22 @@ object SecurePreferences {
         val context = MainApplication.getInstance()
         return try {
             buildEncryptedPrefs(context)
-        } catch (e: Exception) {
-            // KeyStore corrupted — delete the file and recreate
-            File(context.filesDir.parent, "shared_prefs/$FILE_NAME.xml").delete()
-            buildEncryptedPrefs(context)
+        } catch (e: GeneralSecurityException) {
+            recoverFromUnusableKey(context, e)
+        } catch (e: IOException) {
+            recoverFromUnusableKey(context, e)
         }
+    }
+
+    private fun recoverFromUnusableKey(
+        context: android.content.Context,
+        cause: Exception
+    ): SharedPreferences {
+        Logger.e("SecurePreferences", "Encrypted preferences could not be opened", cause)
+        if (!context.deleteSharedPreferences(FILE_NAME)) {
+            throw IllegalStateException("Could not reset unusable encrypted preferences", cause)
+        }
+        return buildEncryptedPrefs(context)
     }
 
     private fun buildEncryptedPrefs(context: android.content.Context): SharedPreferences {

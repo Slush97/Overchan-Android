@@ -170,8 +170,8 @@ internal sealed class Chan4CaptchaData {
         }
 
         private fun parseTask(taskObj: JSONObject): CaptchaTask {
-            val strTitle = taskObj.optString("str", null)
-            val imgTitle = taskObj.optString("img", null)
+            val strTitle = taskObj.optString("str")
+            val imgTitle = taskObj.optString("img")
 
             var textTitle: String? = null
             var titleBitmap: Bitmap? = null

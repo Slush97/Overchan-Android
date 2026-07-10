@@ -23,27 +23,19 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.SSLSocketFactory;
-import javax.net.ssl.X509TrustManager;
-
 import dev.esoc.esochan.http.HttpConstants;
 import dev.esoc.esochan.http.HttpCookie;
-import dev.esoc.esochan.common.Logger;
 import okhttp3.Cookie;
 import okhttp3.CookieJar;
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 
 public class ExtendedHttpClient implements Closeable {
-    private static final String TAG = "ExtendedHttpClient";
-
     private final CookieStore cookieStore;
     private final String proxyHost;
     private final int proxyPort;
@@ -117,49 +109,97 @@ public class ExtendedHttpClient implements Closeable {
             builder.proxy(new Proxy(Proxy.Type.HTTP, new InetSocketAddress(proxyHost, proxyPort)));
         }
 
-        try {
-            SSLSocketFactory sslSocketFactory = ExtendedSSLSocketFactory.getSSLSocketFactory();
-            X509TrustManager trustManager = ExtendedSSLSocketFactory.getTrustManager();
-            HostnameVerifier hostnameVerifier = ExtendedSSLSocketFactory.getHostnameVerifier();
-            if (sslSocketFactory != null && trustManager != null) {
-                builder.sslSocketFactory(sslSocketFactory, trustManager);
-            }
-            if (hostnameVerifier != null) {
-                builder.hostnameVerifier(hostnameVerifier);
-            }
-        } catch (Exception e) {
-            Logger.e(TAG, "SSL configuration failed", e);
-        }
-
         return builder.build();
     }
 
     public static class CookieStore implements CookieJar {
-        private final List<HttpCookie> cookies = Collections.synchronizedList(new ArrayList<HttpCookie>());
+        private final List<Cookie> cookies = new ArrayList<>();
 
         public void addCookie(HttpCookie cookie) {
+            addLegacyCookie(cookie, false);
+        }
+
+        public void addSecureCookie(HttpCookie cookie) {
+            addLegacyCookie(cookie, true);
+        }
+
+        private void addLegacyCookie(HttpCookie cookie, boolean secure) {
+            if (cookie == null || cookie.getName() == null || cookie.getValue() == null
+                    || cookie.getDomain() == null) {
+                return;
+            }
+
+            String domain = cookie.getDomain();
+            boolean domainCookie = domain.startsWith(".");
+            if (domain.startsWith(".")) {
+                domain = domain.substring(1);
+            }
+
+            try {
+                Cookie.Builder builder = new Cookie.Builder()
+                        .name(cookie.getName())
+                        .value(cookie.getValue())
+                        .path(cookie.getPath() != null ? cookie.getPath() : "/");
+                if (domainCookie) {
+                    builder.domain(domain);
+                } else {
+                    builder.hostOnlyDomain(domain);
+                }
+                if (cookie.getExpiryDate() != null) {
+                    builder.expiresAt(cookie.getExpiryDate().getTime());
+                }
+                if (secure) {
+                    builder.secure();
+                }
+                addCookie(builder.build());
+            } catch (IllegalArgumentException ignored) {
+                // Ignore malformed legacy cookies, as OkHttp does for malformed response cookies.
+            }
+        }
+
+        private void addCookie(Cookie cookie) {
             synchronized (cookies) {
-                // Remove existing cookie with same name and domain
-                Iterator<HttpCookie> it = cookies.iterator();
+                Iterator<Cookie> it = cookies.iterator();
                 while (it.hasNext()) {
-                    HttpCookie existing = it.next();
-                    if (existing.getName().equals(cookie.getName()) && domainMatch(existing.getDomain(), cookie.getDomain())) {
+                    Cookie existing = it.next();
+                    if (hasSameIdentity(existing, cookie)) {
                         it.remove();
                     }
                 }
-                cookies.add(cookie);
+                if (cookie.expiresAt() > System.currentTimeMillis()) {
+                    cookies.add(cookie);
+                }
             }
         }
 
         public List<HttpCookie> getCookies() {
-            return new ArrayList<>(cookies);
+            List<HttpCookie> result = new ArrayList<>();
+            synchronized (cookies) {
+                long now = System.currentTimeMillis();
+                Iterator<Cookie> it = cookies.iterator();
+                while (it.hasNext()) {
+                    Cookie cookie = it.next();
+                    if (cookie.expiresAt() <= now) {
+                        it.remove();
+                        continue;
+                    }
+                    HttpCookie legacyCookie = new HttpCookie(cookie.name(), cookie.value());
+                    legacyCookie.setDomain(cookie.hostOnly() ? cookie.domain() : "." + cookie.domain());
+                    legacyCookie.setPath(cookie.path());
+                    if (cookie.persistent()) {
+                        legacyCookie.setExpiryDate(new Date(cookie.expiresAt()));
+                    }
+                    result.add(legacyCookie);
+                }
+            }
+            return result;
         }
 
         public void removeCookie(String name) {
             synchronized (cookies) {
-                Iterator<HttpCookie> it = cookies.iterator();
+                Iterator<Cookie> it = cookies.iterator();
                 while (it.hasNext()) {
-                    if (it.next().getName().equals(name)) {
+                    if (it.next().name().equals(name)) {
                         it.remove();
                     }
                 }
@@ -168,9 +208,9 @@ public class ExtendedHttpClient implements Closeable {
 
         public void clearExpired(Date date) {
             synchronized (cookies) {
-                Iterator<HttpCookie> it = cookies.iterator();
+                Iterator<Cookie> it = cookies.iterator();
                 while (it.hasNext()) {
-                    if (it.next().isExpired(date)) {
+                    if (it.next().expiresAt() <= date.getTime()) {
                         it.remove();
                     }
                 }
@@ -179,13 +219,7 @@ public class ExtendedHttpClient implements Closeable {
 
         @Override
         public void saveFromResponse(HttpUrl url, List<Cookie> responseCookies) {
-            for (Cookie okhttpCookie : responseCookies) {
-                HttpCookie cookie = new HttpCookie(okhttpCookie.name(), okhttpCookie.value());
-                cookie.setDomain(okhttpCookie.domain());
-                cookie.setPath(okhttpCookie.path());
-                if (okhttpCookie.expiresAt() != Long.MAX_VALUE) {
-                    cookie.setExpiryDate(new Date(okhttpCookie.expiresAt()));
-                }
+            for (Cookie cookie : responseCookies) {
                 addCookie(cookie);
             }
         }
@@ -194,53 +228,26 @@ public class ExtendedHttpClient implements Closeable {
         public List<Cookie> loadForRequest(HttpUrl url) {
             List<Cookie> result = new ArrayList<>();
             synchronized (cookies) {
-                Iterator<HttpCookie> it = cookies.iterator();
+                long now = System.currentTimeMillis();
+                Iterator<Cookie> it = cookies.iterator();
                 while (it.hasNext()) {
-                    HttpCookie cookie = it.next();
-                    if (cookie.isExpired(new Date())) {
+                    Cookie cookie = it.next();
+                    if (cookie.expiresAt() <= now) {
                         it.remove();
                         continue;
                     }
-                    if (matchesDomain(url.host(), cookie.getDomain())) {
-                        Cookie.Builder b = new Cookie.Builder()
-                                .name(cookie.getName())
-                                .value(cookie.getValue())
-                                .path(cookie.getPath() != null ? cookie.getPath() : "/");
-                        String domain = cookie.getDomain();
-                        if (domain != null) {
-                            if (domain.startsWith(".")) {
-                                b.domain(domain.substring(1));
-                            } else {
-                                b.domain(domain);
-                            }
-                        } else {
-                            b.domain(url.host());
-                        }
-                        if (cookie.getExpiryDate() != null) {
-                            b.expiresAt(cookie.getExpiryDate().getTime());
-                        }
-                        try {
-                            result.add(b.build());
-                        } catch (Exception e) {
-                            // skip malformed cookies
-                        }
+                    if (cookie.matches(url)) {
+                        result.add(cookie);
                     }
                 }
             }
             return result;
         }
 
-        private static boolean matchesDomain(String host, String cookieDomain) {
-            if (cookieDomain == null) return true;
-            String domain = cookieDomain.startsWith(".") ? cookieDomain.substring(1) : cookieDomain;
-            return host.equalsIgnoreCase(domain) || host.endsWith("." + domain);
-        }
-
-        private static boolean domainMatch(String domain1, String domain2) {
-            if (domain1 == null || domain2 == null) return domain1 == domain2;
-            String d1 = domain1.startsWith(".") ? domain1.substring(1) : domain1;
-            String d2 = domain2.startsWith(".") ? domain2.substring(1) : domain2;
-            return d1.equalsIgnoreCase(d2);
+        private static boolean hasSameIdentity(Cookie first, Cookie second) {
+            return first.name().equals(second.name())
+                    && first.domain().equalsIgnoreCase(second.domain())
+                    && first.path().equals(second.path());
         }
     }
 }

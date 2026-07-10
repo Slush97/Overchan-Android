@@ -79,7 +79,13 @@ public class HttpStreamer {
 
         Response response = null;
         try {
+            boolean retryAutomatically = isAutomaticallyRetryable(requestModel.method);
             OkHttpClient client = httpClient.newCallClient(requestModel.timeoutValue, !requestModel.noRedirect);
+            if (!retryAutomatically) {
+                client = client.newBuilder()
+                        .retryOnConnectionFailure(false)
+                        .build();
+            }
 
             Request.Builder requestBuilder = new Request.Builder().url(url);
             requestBuilder.header("User-Agent", HttpConstants.getUserAgentString());
@@ -113,7 +119,8 @@ public class HttpStreamer {
             Request request = requestBuilder.build();
 
             IOException responseException = null;
-            for (int i = 0; i < 5; ++i) {
+            int maxAttempts = retryAutomatically ? 5 : 1;
+            for (int i = 0; i < maxAttempts; ++i) {
                 try {
                     if (task != null && task.isCancelled()) throw new InterruptedException();
                     response = client.newCall(request).execute();
@@ -178,6 +185,10 @@ public class HttpStreamer {
             HttpResponseModel.release(response);
             throw new HttpRequestException(e);
         }
+    }
+
+    static boolean isAutomaticallyRetryable(int method) {
+        return method == HttpRequestModel.METHOD_GET;
     }
 
     public byte[] getBytesFromUrl(String url, HttpRequestModel requestModel, ExtendedHttpClient httpClient, ProgressListener listener,
