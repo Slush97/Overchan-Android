@@ -1,5 +1,9 @@
 # Posting Reliability & Competitive Parity — Orchestrated Plan
 
+> **OBSOLETE for execution — see [`2026-07-11-post-1.0-improvement-program.md`](./2026-07-11-post-1.0-improvement-program.md).**  
+> This file is retained as research/history only. Do not schedule PRs from it without reconciling against the 2026-07-11 program doc (Gate A / fail-closed posting already shipped in v1.0.0).
+
+
 > **Goal:** Make esochan trustworthy for posting first, then close media/download gaps that drive competitor churn — without breaking captcha, CF, or drafts.
 
 **Source grades:** competitor complaint map + dual code verification (2026-07-08).  

@@ -1,5 +1,9 @@
 # Competitor Complaint Investigation Plan
 
+> **OBSOLETE for execution — see [`2026-07-11-post-1.0-improvement-program.md`](./2026-07-11-post-1.0-improvement-program.md).**  
+> This file is retained as research/history only. Do not schedule PRs from it without reconciling against the 2026-07-11 program doc (Gate A / fail-closed posting already shipped in v1.0.0).
+
+
 > **Goal:** Map real user pain from Read Chan / KurobaEx / Chance / Clover reviews onto esochan code, then investigate and fix the gaps that win users.
 
 **Sources:** Google Play reviews (Read Chan free+paid), AppBrain comments, /g/ client threads, KurobaEx/Chance GitHub, prior competitive research (2026-07-08).

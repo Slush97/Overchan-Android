@@ -1,5 +1,9 @@
 # esochan Modernization and Cleanup Implementation Plan
 
+> **OBSOLETE for execution — see [`2026-07-11-post-1.0-improvement-program.md`](./2026-07-11-post-1.0-improvement-program.md).**  
+> This file is retained as research/history only. Do not schedule PRs from it without reconciling against the 2026-07-11 program doc (Gate A / fail-closed posting already shipped in v1.0.0).
+
+
 > **For Hermes:** Use subagent-driven-development skill to implement this plan task-by-task. Do not batch unrelated tiers. After each task, run the listed verification command and review `git diff` before continuing.
 
 **Goal:** Turn the current fork into a maintainable, modern Android application by addressing obvious lint failures, platform-policy risks, legacy build artifacts, and the largest architecture hotspots in increasing scope tiers.

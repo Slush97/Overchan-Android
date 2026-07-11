@@ -1,5 +1,9 @@
 # esochan Visual Refresh Implementation Plan
 
+> **OBSOLETE for execution — see [`2026-07-11-post-1.0-improvement-program.md`](./2026-07-11-post-1.0-improvement-program.md).**  
+> This file is retained as research/history only. Do not schedule PRs from it without reconciling against the 2026-07-11 program doc (Gate A / fail-closed posting already shipped in v1.0.0).
+
+
 **Captured:** 2026-07-08
 
 **Goal:** Freshen the parts of the app that still feel visually stale without starting a rewrite. The first pass should make icons, settings, and the highest-traffic screens feel consistent with the modernized Android stack already in the repo.

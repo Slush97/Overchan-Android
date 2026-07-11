@@ -4,6 +4,8 @@ Rebranding Overchan Android → esochan, and modernizing for 2026 Android standa
 
 Source package renamed from `nya.miku.wishmaster` to `dev.esoc.esochan` in Phase 2. The `applicationId` is `dev.esoc.esochan`.
 
+> **Post-1.0 execution plan:** [`docs/plans/2026-07-11-post-1.0-improvement-program.md`](docs/plans/2026-07-11-post-1.0-improvement-program.md) (supersedes older `docs/plans/2026-07-0*` files for implementation order).
+
 ---
 
 ## Phase 1A: Rebrand Identity
@@ -118,28 +120,28 @@ Full rename of `nya.miku.wishmaster` → `dev.esoc.esochan` across the entire so
 ### ViewModel + state management
 - [x] Add `androidx.lifecycle:lifecycle-viewmodel` dependency
 - [x] `TabsViewModel` wraps `TabsState` as `StateFlow`, wired into `MainActivity` + `TabsAdapter`
-- [ ] Migrate BoardFragment state into ViewModel (needs dedicated plan)
+- [ ] Migrate BoardFragment state into ViewModel (incremental; see post-1.0 program Tier 6 / PR-6.x — not a rewrite)
 - [ ] Use StateFlow/LiveData for UI updates beyond tabs
 
 ### Storage layer
-- [ ] Consider Room for database access (currently raw SQLite)
-- [ ] Consider DataStore for SharedPreferences replacement
+- [ ] Consider Room for database access (currently raw SQLite) — **deferred** in post-1.0 program non-goals unless schema forces it
+- [ ] Consider DataStore for SharedPreferences replacement — **deferred** (post-1.0 non-goal)
 
 ### Networking
-- [ ] After OkHttp migration (Phase 3), consider Retrofit for API abstraction
-- [ ] Migrate channel modules to use a common HTTP abstraction
+- [ ] After OkHttp migration (Phase 3), consider Retrofit for API abstraction — **deferred** (post-1.0 non-goal)
+- [ ] Migrate channel modules to use a common HTTP abstraction — **deferred**
 
 ---
 
 ## Phase 5: Polish & Infrastructure
 
 - [x] GitHub Actions CI for building APKs on push/PR
-- [ ] New app icon and branding assets
+- [x] New app icon and branding assets (adaptive mipmap launcher; visual refresh Phase 1)
 - [x] Review and trim supported imageboards list (27→13 modules)
-- [ ] Material 3 theming
+- [ ] Material 3 theming (post-1.0 Tier 7; lower priority than posting/captcha gates)
 - [x] ViewBinding to replace `findViewById`
 - [x] Min SDK 21 → 24 (drops Android 5.0-6.x, simplifies code, <1% of devices)
-- [ ] F-Droid metadata if publishing there
+- [ ] F-Droid metadata if publishing there (post-1.0 Tier 7; after Gate C stability)
 
 ---
 
@@ -179,3 +181,21 @@ Full rename of `nya.miku.wishmaster` → `dev.esoc.esochan` across the entire so
 | `src/.../common/ApplicationSettings.java` | isSFW check, storage paths, preferences |
 | `jni/gif.c` | JNI symbols tied to package name |
 | `proguard-project.txt` | Keep rules for package names |
+
+---
+
+## Post-1.0 (after v1.0.0)
+
+Execution is tracked in [`docs/plans/2026-07-11-post-1.0-improvement-program.md`](docs/plans/2026-07-11-post-1.0-improvement-program.md), not the July 2026 research plans.
+
+Priority summary:
+
+1. Captcha/CF transport integrity (cookie bridge, ticket TTL)
+2. Posting error taxonomy residual
+3. Email verify research → implement or WONTFIX
+4. Media/download resilience
+5. Reading UX signals
+6. BoardFragment extraction (incremental)
+7. Visual remainder / F-Droid
+
+**Already done in 1.0.0 and must not be re-opened as PR-0.x:** fail-closed post response (`FourchanPostResponse`), draft retention on failure.
