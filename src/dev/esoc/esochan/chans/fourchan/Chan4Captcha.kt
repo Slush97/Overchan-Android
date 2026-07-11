@@ -37,13 +37,16 @@ import android.widget.LinearLayout
 import android.widget.SeekBar
 import android.widget.TextView
 import android.widget.Toast
+import dev.esoc.esochan.api.HttpChanModule
 import dev.esoc.esochan.api.interfaces.CancellableTask
 import dev.esoc.esochan.common.CancellableTaskScope
 import dev.esoc.esochan.common.Logger
+import dev.esoc.esochan.common.MainApplication
+import dev.esoc.esochan.http.WebViewCookieBridge
+import dev.esoc.esochan.http.interactive.InteractiveException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import dev.esoc.esochan.http.interactive.InteractiveException
 
 private const val TAG = "Chan4Captcha"
 
@@ -134,6 +137,8 @@ internal class Chan4Captcha(
                     scope.launch {
                         val data = Chan4CaptchaData.parse(json)
                         withContext(Dispatchers.Main) {
+                            // CF may have set cf_clearance in this WebView; bridge before destroy.
+                            syncCaptchaCookies()
                             cleanupWebView(webView, dialog)
                             handleParsedCaptcha(activity, task, callback, data)
                         }
@@ -164,12 +169,43 @@ internal class Chan4Captcha(
         when (data) {
             is Chan4CaptchaData.Noop -> {
                 Chan4CaptchaSolved.store(data.challenge, "noop")
-                callback.onSuccess()
+                finishCaptchaSuccess(callback)
             }
             is Chan4CaptchaData.Error -> callback.onError(data.message)
             is Chan4CaptchaData.Cooldown -> showCooldown(activity, task, callback, data.seconds, data.message)
             is Chan4CaptchaData.Slider -> showSliderCaptcha(activity, task, callback, data)
             is Chan4CaptchaData.ImageSelection -> showImageSelection(activity, task, callback, data)
+        }
+    }
+
+    private fun finishCaptchaSuccess(callback: Callback) {
+        syncCaptchaCookies()
+        callback.onSuccess()
+    }
+
+    /**
+     * WebView → OkHttp for allowlisted cookies (v1: [cf_clearance] only).
+     * Also persists clearance via [HttpChanModule.saveCookie] like the dedicated CF path.
+     */
+    private fun syncCaptchaCookies() {
+        try {
+            val chan = MainApplication.getInstance().getChanModule(FourchanModule.CHAN_NAME)
+            if (chan !is HttpChanModule) {
+                Logger.d(TAG, "Captcha cookie bridge skipped: module not HttpChanModule")
+                return
+            }
+            val cookieStore = chan.httpClient.cookieStore
+            val names = WebViewCookieBridge.syncAllowlisted(cookieStore)
+            Logger.d(TAG, "Captcha cookie bridge synced names=$names")
+            if ("cf_clearance" in names) {
+                for (cookie in cookieStore.cookies) {
+                    if (cookie.name == "cf_clearance") {
+                        chan.saveCookie(cookie)
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            Logger.e(TAG, e)
         }
     }
 
@@ -260,7 +296,7 @@ internal class Chan4Captcha(
                     showSliderCaptcha(activity, task, callback, data)
                 } else {
                     Chan4CaptchaSolved.store(data.challenge, answer)
-                    callback.onSuccess()
+                    finishCaptchaSuccess(callback)
                 }
             }
             .setNegativeButton(android.R.string.cancel) { _, _ -> callback.onError("Cancelled") }
@@ -291,7 +327,7 @@ internal class Chan4Captcha(
     ) {
         if (taskIndex >= data.tasks.size) {
             Chan4CaptchaSolved.store(data.challenge, solution.toString())
-            callback.onSuccess()
+            finishCaptchaSuccess(callback)
             return
         }
 
