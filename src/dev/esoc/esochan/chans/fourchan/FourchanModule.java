@@ -739,7 +739,8 @@ public class FourchanModule extends CloudflareChanModule {
         logPostResponseForCapture(response);
         FourchanPostResponse postResponse = FourchanPostResponse.parse(response);
         if (postResponse.type() == FourchanPostResponse.Type.SERVER_ERROR) {
-            throw new Exception(postResponse.message());
+            FourchanPostError.Kind kind = FourchanPostError.classifyServerMessage(postResponse.message());
+            throw new Exception(FourchanPostError.formatUserMessage(resources, kind, postResponse.message()));
         }
         if (postResponse.type() == FourchanPostResponse.Type.SUCCESS) {
             UrlPageModel redirect = new UrlPageModel();

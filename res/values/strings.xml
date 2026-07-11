@@ -286,6 +286,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <string name="posting_error_interactive_format">Requested %s checking</string>
     <string name="posting_error_default">An unknown error occurred</string>
     <string name="posting_error_copy_details">Copy details</string>
+    <string name="posting_error_kind_captcha">Captcha rejected</string>
+    <string name="posting_error_kind_banned">You appear to be banned</string>
+    <string name="posting_error_kind_flood">Flood detected — wait before posting again</string>
+    <string name="posting_error_kind_duplicate">Duplicate post</string>
+    <string name="posting_error_kind_file_too_large">Attachment too large</string>
+    <string name="posting_error_kind_verify_email">Email verification required</string>
+    <string name="posting_error_kind_pass">4chan Pass issue</string>
+    <string name="posting_error_kind_other">Post rejected</string>
     <string name="posting_success">Sent successfully</string>
     <string name="posting_success_post">The post was sent successfully</string>
     <string name="posting_success_thread">The thread was added successfully</string>
