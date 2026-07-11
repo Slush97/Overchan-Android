@@ -126,11 +126,14 @@ internal sealed class Chan4CaptchaData {
                 }
             }
 
-            // Must have a challenge from here on
-            if (!obj.has("challenge")) {
+            // Must have a non-empty challenge from here on
+            if (!obj.has("challenge") || obj.isNull("challenge")) {
                 return Error("Invalid captcha response (no challenge field)")
             }
-            val challenge = obj.getString("challenge")
+            val challenge = obj.getString("challenge").trim()
+            if (challenge.isEmpty()) {
+                return Error("Invalid captcha response (empty challenge)")
+            }
             val ttl = obj.optInt("ttl", 120)
 
             // Noop — no captcha required

@@ -494,11 +494,44 @@ internal class Chan4Captcha(
     companion object {
         private const val serialVersionUID = 1L
 
-        /** Stored ticket from captcha responses, sent with subsequent requests. */
-        @Volatile
+        /**
+         * Captcha ticket from server JSON, reused on subsequent captcha fetches.
+         * Backed by [Chan4CaptchaTicketStore] (SecurePreferences, 6h TTL).
+         * Never holds challenge solutions — those stay in [Chan4CaptchaSolved].
+         */
         @JvmStatic
-        var storedTicket: String? = null
-            internal set
+        var storedTicket: String?
+            get() {
+                memoryTicket?.let { return it }
+                val loaded = try {
+                    Chan4CaptchaTicketStore.load()
+                } catch (e: Exception) {
+                    Logger.e(TAG, e)
+                    null
+                }
+                memoryTicket = loaded
+                return loaded
+            }
+            internal set(value) {
+                if (value.isNullOrEmpty()) {
+                    memoryTicket = null
+                    try {
+                        Chan4CaptchaTicketStore.clear()
+                    } catch (e: Exception) {
+                        Logger.e(TAG, e)
+                    }
+                } else {
+                    memoryTicket = value
+                    try {
+                        Chan4CaptchaTicketStore.save(value)
+                    } catch (e: Exception) {
+                        Logger.e(TAG, e)
+                    }
+                }
+            }
+
+        @Volatile
+        private var memoryTicket: String? = null
     }
 }
 
