@@ -2294,24 +2294,28 @@ public class BoardFragment extends Fragment implements AdapterView.OnItemClickLi
                 scrollContent.setLayoutParams(contentLp);
                 
                 final ScrollView scrollReplies = (ScrollView) view.findViewById(R.id.post_scroll_replies);
-                ((ViewGroup) tag.repliesView.getParent()).removeView(tag.repliesView);
-                scrollReplies.addView(tag.repliesView);
-                scrollReplies.setVisibility(View.VISIBLE);
+                if (tag.repliesIsVisible) {
+                    ((ViewGroup) tag.repliesView.getParent()).removeView(tag.repliesView);
+                    scrollReplies.addView(tag.repliesView);
+                    scrollReplies.setVisibility(View.VISIBLE);
 
-                tag.repliesView.measure(
-                        MeasureSpec.makeMeasureSpec(contentWidth, MeasureSpec.EXACTLY),
-                        MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
-                int measuredRepliesHeight = tag.repliesView.getMeasuredHeight();
-                ViewGroup.LayoutParams repliesParams = tag.repliesView.getLayoutParams();
-                if (repliesParams instanceof ViewGroup.MarginLayoutParams) {
-                    ViewGroup.MarginLayoutParams marginParams = (ViewGroup.MarginLayoutParams) repliesParams;
-                    measuredRepliesHeight += marginParams.topMargin + marginParams.bottomMargin;
-                }
-                int repliesMax = Math.max(popupMaxContentHeight / 3, 1);
-                if (measuredRepliesHeight > repliesMax) {
-                    scrollReplies.getLayoutParams().height = repliesMax;
-                } else if (measuredRepliesHeight > 0) {
-                    scrollReplies.getLayoutParams().height = measuredRepliesHeight;
+                    tag.repliesView.measure(
+                            MeasureSpec.makeMeasureSpec(contentWidth, MeasureSpec.EXACTLY),
+                            MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
+                    int measuredRepliesHeight = tag.repliesView.getMeasuredHeight();
+                    ViewGroup.LayoutParams repliesParams = tag.repliesView.getLayoutParams();
+                    if (repliesParams instanceof ViewGroup.MarginLayoutParams) {
+                        ViewGroup.MarginLayoutParams marginParams = (ViewGroup.MarginLayoutParams) repliesParams;
+                        measuredRepliesHeight += marginParams.topMargin + marginParams.bottomMargin;
+                    }
+                    int repliesMax = Math.max(popupMaxContentHeight / 3, 1);
+                    if (measuredRepliesHeight > repliesMax) {
+                        scrollReplies.getLayoutParams().height = repliesMax;
+                    } else if (measuredRepliesHeight > 0) {
+                        scrollReplies.getLayoutParams().height = measuredRepliesHeight;
+                    }
+                } else {
+                    scrollReplies.setVisibility(View.GONE);
                 }
             } else {
                 tag.isPopupDialog = false;
